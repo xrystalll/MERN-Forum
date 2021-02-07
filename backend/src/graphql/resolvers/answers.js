@@ -1,6 +1,7 @@
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 const Mongoose = require('mongoose');
 
+const Thread = require('../../models/Thread');
 const Answer = require('../../models/Answer');
 const checkAuth = require('../../util/checkAuth');
 
@@ -24,7 +25,10 @@ module.exports = {
         throw new Error('Answer body must not be empty')
       }
 
+      const thread = await Thread.findById(threadId)
+
       const newAnswer = new Answer({
+        boardId: thread.boardId, 
         threadId,
         body,
         author: [{

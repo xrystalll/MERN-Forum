@@ -1,6 +1,7 @@
 const { model, Schema } = require('mongoose');
 
 const answerSchema = new Schema({
+  boardId: String,
   threadId: String,
   body: String,
   createdAt: String,

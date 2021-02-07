@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import './style.css';
+
 export const Section = ({ children }) => {
   return (
     <section className="main_section">

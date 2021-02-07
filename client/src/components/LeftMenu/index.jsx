@@ -1,6 +1,9 @@
 import { useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+
 import { StoreContext } from 'store/Store';
+import { counter } from 'support/Utils';
+import './style.css';
 
 const LeftMenu = ({ open }) => {
   const { user } = useContext(StoreContext)
@@ -15,7 +18,7 @@ const LeftMenu = ({ open }) => {
             <li className="nav_item">
               <NavLink to="/messages">
                 <span className="nav_text">Messages</span>
-                {messages > 0 && <span className="nav_counter">{messages}</span>}
+                {messages > 0 && <span className="nav_counter">{counter(messages)}</span>}
               </NavLink>
             </li>
           )}

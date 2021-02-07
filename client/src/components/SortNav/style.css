@@ -1,0 +1,27 @@
+/* SortNav */
+.sort_nav {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sort_item {
+  background-color: var(--secondary-bg-tint);
+  border-radius: var(--border-radius);
+  font-size: .95rem;
+  padding: .1rem .6rem;
+  margin-right: .5rem;
+  transition: var(--transition-background);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  cursor: pointer;
+  user-select: none;
+}
+.sort_item.active {
+  color: var(--accent-color);
+}

@@ -1,17 +1,70 @@
-import { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Fragment, useContext, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import gql from 'graphql-tag';
 import moment from 'moment';
 
-const Card = ({ data, full }) => {
+import { StoreContext } from 'store/Store';
+import { counter, declOfNum } from 'support/Utils';
+
+const LIKE_THREAD_MUTATION = gql`
+  mutation($id: ID!) {
+    likeThread(id: $id) {
+      likes {
+        username
+      }
+      likeCount
+    }
+  }
+`;
+
+const LIKE_ANSWER_MUTATION = gql`
+  mutation($id: ID!) {
+    likeAnswer(id: $id) {
+      likes {
+        username
+      }
+      likeCount
+    }
+  }
+`;
+
+const Card = ({ data, full, type }) => {
+  const { user } = useContext(StoreContext)
+  const history = useHistory()
+  const [likes, setLikes] = useState(data.likeCount)
+  const [liked, setLiked] = useState(!!data?.likes?.find(i => i.username === user.username))
+
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
   const imageFile = data?.attach?.length
     ? imageTypes.find(i => i === data.attach.type) ? { backgroundImage: `url(${data.attach.file})`} : null
     : null
 
+  const [likeThread] = useMutation(LIKE_THREAD_MUTATION, {
+    variables: { id: data.id },
+    update(_, { data: { likeThread } }) {
+      setLikes(likeThread.likeCount)
+    }
+  })
+
+  const [likeAnswer] = useMutation(LIKE_ANSWER_MUTATION, {
+    variables: { id: data.id },
+    update(_, { data: { likeAnswer } }) {
+      setLikes(likeAnswer.likeCount)
+    }
+  })
+
+  const onLike = () => {
+    if (user) {
+      setLiked(!liked)
+      type === 'answer' ? likeAnswer() : likeThread()
+    } else {
+      history.push('/signup')
+    }
+  }
+
   return (
     <div className="card_item">
-      {full && <a id={data.id} href={'#' + data.id} className="anchor"> </a>}
-
       <div className="card_body">
         <div className="card_block">
           <header className="card_head">
@@ -34,7 +87,7 @@ const Card = ({ data, full }) => {
                 <Link to={'/user/' + data.author[0].id} className="head_text bold">{data.author[0].username}</Link>
                 <span className="bullet">•</span>
                 <span className="head_text">
-                  <time>{moment(data.createdAt).fromNow()}</time>
+                  <time>{moment(data.createdAt).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YY, hh:mm' })}</time>
                 </span>
               </div>
             </div>
@@ -53,6 +106,7 @@ const Card = ({ data, full }) => {
           {full && (
             <div className="card_content">
               <p>{data.body}</p>
+
               {imageFile && (
                 <div className="attached_file card_left empty visible" style={imageFile}>
                   <div className="attached_info">{data.attach.type}</div>
@@ -63,18 +117,18 @@ const Card = ({ data, full }) => {
 
           <footer className="card_foot">
             {full ? (
-              <footer className="card_foot">
+              <Fragment>
                 <div className="act_btn foot_btn">
                   <i className="bx bx-reply bx-flip-horizontal"></i>
                   <span>Answer</span>
                 </div>
 
-                <div className="act_btn foot_btn">
-                  <i className="bx bx-heart"></i>
-                  {data.likeCount > 0 && (
+                <div className="act_btn foot_btn" onClick={onLike}>
+                  <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'}></i>
+                  {likes > 0 && (
                     <Fragment>
-                      <span className="card_count">{data.likeCount}</span>
-                      <span className="hidden">likes</span>
+                      <span className="card_count">{counter(likes)}</span>
+                      <span className="hidden">{declOfNum(likes, ['like', 'likes', 'likes'])}</span>
                     </Fragment>
                   )}
                 </div>
@@ -82,26 +136,30 @@ const Card = ({ data, full }) => {
                 {data.answersCount > 0 && (
                   <div className="act_btn foot_btn disable">
                     <i className="bx bx-message-square-detail"></i>
-                    <span className="card_count">{data.answersCount}</span>
-                    <span className="hidden">answers</span>
+                    <span className="card_count">{counter(data.answersCount)}</span>
+                    <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
                   </div>
                 )}
-
-                {data?.edited?.length && (
-                  <div className="act_btn foot_btn disable">
-                    <i className="bx bx-pencil"></i>
-                    <span className="card_count">{moment(data.edited[0].createdAt).fromNow()}</span>
-                  </div>
-                )}
-              </footer>
+              </Fragment>
             ) : (
               <div className="act_btn foot_btn disable">
                 <i className="bx bx-message-square-detail"></i>
-                <span className="card_count">{data.answersCount || 0}</span>
-                <span className="hidden">answers</span>
+                <span className="card_count">{counter(data.answersCount)}</span>
+                <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
               </div>
             )}
           </footer>
+
+          {full && (
+            data?.edited?.length ? (
+              <div className="act_btn foot_btn under_foot disable">
+                <i className="bx bx-pencil"></i>
+                <span className="card_count">
+                  {moment(data.edited[0].createdAt).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YY, hh:mm' })}
+                </span>
+              </div>
+            ) : null
+          )}
         </div>
       </div>
     </div>
@@ -122,14 +180,14 @@ const BoardCard = ({ data }) => {
           <footer className="card_foot">
             <div className="act_btn foot_btn disable">
               <i className="bx bx-news"></i>
-              <span className="card_count">{data.threadsCount}</span>
-              <span className="hidden">threads</span>
+              <span className="card_count">{counter(data.threadsCount)}</span>
+              <span className="hidden">{declOfNum(data.threadsCount, ['thread', 'threds', 'threds'])}</span>
             </div>
 
             <div className="act_btn foot_btn disable">
               <i className="bx bx-message-square-detail"></i>
-              <span className="card_count">{data.messagesCount}</span>
-              <span className="hidden">messages</span>
+              <span className="card_count">{counter(data.answersCount)}</span>
+              <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
             </div>
           </footer>
         </div>

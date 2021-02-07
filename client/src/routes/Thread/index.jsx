@@ -12,6 +12,7 @@ const THREAD_ANSWERS_QUERY = gql`
   query($id: ID!) {
     getThread(id: $id) {
       id
+      boardTitle
       boardId
       pined
       closed
@@ -33,6 +34,7 @@ const THREAD_ANSWERS_QUERY = gql`
         file
         type
       }
+      answersCount
     }
     getAnswers(threadId: $id) {
       id
@@ -72,13 +74,13 @@ const Thread = ({ match }) => {
           <Breadcrumbs current={data.getThread.title} links={[
             { title: 'Home', link: '/' },
             { title: 'All boards', link: '/boards' },
-            { title: data.getThread.id, link: '/boards/' + data.getThread.boardId }
+            { title: data.getThread.boardTitle, link: '/boards/' + data.getThread.boardId }
           ]} />
 
-          <Card data={data.getThread} full={true} />
+          <Card data={data.getThread} full={true} type="thread" />
 
           {data.getAnswers.map(item => (
-            <Card key={item.id} data={item} full={true} />
+            <Card key={item.id} data={item} full={true} type="answer" />
           ))}
         </Fragment>
       ) : (

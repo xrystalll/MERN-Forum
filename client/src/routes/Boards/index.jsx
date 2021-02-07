@@ -15,6 +15,8 @@ const BOARDS_QUERY = gql`
       id
       title
       position
+      threadsCount
+      answersCount
     }
   }
 `;
@@ -35,7 +37,7 @@ const Boards = () => {
             { title: 'Default', active: true },
             { title: 'Popular', active: false },
             { title: 'Recently active', active: false },
-            { title: 'By messages count', active: false }
+            { title: 'By answers count', active: false }
           ]} />
 
           {data.getBoards.sort((a, b) => a.position - b.position).map(item => (

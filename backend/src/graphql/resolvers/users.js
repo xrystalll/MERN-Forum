@@ -44,21 +44,17 @@ module.exports = {
       }
 
       const user = await User.findOne({ username })
-
-      // wrong username
       if (!user) {
         errors.general = 'User not found'
         throw new UserInputError('User not found', { errors })
       }
 
-      // wrong password
       const match = await bcrypt.compare(password, user.password)
       if (!match) {
         errors.general = 'Wrong credentials'
         throw new UserInputError('Wrong credentials', { errors })
       }
 
-      // login is good, issue the user a token
       const token = generateToken(user)
 
       return {
@@ -69,7 +65,6 @@ module.exports = {
     },
 
     async register(_, { registerInput: { username, email, password, confirmPassword } }) {
-      // Validate user data
       const { errors, valid } = validateRegisterInput(username, email, password, confirmPassword)
 
       if (!valid) {
@@ -80,7 +75,16 @@ module.exports = {
       if (user) {
         throw new UserInputError('Username is taken', {
           errors: {
-            username: 'This username is taken... sorry yo.'
+            username: 'Username is taken'
+          }
+        })
+      }
+
+      const checkEmail = await User.findOne({ email })
+      if (checkEmail) {
+        throw new UserInputError('Email already registered', {
+          errors: {
+            username: 'Email already registered'
           }
         })
       }

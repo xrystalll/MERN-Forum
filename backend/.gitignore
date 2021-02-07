@@ -1,4 +1,4 @@
 node_modules/
 .env
-.eslintcache
+
 npm-debug.log*

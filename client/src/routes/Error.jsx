@@ -14,7 +14,7 @@ const NotFound = () => {
 
       <SectionHeader title="Error 404. Page not found" />
 
-      <Link to="">Go to home page</Link>
+      <Link to="/">Go to home page</Link>
     </Section>
   )
 }

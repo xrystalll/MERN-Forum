@@ -1,3 +1,5 @@
+import './style.css';
+
 const SortNav = ({ links }) => {
   return (
     <div className="sort_nav">

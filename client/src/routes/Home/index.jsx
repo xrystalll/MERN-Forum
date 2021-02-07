@@ -13,7 +13,8 @@ const BOARDS_AND_RECENTLY_THREADS_QUERY = gql`
     getBoards {
       id
       title
-      position
+      threadsCount
+      answersCount
     }
     getRecentlyThreads {
       id
@@ -26,9 +27,7 @@ const BOARDS_AND_RECENTLY_THREADS_QUERY = gql`
         id
         username
       }
-      likes {
-        username
-      }
+      answersCount
     }
   }
 `;

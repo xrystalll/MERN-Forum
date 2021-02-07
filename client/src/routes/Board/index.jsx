@@ -25,6 +25,7 @@ const THREADS_QUERY = gql`
       likes {
         username
       }
+      answersCount
     }
     getBoard(id: $boardId) {
       title
@@ -53,7 +54,7 @@ const Board = ({ match }) => {
             { title: 'Default', active: true },
             { title: 'Popular', active: false },
             { title: 'Recently active', active: false },
-            { title: 'By messages count', active: false }
+            { title: 'By answers count', active: false }
           ]} />
 
           {data.getThreads.map(item => (

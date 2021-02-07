@@ -4,12 +4,16 @@ module.exports = gql`
   type Board {
     id: ID!
     title: String!
+    body: String!
     position: Int!
     createdAt: String!
+    threadsCount: Int!
+    answersCount: Int!
   }
   type Thread {
     id: ID!
     boardId: ID!
+    boardTitle: String!
     pined: Boolean!
     closed: Boolean!
     title: String!
@@ -20,9 +24,11 @@ module.exports = gql`
     likes: [Like]!
     likeCount: Int!
     attach: [Attach]
+    answersCount: Int!
   }
   type Answer {
     id: ID!
+    boardId: ID!
     threadId: ID!
     body: String!
     createdAt: String!
@@ -68,16 +74,16 @@ module.exports = gql`
   }
 
   type Query {
-    getBoards: [Board]
+    getBoards(limit: Int, sort: String): [Board]
     getBoard(id: ID!): Board
 
-    getThreads(boardId: ID!): [Thread]
+    getThreads(boardId: ID!, limit: Int, sort: String): [Thread]
     getThread(id: ID!): Thread
-    getRecentlyThreads: [Thread]
+    getRecentlyThreads(limit: Int): [Thread]
 
-    getAnswers(threadId: ID!): [Answer]
+    getAnswers(threadId: ID!, limit: Int): [Answer]
 
-    getUsers: [User]
+    getUsers(limit: Int, sort: String): [User]
     getUser(id: ID!): User
   }
 
@@ -85,9 +91,9 @@ module.exports = gql`
     login(username: String!, password: String!): User!
     register(registerInput: RegisterInput): User!
 
-    createBoard(title: String!, position: Int!): Board!
+    createBoard(title: String!, body: String, position: Int!): Board!
     deleteBoard(id: ID!): String!
-    editBoard(id: ID!, title: String!, position: Int): Board!
+    editBoard(id: ID!, title: String!, body: String, position: Int): Board!
 
     createThread(boardId: ID!, title: String!, body: String!): Thread!
     deleteThread(id: ID!): String!

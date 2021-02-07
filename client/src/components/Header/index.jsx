@@ -2,6 +2,8 @@ import { Fragment, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StoreContext } from 'store/Store';
 
+import './style.css';
+
 const Header = ({ setMenuState }) => {
   const { user } = useContext(StoreContext)
   const [notification] = useState(false)

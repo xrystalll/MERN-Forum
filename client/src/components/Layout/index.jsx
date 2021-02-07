@@ -5,6 +5,7 @@ import Header from 'components/Header';
 import LeftMenu from 'components/LeftMenu';
 import Modal from 'components/Modal';
 import Footer from 'components/Footer';
+import './style.css';
 
 const Layout = ({ children }) => {
   const { user } = useContext(StoreContext)

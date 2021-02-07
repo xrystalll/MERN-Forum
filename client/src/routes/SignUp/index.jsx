@@ -9,6 +9,7 @@ import { useForm } from 'hooks/useForm';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
+import Loader from 'components/Loader';
 
 const REGISTER_USER = gql`
   mutation($username: String!, $email: String!, $password: String!, $confirmPassword: String!) {
@@ -45,7 +46,7 @@ const SignUp = ({ history }) => {
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
     update(_, { data: { register: userData } }) {
       context.login(userData)
-      history.push('/')
+      history.push('/user/' + userData.id)
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors)
@@ -64,9 +65,12 @@ const SignUp = ({ history }) => {
       <form className="sign_form form_inner" onSubmit={onSubmit}>
         <div className="card_item">
           <div className="card_body">
-            <div className="card_outside_title">Username</div>
+            <div className="card_outside_title">
+              Username
+              {errors.username && <span className="form_error">{errors.username}</span>}
+            </div>
 
-            <div className={!!errors.username ? 'form_block error' : 'form_block' }>
+            <div className={errors.username ? 'form_block error' : 'form_block' }>
               <input
                 className="input_area"
                 type="text"
@@ -80,9 +84,12 @@ const SignUp = ({ history }) => {
 
         <div className="card_item">
           <div className="card_body">
-            <div className="card_outside_title">Email address</div>
+            <div className="card_outside_title">
+              Email address
+              {errors.email && <span className="form_error">{errors.email}</span>}
+            </div>
 
-            <div className={!!errors.email ? 'form_block error' : 'form_block' }>
+            <div className={errors.email ? 'form_block error' : 'form_block' }>
               <input
                 className="input_area"
                 type="email"
@@ -96,9 +103,12 @@ const SignUp = ({ history }) => {
 
         <div className="card_item">
           <div className="card_body">
-            <div className="card_outside_title">Password</div>
+            <div className="card_outside_title">
+              Password
+              {errors.password && <span className="form_error">{errors.password}</span>}
+            </div>
 
-            <div className={!!errors.password ? 'form_block error' : 'form_block' }>
+            <div className={errors.password ? 'form_block error' : 'form_block' }>
               <input
                 className="input_area"
                 type="password"
@@ -112,9 +122,12 @@ const SignUp = ({ history }) => {
 
         <div className="card_item">
           <div className="card_body">
-            <div className="card_outside_title">Password</div>
+            <div className="card_outside_title">
+              Confirm password
+              {errors.confirmPassword && <span className="form_error">{errors.confirmPassword}</span>}
+            </div>
 
-            <div className={!!errors.confirmPassword ? 'form_block error' : 'form_block' }>
+            <div className={errors.confirmPassword ? 'form_block error' : 'form_block' }>
               <input
                 className="input_area"
                 type="password"
@@ -126,18 +139,16 @@ const SignUp = ({ history }) => {
           </div>
         </div>
 
-        {Object.keys(errors).length > 0 && (
+        {errors.general && (
           <div className="card_item">
-            <ul>
-              {Object.values(errors).map((value, index) => (
-                <li key={index} className="errors_list">{value}</li>
-              ))}
-            </ul>
+            <span className="form_error">{errors.general}</span>
           </div>
         )}
 
         <div className="card_item center">
-          <input className="btn" type="submit" value="Create account" disabled={loading} />
+          {loading
+            ? <Loader className="btn" />
+            : <input className="btn" type="submit" value="Create account" />}
         </div>
 
         <div className="card_item center text_reference">

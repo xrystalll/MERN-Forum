@@ -1,0 +1,40 @@
+/* Section */
+.main_section {
+  margin: 1.1rem 1rem 0;
+}
+.main_section:not(:first-child) {
+  margin: 2rem 1rem 0;
+}
+.section_header {
+  margin-bottom: 1.1rem;
+}
+.section_header > h2 {
+  color: var(--secondary-text);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  user-select: none;
+}
+.with_link {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+.with_link > .more_link {
+  display: flex;
+  margin-left: auto;
+}
+.more_link a {
+  display: flex;
+  align-items: center;
+  color: var(--accent-color);
+  padding: .2rem 0 .2rem 1rem;
+}
+.more_link i {
+  font-size: 22px;
+  margin-left: 2px;
+}
+.with_link > .more_link:hover i {
+  position: relative;
+  right: -4px;
+}

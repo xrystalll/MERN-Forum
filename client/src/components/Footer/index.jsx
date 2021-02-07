@@ -1,3 +1,5 @@
+import './style.css';
+
 const Footer = () => {
   return (
     <footer className="general_footer">
