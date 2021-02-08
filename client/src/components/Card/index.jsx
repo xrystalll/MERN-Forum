@@ -10,7 +10,9 @@ import { counter, declOfNum } from 'support/Utils';
 const LIKE_THREAD_MUTATION = gql`
   mutation($id: ID!) {
     likeThread(id: $id) {
+      id
       likes {
+        id
         username
       }
       likeCount
@@ -21,7 +23,9 @@ const LIKE_THREAD_MUTATION = gql`
 const LIKE_ANSWER_MUTATION = gql`
   mutation($id: ID!) {
     likeAnswer(id: $id) {
+      id
       likes {
+        id
         username
       }
       likeCount
@@ -33,7 +37,7 @@ const Card = ({ data, full, type }) => {
   const { user } = useContext(StoreContext)
   const history = useHistory()
   const [likes, setLikes] = useState(data.likeCount)
-  const [liked, setLiked] = useState(!!data?.likes?.find(i => i.username === user.username))
+  const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i.username === user.username) : false)
 
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
   const imageFile = data?.attach?.length
@@ -181,7 +185,7 @@ const BoardCard = ({ data }) => {
             <div className="act_btn foot_btn disable">
               <i className="bx bx-news"></i>
               <span className="card_count">{counter(data.threadsCount)}</span>
-              <span className="hidden">{declOfNum(data.threadsCount, ['thread', 'threds', 'threds'])}</span>
+              <span className="hidden">{declOfNum(data.threadsCount, ['thread', 'threads', 'threads'])}</span>
             </div>
 
             <div className="act_btn foot_btn disable">

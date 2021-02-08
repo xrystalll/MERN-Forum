@@ -6,9 +6,9 @@ const checkAuth = require('../../util/checkAuth');
 
 module.exports = {
   Query: {
-    async getThreads(_, { boardId }) {
+    async getThreads(_, { boardId, limit = 10 }) {
       try {
-        const threads = await Thread.find({ boardId }).sort({ createdAt: -1 })
+        const threads = await Thread.find({ boardId }).sort({ createdAt: -1 }).limit(limit)
         return threads
       } catch (err) {
         throw new Error(err)
@@ -22,9 +22,9 @@ module.exports = {
         throw new Error(err)
       }
     },
-    async getRecentlyThreads() {
+    async getRecentlyThreads(limit = 10) {
       try {
-        const recentlyThreads = await Thread.find().sort({ createdAt: -1 })
+        const recentlyThreads = await Thread.find().sort({ createdAt: -1 }).limit(limit)
         return recentlyThreads
       } catch (err) {
         throw new Error(err)

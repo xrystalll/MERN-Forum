@@ -8,6 +8,7 @@ module.exports = gql`
     position: Int!
     createdAt: String!
     threadsCount: Int!
+    newestThread: String!
     answersCount: Int!
   }
   type Thread {
@@ -25,6 +26,7 @@ module.exports = gql`
     likeCount: Int!
     attach: [Attach]
     answersCount: Int!
+    newestAnswer: String!
   }
   type Answer {
     id: ID!
@@ -47,6 +49,7 @@ module.exports = gql`
     createdAt: String!
   }
   type Like {
+    id: ID!
     username: String!
     createdAt: String!
   }
@@ -74,10 +77,10 @@ module.exports = gql`
   }
 
   type Query {
-    getBoards(limit: Int, sort: String): [Board]
+    getBoards(limit: Int): [Board]
     getBoard(id: ID!): Board
 
-    getThreads(boardId: ID!, limit: Int, sort: String): [Thread]
+    getThreads(boardId: ID!, limit: Int): [Thread]
     getThread(id: ID!): Thread
     getRecentlyThreads(limit: Int): [Thread]
 

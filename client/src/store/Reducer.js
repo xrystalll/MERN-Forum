@@ -10,6 +10,11 @@ const Reducer = (state, action) => {
         ...state,
         user: null
       }
+    case 'SET_POST_TYPE':
+      return {
+        ...state,
+        postType: action.payload
+      }
     default:
       return state
   }

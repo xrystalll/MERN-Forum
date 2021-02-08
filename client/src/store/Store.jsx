@@ -4,7 +4,11 @@ import jwtDecode from 'jwt-decode';
 import Reducer from './Reducer';
 
 const initialState = {
-  user: null
+  user: null,
+  postType: {
+    type: 'thread',
+    id: null
+  }
 }
 
 if (localStorage.getItem('token')) {
@@ -19,6 +23,10 @@ if (localStorage.getItem('token')) {
 
 const StoreContext = createContext({
   user: null,
+  postType: {
+    type: 'thread',
+    id: null
+  },
   login: (userData) => {},
   logout: () => {}
 })
@@ -39,8 +47,15 @@ const Store = ({ children }) => {
     dispatch({ type: 'LOGOUT' })
   }
 
+  const setPostType = (payload) => {
+    dispatch({
+      type: 'SET_POST_TYPE',
+      payload: payload
+    })
+  }
+
   return (
-    <StoreContext.Provider value={{ user: state.user, login, logout }}>
+    <StoreContext.Provider value={{ user: state.user, postType: state.postType, login, logout, setPostType }}>
       {children}
     </StoreContext.Provider>
   )

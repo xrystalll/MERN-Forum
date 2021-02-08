@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { StoreContext } from 'store/Store';
 
 import Header from 'components/Header';
@@ -8,9 +8,27 @@ import Footer from 'components/Footer';
 import './style.css';
 
 const Layout = ({ children }) => {
-  const { user } = useContext(StoreContext)
+  const { user, postType } = useContext(StoreContext)
   const [menuOpen, setMenuOpen] = useState(false)
-  const coverOpen = menuOpen ? 'cover open' : 'cover'
+  const [modalOpen, setModalOpen] = useState(false)
+  const coverOpen = menuOpen || modalOpen  ? 'cover open' : 'cover'
+
+  const fabClick = () => {
+    setModalOpen(!modalOpen)
+  }
+
+  const coverClick = () => {
+    menuOpen && setMenuOpen(!menuOpen)
+    modalOpen && setModalOpen(!modalOpen)
+  }
+
+  useEffect(() => {
+    if (menuOpen || modalOpen) {
+      document.body.classList.add('noscroll')
+    } else {
+      document.body.classList.remove('noscroll')
+    }
+  }, [menuOpen, modalOpen])
 
   return (
     <Fragment>
@@ -26,16 +44,25 @@ const Layout = ({ children }) => {
         </main>
 
         {user && (
-          <div className="fab">
-            <span>Create new</span>
-            <i className="bx bx-pencil"></i>
+          <div className="fab" onClick={fabClick}>
+            {postType.type === 'answer' ? (
+              <Fragment>
+                <span>Answer</span>
+                <i className="bx bx-pencil"></i>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <span>Create new</span>
+                <i className="bx bx-pencil"></i>
+              </Fragment>
+            )}
           </div>
         )}
       </section>
 
-      {user && <Modal />}
+      {user && <Modal open={modalOpen} close={() => setModalOpen(false)} />}
 
-      <div className={coverOpen} onClick={() => setMenuOpen(false)}></div>
+      <div className={coverOpen} onClick={coverClick}></div>
     </Fragment>
   )
 }

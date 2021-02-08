@@ -6,9 +6,9 @@ const checkAuth = require('../../util/checkAuth');
 
 module.exports = {
   Query: {
-    async getBoards() {
+    async getBoards(_, { limit = 10 }) {
       try {
-        const boards = await Board.find().sort({ position: -1 })
+        const boards = await Board.find().sort({ position: -1 }).limit(limit)
         return boards
       } catch (err) {
         throw new Error(err)

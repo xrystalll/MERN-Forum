@@ -1,6 +1,8 @@
-import { Fragment } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+
+import { StoreContext } from 'store/Store';
 
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -16,6 +18,7 @@ const BOARDS_QUERY = gql`
       title
       position
       threadsCount
+      newestThread
       answersCount
     }
   }
@@ -23,7 +26,30 @@ const BOARDS_QUERY = gql`
 
 const Boards = () => {
   document.title = 'Forum | Boards'
+  const { setPostType } = useContext(StoreContext)
+  const [init, setInit] = useState(true)
+
+  useEffect(() => {
+    init && setPostType({
+      type: 'thread',
+      id: null
+    })
+    setInit(false)
+  }, [setInit, init, setPostType])
+
   const { loading, data } = useQuery(BOARDS_QUERY)
+  const [sort, setSort] = useState('default')
+
+  const sortFunc = (a, b) => {
+    switch (sort) {
+      case 'popular':
+        return b.threadsCount - a.threadsCount
+      case 'answers':
+        return b.answersCount - a.answersCount
+      default:
+        return b.position - a.position
+    }
+  }
 
   return !loading ? (
     <Section>
@@ -34,15 +60,18 @@ const Boards = () => {
           ]} />
 
           <SortNav links={[
-            { title: 'Default', active: true },
-            { title: 'Popular', active: false },
-            { title: 'Recently active', active: false },
-            { title: 'By answers count', active: false }
-          ]} />
+            { title: 'Default', sort: 'default' },
+            { title: 'Popular', sort: 'popular' },
+            { title: 'Answers count', sort: 'answers' }
+          ]} setSort={setSort} state={sort} />
 
-          {data.getBoards.sort((a, b) => a.position - b.position).map(item => (
-            <BoardCard key={item.id} data={item} />
-          ))}
+          {data.getBoards.length ? (
+            data.getBoards.slice().sort(sortFunc).map(item => (
+              <BoardCard key={item.id} data={item} />
+            ))
+          ) : (
+            <Errorer message="No boards yet" />
+          )}
         </Fragment>
       ) : (
         <Fragment>

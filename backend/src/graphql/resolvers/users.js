@@ -11,14 +11,21 @@ const generateToken = (user) => {
     username: user.username,
     picture: user.picture,
     role: user.role
-  }, process.env.SECRET, { expiresIn: '1h' })
+  }, process.env.SECRET, { expiresIn: '24h' })
 }
 
 module.exports = {
   Query: {
-    async getUsers() {
+    async getUsers(_, { limit = 10, sort }) {
       try {
-        const users = await User.find().sort({ createdAt: -1 })
+        let users
+        if (sort === 'online') {
+          users = await User.find().sort({ onlineAt: -1 }).limit(limit)
+        } else if (sort === 'admin') {
+          users = await User.find({ role: 'admin' }).sort({ onlineAt: -1 }).limit(limit)
+        } else {
+          users = await User.find().sort({ createdAt: -1 }).limit(limit)
+        }
         return users
       } catch (err) {
         throw new Error(err)

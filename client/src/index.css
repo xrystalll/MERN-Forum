@@ -588,7 +588,7 @@ a.head_text:hover {
 .sign_form .center {
   justify-content: center;
 }
-.card_item.center .content_loader {
+.card_item .content_loader {
   height: 34px;
   margin: .8rem 2px 1rem;
 }

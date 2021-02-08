@@ -7,9 +7,9 @@ const checkAuth = require('../../util/checkAuth');
 
 module.exports = {
   Query: {
-    async getAnswers(_, { threadId }) {
+    async getAnswers(_, { threadId, limit = 10 }) {
       try {
-        const answers = await Answer.find({ threadId }).sort({ createdAt: -1 })
+        const answers = await Answer.find({ threadId }).sort({ createdAt: -1 }).limit(limit)
         return answers
       } catch (err) {
         throw new Error(err)

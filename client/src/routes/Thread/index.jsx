@@ -1,6 +1,8 @@
-import { Fragment } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+
+import { StoreContext } from 'store/Store';
 
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -60,7 +62,18 @@ const THREAD_ANSWERS_QUERY = gql`
 `;
 
 const Thread = ({ match }) => {
+  const { setPostType } = useContext(StoreContext)
+  const [init, setInit] = useState(true)
   const { threadId } = match.params
+
+  useEffect(() => {
+    init && setPostType({
+      type: 'answer',
+      id: threadId
+    })
+    setInit(false)
+  }, [setInit, init, setPostType, threadId])
+
   const { loading, data } = useQuery(THREAD_ANSWERS_QUERY, {
     variables: {
       id: threadId
@@ -79,7 +92,9 @@ const Thread = ({ match }) => {
 
           <Card data={data.getThread} full={true} type="thread" />
 
-          {data.getAnswers.map(item => (
+          <br />
+
+          {data.getAnswers.slice().reverse().map(item => (
             <Card key={item.id} data={item} full={true} type="answer" />
           ))}
         </Fragment>

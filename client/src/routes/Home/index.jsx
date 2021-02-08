@@ -1,6 +1,8 @@
-import { Fragment } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+
+import { StoreContext } from 'store/Store';
 
 import { Section, SectionHeader } from 'components/Section';
 import { Card } from 'components/Card';
@@ -9,14 +11,14 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const BOARDS_AND_RECENTLY_THREADS_QUERY = gql`
-  {
+  query($limit: Int) {
     getBoards {
       id
       title
       threadsCount
       answersCount
     }
-    getRecentlyThreads {
+    getRecentlyThreads(limit: $limit) {
       id
       boardId
       pined
@@ -34,7 +36,20 @@ const BOARDS_AND_RECENTLY_THREADS_QUERY = gql`
 
 const Home = () => {
   document.title = 'Forum'
-  const { loading, data } = useQuery(BOARDS_AND_RECENTLY_THREADS_QUERY)
+  const { setPostType } = useContext(StoreContext)
+  const [init, setInit] = useState(true)
+
+  useEffect(() => {
+    init && setPostType({
+      type: 'thread',
+      id: null
+    })
+    setInit(false)
+  }, [setInit, init, setPostType])
+
+  const { loading, data } = useQuery(BOARDS_AND_RECENTLY_THREADS_QUERY, {
+    variables: { limit: 5 }
+  })
 
   return !loading ? (
     data ? (
@@ -43,7 +58,7 @@ const Home = () => {
           <SectionHeader title="Popular boards" link={{ title: 'All', url: '/boards' }} />
 
           <PopularBoardsContainer>
-            {data.getBoards.map(item => (
+            {data.getBoards.slice().sort((a, b) => b.threadsCount - a.threadsCount).slice(0, 6).map(item => (
               <PopularBoardsItem key={item.id} data={item} />
             ))}
           </PopularBoardsContainer>
