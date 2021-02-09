@@ -77,16 +77,16 @@ module.exports = gql`
   }
 
   type Query {
-    getBoards(limit: Int): [Board]
+    getBoards(limit: Int, offset: Int): [Board]
     getBoard(id: ID!): Board
 
-    getThreads(boardId: ID!, limit: Int): [Thread]
+    getThreads(boardId: ID!, limit: Int, offset: Int): [Thread]
     getThread(id: ID!): Thread
-    getRecentlyThreads(limit: Int): [Thread]
+    getRecentlyThreads(limit: Int, offset: Int): [Thread]
 
-    getAnswers(threadId: ID!, limit: Int): [Answer]
+    getAnswers(threadId: ID!, limit: Int, offset: Int): [Answer]
 
-    getUsers(limit: Int, sort: String): [User]
+    getUsers(limit: Int, offset: Int, sort: String): [User]
     getUser(id: ID!): User
   }
 
@@ -101,6 +101,7 @@ module.exports = gql`
     createThread(boardId: ID!, title: String!, body: String!): Thread!
     deleteThread(id: ID!): String!
     editThread(id: ID!, title: String!, body: String!): Thread!
+    adminEditThread(id: ID!, title: String!, body: String!, pined: Boolean, closed: Boolean): Thread!
     likeThread(id: ID!): Thread!
 
     createAnswer(threadId: ID!, body: String!): Answer!

@@ -2,14 +2,15 @@ const { AuthenticationError, UserInputError } = require('apollo-server-express')
 const Mongoose = require('mongoose');
 
 const Thread = require('../../models/Thread');
+const Answer = require('../../models/Answer');
 const checkAuth = require('../../util/checkAuth');
 
 module.exports = {
   Query: {
-    async getThreads(_, { boardId, limit = 10 }) {
+    async getThreads(_, { boardId, limit = 10, offset = 0 }) {
       try {
-        const threads = await Thread.find({ boardId }).sort({ createdAt: -1 }).limit(limit)
-        return threads
+        const threads = await Thread.paginate({ boardId }, { sort: { createdAt: -1 }, offset, limit })
+        return threads.docs
       } catch (err) {
         throw new Error(err)
       }
@@ -22,10 +23,10 @@ module.exports = {
         throw new Error(err)
       }
     },
-    async getRecentlyThreads(limit = 10) {
+    async getRecentlyThreads(_, { limit = 10, offset = 0 }) {
       try {
-        const recentlyThreads = await Thread.find().sort({ createdAt: -1 }).limit(limit)
-        return recentlyThreads
+        const recentlyThreads = await Thread.paginate({}, { sort: { createdAt: -1, pined: -1 }, offset, limit })
+        return recentlyThreads.docs
       } catch (err) {
         throw new Error(err)
       }
@@ -67,12 +68,13 @@ module.exports = {
     },
 
     async deleteThread(_, { id }, context) {
-      const { username, role } = checkAuth(context)
+      const { role } = checkAuth(context)
 
       try {
         const thread = await Thread.findById(id)
 
         if (role === 'admin') {
+          await Answer.deleteMany({ threadId: id })
           await thread.delete()
           return 'Thread deleted successfully'
         }
@@ -84,7 +86,7 @@ module.exports = {
     },
 
     async editThread(_, { id, title, body }, context) {
-      const { username, role } = checkAuth(context)
+      const { username } = checkAuth(context)
 
       if (title.trim() === '') {
         throw new Error('Thread title must not be empty')
@@ -97,10 +99,44 @@ module.exports = {
       const thread = await Thread.findById(id)
 
       try {
-        if (username === thread.author.username || role === 'admin') {
+        if (username === thread.author.username) {
           await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
             title,
             body,
+            edited: [{
+              createdAt: new Date().toISOString()
+            }]
+          })
+          const editedThread = await Thread.findById(id)
+          return editedThread
+        }
+
+        throw new AuthenticationError('Action not allowed')
+      } catch (err) {
+        throw new Error(err)
+      }
+    },
+
+    async adminEditThread(_, { id, title, body, pined = false, closed = false }, context) {
+      const { role } = checkAuth(context)
+
+      if (title.trim() === '') {
+        throw new Error('Thread title must not be empty')
+      }
+
+      if (body.trim() === '') {
+        throw new Error('Thread body must not be empty')
+      }
+
+      const thread = await Thread.findById(id)
+
+      try {
+        if (role === 'admin') {
+          await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
+            title,
+            body,
+            pined,
+            closed,
             edited: [{
               createdAt: new Date().toISOString()
             }]

@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const userSchema = new Schema({
   username: {
@@ -26,5 +27,6 @@ const userSchema = new Schema({
   },
   role: String
 })
+userSchema.plugin(mongoosePaginate)
 
 module.exports = model('User', userSchema);

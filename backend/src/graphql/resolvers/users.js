@@ -16,17 +16,17 @@ const generateToken = (user) => {
 
 module.exports = {
   Query: {
-    async getUsers(_, { limit = 10, sort }) {
+    async getUsers(_, { limit = 10, offset = 0, sort }) {
       try {
         let users
         if (sort === 'online') {
-          users = await User.find().sort({ onlineAt: -1 }).limit(limit)
+          users = await User.paginate({}, { sort: { onlineAt: -1 }, offset, limit })
         } else if (sort === 'admin') {
-          users = await User.find({ role: 'admin' }).sort({ onlineAt: -1 }).limit(limit)
+          users = await User.paginate({ role: 'admin' }, { sort: { onlineAt: -1 }, offset, limit })
         } else {
-          users = await User.find().sort({ createdAt: -1 }).limit(limit)
+          users = await User.paginate({}, { sort: { createdAt: -1 }, offset, limit })
         }
-        return users
+        return users.docs
       } catch (err) {
         throw new Error(err)
       }

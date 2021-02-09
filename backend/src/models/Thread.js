@@ -1,4 +1,5 @@
 const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const threadSchema = new Schema({
   boardId: String,
@@ -23,5 +24,6 @@ const threadSchema = new Schema({
     type: String
   }]
 })
+threadSchema.plugin(mongoosePaginate)
 
 module.exports = model('Thread', threadSchema);
