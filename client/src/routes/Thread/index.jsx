@@ -1,6 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 
 import { StoreContext } from 'store/Store';
 
@@ -10,56 +9,7 @@ import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const THREAD_ANSWERS_QUERY = gql`
-  query($id: ID!) {
-    getThread(id: $id) {
-      id
-      boardTitle
-      boardId
-      pined
-      closed
-      title
-      body
-      createdAt
-      author {
-        id
-        username
-      }
-      edited {
-        createdAt
-      }
-      likes {
-        username
-      }
-      likeCount
-      attach {
-        file
-        type
-      }
-      answersCount
-    }
-    getAnswers(threadId: $id) {
-      id
-      body
-      createdAt
-      author {
-        id
-        username
-      }
-      edited {
-        createdAt
-      }
-      likes {
-        username
-      }
-      likeCount
-      attach {
-        file
-        type
-      }
-    }
-  }
-`;
+import { THREAD_ANSWERS_QUERY } from 'support/Queries';
 
 const Thread = ({ match }) => {
   const { setPostType } = useContext(StoreContext)
@@ -83,21 +33,31 @@ const Thread = ({ match }) => {
   return !loading ? (
     <Section>
       {data ? (
-        <Fragment>
-          <Breadcrumbs current={data.getThread.title} links={[
-            { title: 'Home', link: '/' },
-            { title: 'All boards', link: '/boards' },
-            { title: data.getThread.boardTitle, link: '/boards/' + data.getThread.boardId }
-          ]} />
+        data.getThread ? (
+          <Fragment>
+            <Breadcrumbs current={data.getThread.title} links={[
+              { title: 'Home', link: '/' },
+              { title: 'All boards', link: '/boards' },
+              { title: data.getThread.boardTitle, link: '/boards/' + data.getThread.boardId }
+            ]} />
 
-          <Card data={data.getThread} full={true} type="thread" />
+            <Card data={data.getThread} full={true} type="thread" />
 
-          <br />
+            <br />
 
-          {data.getAnswers.slice().reverse().map(item => (
-            <Card key={item.id} data={item} full={true} type="answer" />
-          ))}
-        </Fragment>
+            {data.getAnswers.slice().reverse().map(item => (
+              <Card key={item.id} data={item} full={true} type="answer" />
+            ))}
+          </Fragment>
+        ) : (
+          <Fragment>
+            <Breadcrumbs current="Error" links={[
+              { title: 'Home', link: '/' },
+              { title: 'All boards', link: '/boards' }
+            ]} />
+            <Errorer message="Thread not found" />
+          </Fragment>
+        )
       ) : (
         <Fragment>
           <Breadcrumbs current="Error" links={[

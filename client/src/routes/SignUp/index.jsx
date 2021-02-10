@@ -1,7 +1,5 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
@@ -11,20 +9,7 @@ import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import Loader from 'components/Loader';
 
-const REGISTER_USER = gql`
-  mutation($username: String!, $email: String!, $password: String!, $confirmPassword: String!) {
-    register(
-      registerInput: { username: $username, email: $email, password: $password, confirmPassword: $confirmPassword }
-    ) {
-      id
-      username
-      createdAt
-      token
-      picture
-      role
-    }
-  }
-`;
+import { REGISTER_USER } from 'support/Mutations';
 
 const SignUp = ({ history }) => {
   document.title = 'Forum | Sign Up'

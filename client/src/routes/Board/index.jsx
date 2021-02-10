@@ -1,6 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 
 import { StoreContext } from 'store/Store';
 
@@ -11,30 +10,7 @@ import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const THREADS_QUERY = gql`
-  query($boardId: ID!) {
-    getThreads(boardId: $boardId) {
-      id
-      boardId
-      pined
-      closed
-      title
-      createdAt
-      author {
-        id
-        username
-      }
-      likes {
-        username
-      }
-      newestAnswer
-      answersCount
-    }
-    getBoard(id: $boardId) {
-      title
-    }
-  }
-`;
+import { THREADS_QUERY } from 'support/Queries';
 
 const Board = ({ match }) => {
   const { setPostType } = useContext(StoreContext)
@@ -60,6 +36,8 @@ const Board = ({ match }) => {
     switch (sort) {
       case 'answers':
         return b.answersCount - a.answersCount
+      case 'recently':
+        return a.newestAnswer > b.newestAnswer ? -1 : 1
       default:
         return b.newestAnswer - a.newestAnswer
     }
@@ -76,7 +54,7 @@ const Board = ({ match }) => {
 
           <SortNav links={[
             { title: 'Default', sort: 'default' },
-            { title: 'Recently', sort: 'recently' },
+            { title: 'Recently answered', sort: 'recently' },
             { title: 'By answers count', sort: 'answers' }
           ]} setSort={setSort} state={sort} />
 

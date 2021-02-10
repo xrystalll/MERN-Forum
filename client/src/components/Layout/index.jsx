@@ -8,9 +8,8 @@ import Footer from 'components/Footer';
 import './style.css';
 
 const Layout = ({ children }) => {
-  const { user, postType } = useContext(StoreContext)
+  const { user, modalOpen, setModalOpen, postType, setPostType } = useContext(StoreContext)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
   const coverOpen = menuOpen || modalOpen  ? 'cover open' : 'cover'
 
   const fabClick = () => {
@@ -18,8 +17,22 @@ const Layout = ({ children }) => {
   }
 
   const coverClick = () => {
-    menuOpen && setMenuOpen(!menuOpen)
-    modalOpen && setModalOpen(!modalOpen)
+    menuOpen && setMenuOpen(false)
+    modalOpen && setModalOpen(false)
+  }
+
+  const modalClose = () => {
+    if (
+      postType.type === 'answerEdit' ||
+      postType.type === 'userThreadEdit' ||
+      postType.type === 'adminThreadEdit'
+    ) {
+      setPostType({
+        type: 'answer',
+        id: postType.id
+      })
+    }
+    setModalOpen(false)
   }
 
   useEffect(() => {
@@ -60,7 +73,7 @@ const Layout = ({ children }) => {
         )}
       </section>
 
-      {user && <Modal open={modalOpen} close={() => setModalOpen(false)} />}
+      {user && <Modal open={modalOpen} close={modalClose} />}
 
       <div className={coverOpen} onClick={coverClick}></div>
     </Fragment>

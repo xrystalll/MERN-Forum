@@ -1,43 +1,26 @@
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
 import moment from 'moment';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum } from 'support/Utils';
 
-const LIKE_THREAD_MUTATION = gql`
-  mutation($id: ID!) {
-    likeThread(id: $id) {
-      id
-      likes {
-        id
-        username
-      }
-      likeCount
-    }
-  }
-`;
-
-const LIKE_ANSWER_MUTATION = gql`
-  mutation($id: ID!) {
-    likeAnswer(id: $id) {
-      id
-      likes {
-        id
-        username
-      }
-      likeCount
-    }
-  }
-`;
+import { BOARDS_AND_RECENTLY_THREADS_QUERY, THREADS_QUERY, THREAD_ANSWERS_QUERY } from 'support/Queries';
+import {
+  LIKE_THREAD_MUTATION,
+  LIKE_ANSWER_MUTATION,
+  DELETE_THREAD,
+  DELETE_ANSWER,
+  ADMIN_EDIT_THREAD
+} from 'support/Mutations';
 
 const Card = ({ data, full, type }) => {
-  const { user } = useContext(StoreContext)
+  const { user, setModalOpen, setPostType } = useContext(StoreContext)
   const history = useHistory()
   const [likes, setLikes] = useState(data.likeCount)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i.username === user.username) : false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
   const imageFile = data?.attach?.length
@@ -65,6 +48,112 @@ const Card = ({ data, full, type }) => {
     } else {
       history.push('/signup')
     }
+  }
+
+  const editClick = () => {
+    const admin = user.role === 'admin' ? true : false
+    let postType
+    if (type === 'thread' && admin) {
+      postType = 'adminThreadEdit'
+    } else if (type === 'answer') {
+      postType = 'answerEdit'
+    } else {
+      postType = 'userThreadEdit'
+    }
+    setPostType({
+      type: postType,
+      id: data.id,
+      someData: {
+        id: data.id,
+        title: data.title,
+        body: data.body
+      }
+    })
+    setModalOpen(true)
+  }
+
+  const [deleteThread] = useMutation(DELETE_THREAD, {
+    refetchQueries: [{
+      query: BOARDS_AND_RECENTLY_THREADS_QUERY,
+      variables: { limit: 5 }
+    }, {
+      query: THREADS_QUERY,
+      variables: { boardId: data.boardId }
+    }],
+    variables: { id: data.id }
+  })
+
+  const [deleteAnswer] = useMutation(DELETE_ANSWER, {
+    refetchQueries: [{
+      query: THREAD_ANSWERS_QUERY,
+      variables: { id: data.threadId }
+    }],
+    variables: { id: data.id }
+  })
+
+  const onDelete = () => {
+    if (type === 'answer') {
+      deleteAnswer()
+    } else {
+      deleteThread()
+      history.push('/')
+    }
+  }
+
+  const [pined, setPined] = useState(data.pined)
+  const [closed, setClosed] = useState(data.closed)
+
+  const [adminEditThread] = useMutation(ADMIN_EDIT_THREAD)
+
+  const onPin = () => {
+    if (type !== 'answer') {
+      setPined(!pined)
+      adminEditThread({
+        variables: {
+          id: data.id,
+          title: data.title,
+          body: data.body,
+          pined: !pined,
+          closed
+        }
+      })
+    }
+  }
+
+  const onClose = () => {
+    if (type !== 'answer') {
+      setClosed(!closed)
+      adminEditThread({
+        variables: {
+          id: data.id,
+          title: data.title,
+          body: data.body,
+          pined,
+          closed: !closed
+        }
+      })
+    }
+  }
+
+  const openDropdown = () => {
+    setDropdownOpen(!dropdownOpen)
+  }
+
+  const dropdown = useRef()
+
+  useEffect(() => {
+    if (!full && !user) return
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [full, user])
+
+  const handleClickOutside = ({ target }) => {
+    if (dropdown.current?.contains(target)) return
+
+    setDropdownOpen(false)
   }
 
   return (
@@ -96,15 +185,26 @@ const Card = ({ data, full, type }) => {
               </div>
             </div>
 
-            <div className="dropdown">
-              <div className="dropdown_trigger act_btn">
-                <i className="bx bx-dots-horizontal-rounded"></i>
+            {full && user && (
+              <div ref={dropdown} className={dropdownOpen ? 'dropdown open' : 'dropdown'}>
+                <div className="dropdown_trigger act_btn" onClick={openDropdown}>
+                  <i className="bx bx-dots-horizontal-rounded"></i>
+                </div>
+                <div className="dropdown_content">
+                  {user.role === 'admin' && (
+                    <Fragment>
+                      {type !== 'answer' && <div onClick={onPin} className="dropdown_item">Pin</div>}
+                      {type !== 'answer' && <div onClick={onClose} className="dropdown_item">Close</div>}
+                      <div onClick={onDelete} className="dropdown_item">Delete</div>
+                    </Fragment>
+                  )}
+                  {user === data.author[0].username || user.role === 'admin'
+                    ? <div onClick={editClick} className="dropdown_item">Edit</div>
+                    : null
+                  }
+                </div>
               </div>
-              <div className="dropdown_content">
-                <div className="dropdown_item">Report</div>
-                <div className="dropdown_item">Copy link</div>
-              </div>
-            </div>
+            )}
           </header>
 
           {full && (

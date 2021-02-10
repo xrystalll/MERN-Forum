@@ -1,4 +1,4 @@
-import { createContext, useReducer } from 'react';
+import { createContext, useReducer, useState } from 'react';
 import jwtDecode from 'jwt-decode';
 
 import Reducer from './Reducer';
@@ -7,7 +7,8 @@ const initialState = {
   user: null,
   postType: {
     type: 'thread',
-    id: null
+    id: null,
+    someData: null
   }
 }
 
@@ -25,7 +26,8 @@ const StoreContext = createContext({
   user: null,
   postType: {
     type: 'thread',
-    id: null
+    id: null,
+    someData: null
   },
   login: (userData) => {},
   logout: () => {}
@@ -33,6 +35,7 @@ const StoreContext = createContext({
 
 const Store = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const login = (userData) => {
     localStorage.setItem('token', userData.token)
@@ -55,7 +58,15 @@ const Store = ({ children }) => {
   }
 
   return (
-    <StoreContext.Provider value={{ user: state.user, postType: state.postType, login, logout, setPostType }}>
+    <StoreContext.Provider value={{
+      user: state.user,
+      modalOpen,
+      setModalOpen,
+      postType: state.postType,
+      setPostType,
+      login,
+      logout
+    }}>
       {children}
     </StoreContext.Provider>
   )

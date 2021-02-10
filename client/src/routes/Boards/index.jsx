@@ -1,6 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 
 import { StoreContext } from 'store/Store';
 
@@ -11,18 +10,7 @@ import { BoardCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const BOARDS_QUERY = gql`
-  {
-    getBoards {
-      id
-      title
-      position
-      threadsCount
-      newestThread
-      answersCount
-    }
-  }
-`;
+import { BOARDS_QUERY } from 'support/Queries';
 
 const Boards = () => {
   document.title = 'Forum | Boards'

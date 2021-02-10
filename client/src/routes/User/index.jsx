@@ -1,24 +1,12 @@
 import { Fragment } from 'react';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const USER_QUERY = gql`
-  query($id: ID!) {
-    getUser(id: $id) {
-      id
-      username
-      createdAt
-      onlineAt
-      picture
-      role
-    }
-  }
-`;
+import { USER_QUERY } from 'support/Queries';
 
 const User = ({ match }) => {
   const { userId } = match.params

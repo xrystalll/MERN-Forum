@@ -353,6 +353,7 @@ a.head_text:hover {
   background-color: var(--secondary-bg-tint);
   border-radius: var(--border-radius);
   overflow: hidden;
+  z-index: 1;
 }
 .dropdown.open .dropdown_content {
   display: flex;

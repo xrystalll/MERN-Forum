@@ -1,6 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 
 import { StoreContext } from 'store/Store';
 
@@ -10,29 +9,7 @@ import { PopularBoardsContainer, PopularBoardsItem } from 'components/PopularBoa
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const BOARDS_AND_RECENTLY_THREADS_QUERY = gql`
-  query($limit: Int) {
-    getBoards {
-      id
-      title
-      threadsCount
-      answersCount
-    }
-    getRecentlyThreads(limit: $limit) {
-      id
-      boardId
-      pined
-      closed
-      title
-      createdAt
-      author {
-        id
-        username
-      }
-      answersCount
-    }
-  }
-`;
+import { BOARDS_AND_RECENTLY_THREADS_QUERY } from 'support/Queries';
 
 const Home = () => {
   document.title = 'Forum'
