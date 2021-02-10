@@ -9,7 +9,8 @@ const initialState = {
     type: 'thread',
     id: null,
     someData: null
-  }
+  },
+  fab: true
 }
 
 if (localStorage.getItem('token')) {
@@ -29,6 +30,7 @@ const StoreContext = createContext({
     id: null,
     someData: null
   },
+  fab: true,
   login: (userData) => {},
   logout: () => {}
 })
@@ -57,6 +59,13 @@ const Store = ({ children }) => {
     })
   }
 
+  const setFabVisible = (payload) => {
+    dispatch({
+      type: 'SET_FAB_VISIBLE',
+      payload: payload
+    })
+  }
+
   return (
     <StoreContext.Provider value={{
       user: state.user,
@@ -64,6 +73,8 @@ const Store = ({ children }) => {
       setModalOpen,
       postType: state.postType,
       setPostType,
+      fab: state.fab,
+      setFabVisible,
       login,
       logout
     }}>

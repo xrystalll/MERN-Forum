@@ -51,6 +51,7 @@ module.exports = gql`
   type Like {
     id: ID!
     username: String!
+    picture: String!
     createdAt: String!
   }
   type Attach {
@@ -76,6 +77,10 @@ module.exports = gql`
     email: String!
   }
 
+  type File {
+    url: String!
+  }
+
   type Query {
     getBoards(limit: Int, offset: Int): [Board]
     getBoard(id: ID!): Board
@@ -93,6 +98,7 @@ module.exports = gql`
   type Mutation {
     login(username: String!, password: String!): User!
     register(registerInput: RegisterInput): User!
+    uploadUserAvatar(id: ID!, file: Upload!): File!
 
     createBoard(title: String!, body: String, position: Int!): Board!
     deleteBoard(id: ID!): String!

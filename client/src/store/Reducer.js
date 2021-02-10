@@ -15,6 +15,11 @@ const Reducer = (state, action) => {
         ...state,
         postType: action.payload
       }
+    case 'SET_FAB_VISIBLE':
+      return {
+        ...state,
+        fab: action.payload
+      }
     default:
       return state
   }

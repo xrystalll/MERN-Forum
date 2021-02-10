@@ -1,9 +1,14 @@
+const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UserInputError } = require('apollo-server-express');
 
 const User = require('../../models/User');
 const { validateRegisterInput, validateLoginInput } = require('../../util/validators');
+const checkAuth = require('../../util/checkAuth');
+const generateRandomString = require('../../util/generateRandomString');
 
 const generateToken = (user) => {
   return jwt.sign({
@@ -96,10 +101,8 @@ module.exports = {
         })
       }
 
-      // Hash the password
       password = await bcrypt.hash(password, 12)
 
-      // create the new user with the model and passed in data
       const newUser = new User({
         email,
         username,
@@ -109,15 +112,43 @@ module.exports = {
         role: 'user'
       })
 
-      // save the user to the DB
       const res = await newUser.save()
-      // Create auth token
       const token = generateToken(res)
 
       return {
         ...res._doc,
         id: res._id,
         token
+      }
+    },
+
+    async uploadUserAvatar(_, { id, file }, context) {
+      const { username } = checkAuth(context)
+
+      const user = await User.findById(id)
+
+      try {
+        if (username === user.username) {
+          const { createReadStream, filename } = await file
+
+          const { ext } = path.parse(filename)
+          const newFilename = generateRandomString(8) + ext
+
+          const stream = createReadStream()
+          const pathName = path.join(__dirname, '..', '..', '..', `/public/users/images/${newFilename}`)
+          await sharp(stream)
+            .resize(300, 300)
+            .toFile(pathName)
+
+          const url = `http://localhost:${process.env.PORT || 8000}/users/images/${newFilename}`
+
+          await User.updateOne({ _id: Mongoose.Types.ObjectId(id) }, { picture: url })
+          return url
+        }
+
+        throw new AuthenticationError('Action not allowed')
+      } catch (err) {
+        throw new Error(err)
       }
     }
   }

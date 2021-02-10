@@ -27,6 +27,12 @@ module.exports = {
 
       const thread = await Thread.findById(threadId)
 
+      if (thread.closed) {
+        if (user.role !== 'admin') {
+          throw new UserInputError('Thread closed')
+        }
+      }
+
       const newAnswer = new Answer({
         boardId: thread.boardId, 
         threadId,
@@ -72,9 +78,16 @@ module.exports = {
       }
 
       const answer = await Answer.findById(id)
+      const thread = await Thread.findById(answer.threadId)
+
+      if (thread.closed) {
+        if (user.role !== 'admin') {
+          throw new UserInputError('Thread closed')
+        }
+      }
 
       try {
-        if (username === answer.author.username || role === 'admin') {
+        if (username === answer.author[0].username || role === 'admin') {
           await Answer.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
             body,
             edited: [{
@@ -92,7 +105,7 @@ module.exports = {
     },
 
     async likeAnswer(_, { id }, context) {
-      const { username } = checkAuth(context)
+      const { username, picture } = checkAuth(context)
 
       try {
         const answer = await Answer.findById(id)
@@ -103,6 +116,7 @@ module.exports = {
           } else {
             answer.likes.push({
               username,
+              picture,
               createdAt: new Date().toISOString()
             })
           }

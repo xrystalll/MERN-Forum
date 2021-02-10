@@ -8,7 +8,7 @@ import Footer from 'components/Footer';
 import './style.css';
 
 const Layout = ({ children }) => {
-  const { user, modalOpen, setModalOpen, postType, setPostType } = useContext(StoreContext)
+  const { user, modalOpen, setModalOpen, postType, setPostType, fab } = useContext(StoreContext)
   const [menuOpen, setMenuOpen] = useState(false)
   const coverOpen = menuOpen || modalOpen  ? 'cover open' : 'cover'
 
@@ -56,7 +56,7 @@ const Layout = ({ children }) => {
           <Footer />
         </main>
 
-        {user && (
+        {user && fab && (
           <div className="fab" onClick={fabClick}>
             {postType.type === 'answer' ? (
               <Fragment>
@@ -73,7 +73,7 @@ const Layout = ({ children }) => {
         )}
       </section>
 
-      {user && <Modal open={modalOpen} close={modalClose} />}
+      {user && modalOpen && <Modal open={modalOpen} close={modalClose} />}
 
       <div className={coverOpen} onClick={coverClick}></div>
     </Fragment>

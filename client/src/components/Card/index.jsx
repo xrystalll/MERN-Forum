@@ -1,10 +1,12 @@
-import { Fragment, useContext, useEffect, useRef, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import moment from 'moment';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum } from 'support/Utils';
+
+import Dropdown from './Dropdown';
 
 import { BOARDS_AND_RECENTLY_THREADS_QUERY, THREADS_QUERY, THREAD_ANSWERS_QUERY } from 'support/Queries';
 import {
@@ -16,11 +18,16 @@ import {
 } from 'support/Mutations';
 
 const Card = ({ data, full, type }) => {
-  const { user, setModalOpen, setPostType } = useContext(StoreContext)
+  const { user, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
   const history = useHistory()
   const [likes, setLikes] = useState(data.likeCount)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i.username === user.username) : false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+
+  useEffect(() => { 
+    if (type === 'thread' && data.closed) {
+      setFabVisible(false)
+    }
+  }, [type, data.closed, setFabVisible])
 
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
   const imageFile = data?.attach?.length
@@ -123,6 +130,7 @@ const Card = ({ data, full, type }) => {
   const onClose = () => {
     if (type !== 'answer') {
       setClosed(!closed)
+      setFabVisible(closed)
       adminEditThread({
         variables: {
           id: data.id,
@@ -133,27 +141,6 @@ const Card = ({ data, full, type }) => {
         }
       })
     }
-  }
-
-  const openDropdown = () => {
-    setDropdownOpen(!dropdownOpen)
-  }
-
-  const dropdown = useRef()
-
-  useEffect(() => {
-    if (!full && !user) return
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [full, user])
-
-  const handleClickOutside = ({ target }) => {
-    if (dropdown.current?.contains(target)) return
-
-    setDropdownOpen(false)
   }
 
   return (
@@ -186,24 +173,19 @@ const Card = ({ data, full, type }) => {
             </div>
 
             {full && user && (
-              <div ref={dropdown} className={dropdownOpen ? 'dropdown open' : 'dropdown'}>
-                <div className="dropdown_trigger act_btn" onClick={openDropdown}>
-                  <i className="bx bx-dots-horizontal-rounded"></i>
-                </div>
-                <div className="dropdown_content">
-                  {user.role === 'admin' && (
-                    <Fragment>
-                      {type !== 'answer' && <div onClick={onPin} className="dropdown_item">Pin</div>}
-                      {type !== 'answer' && <div onClick={onClose} className="dropdown_item">Close</div>}
-                      <div onClick={onDelete} className="dropdown_item">Delete</div>
-                    </Fragment>
-                  )}
-                  {user === data.author[0].username || user.role === 'admin'
-                    ? <div onClick={editClick} className="dropdown_item">Edit</div>
-                    : null
-                  }
-                </div>
-              </div>
+              <Dropdown>
+                {user.role === 'admin' && (
+                  <Fragment>
+                    {type !== 'answer' && <div onClick={onPin} className="dropdown_item">Pin</div>}
+                    {type !== 'answer' && <div onClick={onClose} className="dropdown_item">Close</div>}
+                    <div onClick={onDelete} className="dropdown_item">Delete</div>
+                  </Fragment>
+                )}
+                {user.username === data.author[0].username || user.role === 'admin'
+                  ? <div onClick={editClick} className="dropdown_item">Edit</div>
+                  : null
+                }
+              </Dropdown>
             )}
           </header>
 
@@ -227,12 +209,22 @@ const Card = ({ data, full, type }) => {
                   <span>Answer</span>
                 </div>
 
-                <div className="act_btn foot_btn" onClick={onLike}>
+                <div className="act_btn foot_btn likes" onClick={onLike}>
                   <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'}></i>
                   {likes > 0 && (
                     <Fragment>
                       <span className="card_count">{counter(likes)}</span>
                       <span className="hidden">{declOfNum(likes, ['like', 'likes', 'likes'])}</span>
+                      {user && (
+                        <div className="likes_list">
+                          {data.likes.slice(0, 4).map((item, index) => (
+                            <div key={index} className="head_profile" title={item.username} style={item.picture && { backgroundImage: `url(${item.picture})` }}>
+                              {!item.picture && item.username.charAt(0)}
+                            </div>
+                          ))}
+                          {data.likes.length > 4 && <span>4 and others</span>}
+                        </div>
+                      )}
                     </Fragment>
                   )}
                 </div>

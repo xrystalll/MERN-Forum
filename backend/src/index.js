@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const path = require('path');
+
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
@@ -15,6 +17,7 @@ const pubsub = new PubSub()
 
 const app = express()
 
+app.use(express.static(path.join(__dirname, '..', '/public')))
 app.use(cors())
 
 const server = new ApolloServer({

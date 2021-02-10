@@ -13,17 +13,21 @@ import Errorer from 'components/Errorer';
 import { THREADS_QUERY } from 'support/Queries';
 
 const Board = ({ match }) => {
-  const { setPostType } = useContext(StoreContext)
+  document.title = 'Forum | Board'
+  const { setPostType, setFabVisible } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const { boardId } = match.params
 
   useEffect(() => {
-    init && setPostType({
-      type: 'thread',
-      id: boardId
-    })
+    if (init) {
+      setFabVisible(true)
+      setPostType({
+        type: 'thread',
+        id: boardId
+      })
+    }
     setInit(false)
-  }, [setInit, init, setPostType, boardId])
+  }, [setInit, init, setPostType, setFabVisible, boardId])
 
   const { loading, data } = useQuery(THREADS_QUERY, {
     variables: {

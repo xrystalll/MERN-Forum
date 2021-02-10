@@ -13,16 +13,19 @@ import { BOARDS_AND_RECENTLY_THREADS_QUERY } from 'support/Queries';
 
 const Home = () => {
   document.title = 'Forum'
-  const { setPostType } = useContext(StoreContext)
+  const { setPostType, setFabVisible } = useContext(StoreContext)
   const [init, setInit] = useState(true)
 
   useEffect(() => {
-    init && setPostType({
-      type: 'thread',
-      id: null
-    })
+    if (init) {
+      setFabVisible(true)
+      setPostType({
+        type: 'thread',
+        id: null
+      })
+    }
     setInit(false)
-  }, [setInit, init, setPostType])
+  }, [setInit, init, setPostType, setFabVisible])
 
   const { loading, data } = useQuery(BOARDS_AND_RECENTLY_THREADS_QUERY, {
     variables: { limit: 5 }

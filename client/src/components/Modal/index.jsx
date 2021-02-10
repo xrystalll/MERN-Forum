@@ -5,6 +5,10 @@ import { useQuery, useMutation } from '@apollo/client';
 import { StoreContext } from 'store/Store';
 import { useForm } from 'hooks/useForm';
 
+import ModalBody from './ModalBody';
+import FormCardItem from 'components/Card/FormCardItem';
+import Input from 'components/Form/Input';
+import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
 
 import {
@@ -21,23 +25,6 @@ import {
   EDIT_ANSWER
 } from 'support/Mutations';
 
-const ModalBody = ({ children, title, onClick }) => {
-  return (
-    <div className="modal_body">
-      <div className="modal_head">
-        <div className="section_header with_link">
-          <h2>{title}</h2>
-          <div className="modal_close more_link" onClick={onClick}>
-            <i className="bx bx-x"></i>
-          </div>
-        </div>
-      </div>
-      
-      {children}
-    </div>
-  )
-}
-
 const Modal = ({ open, close }) => {
   const history = useHistory()
   const { postType, setPostType } = useContext(StoreContext)
@@ -47,7 +34,6 @@ const Modal = ({ open, close }) => {
   const createCallback = () => {
     if (postType.type === 'answer') {
       createAnswer()
-      reset()
     }
     if (postType.type === 'thread') {
       if (!values.boardId || !values.title || !values.body) {
@@ -55,27 +41,23 @@ const Modal = ({ open, close }) => {
       } else {
         createThread()
         setError('')
-        reset()
       }
     }
     if (postType.type === 'answerEdit') {
       editAnswer()
-      reset()
     }
     if (postType.type === 'userThreadEdit') {
       editThread()
-      reset()
     }
     if (postType.type === 'adminThreadEdit') {
       adminEditThread()
-      reset()
     }
   }
 
-  const { onChange, onSubmit, values, reset } = useForm(createCallback, {
+  const { onChange, onSubmit, values } = useForm(createCallback, {
     boardId: postType.id || '',
-    title: '',
-    body: ''
+    title: postType?.someData?.title || '',
+    body: postType?.someData?.body || ''
   })
 
   const [createAnswer, { loadingAnswer }] = useMutation(CREATE_ANSWER, {
@@ -124,7 +106,10 @@ const Modal = ({ open, close }) => {
   const [editAnswer, { loadingEditAnswer }] = useMutation(EDIT_ANSWER, {
     update(_, { data: { editAnswer } }) {
       close()
-      setPostType('answer')
+      setPostType({
+        type: 'answer',
+        id: postType.id
+      })
     },
     onError(err) {
       console.error(err)
@@ -136,7 +121,7 @@ const Modal = ({ open, close }) => {
       query: BOARDS_QUERY
     }],
     variables: {
-      id: postType.id,
+      id: postType?.someData?.id || '',
       body: values.body
     }
   })
@@ -144,7 +129,10 @@ const Modal = ({ open, close }) => {
   const [editThread] = useMutation(USER_EDIT_THREAD, {
     update(_, { data: { editThread } }) {
       close()
-      setPostType('answer')
+      setPostType({
+        type: 'answer',
+        id: postType.id
+      })
     },
     onError(err) {
       console.error(err)
@@ -168,7 +156,10 @@ const Modal = ({ open, close }) => {
   const [adminEditThread] = useMutation(ADMIN_EDIT_THREAD, {
     update(_, { data: { adminEditThread } }) {
       close()
-      setPostType('answer')
+      setPostType({
+        type: 'answer',
+        id: postType.id
+      })
     },
     onError(err) {
       console.error(err)
@@ -193,68 +184,58 @@ const Modal = ({ open, close }) => {
 
   const threadContent = (
     <ModalBody title="New thread" onClick={close}>
-      <form className="form_inner"  onSubmit={onSubmit}>
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Thread title</div>
+      <form className="form_inner" onSubmit={onSubmit}>
+        <FormCardItem title="Thread title">
+          <div className="form_block">
+            <Input
+              name="title"
+              value={values.title}
+              placeholder="Enter title"
+              required
+              onChange={onChange}
+            />
+          </div>
+        </FormCardItem>
 
-            <div className="form_block">
-              <input
-                className="input_area"
-                type="text"
-                name="title"
-                value={values.title}
-                placeholder="Enter title"
+        <FormCardItem title="Content">
+          <div className="form_block">
+            <div className="form_foot">
+              <div className="act_group">
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-italic"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-bold"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-link"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-hide"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-image-alt"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-code-alt"></i>
+                </div>
+              </div>
+            </div>
+
+            <div className="text_area">
+              <textarea
+                name="body"
+                value={values.body}
+                placeholder="Enter your message"
                 onChange={onChange}
                 required
               />
             </div>
           </div>
-        </div>
+        </FormCardItem>
 
         <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Content</div>
-
-            <div className="form_block">
-              <div className="form_foot">
-                <div className="act_group">
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-italic"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-bold"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-link"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-hide"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-image-alt"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-code-alt"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text_area">
-                <textarea
-                  name="body"
-                  value={values.body}
-                  placeholder="Enter your message"
-                  onChange={onChange}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="card_item">
-          <div id="attached" className="attached_file card_left empty">
+          <div className="attached_file card_left empty">
             <span className="remove_file">
               <i className="bx bx-x"></i>
             </span>
@@ -281,38 +262,33 @@ const Modal = ({ open, close }) => {
           </div>
         </div>
 
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Choose board</div>
-
-            <div className="form_block select">
-
-              <select
-                className="input_area select_area"
-                name="boardId"
-                value={values.boardId}
-                onChange={onChange}
-                required
-              >
-                <option>Select a board</option>
-                {loadingBoards ? (
-                  <option>Loading...</option>
-                ) : (
-                  boardsData && (
-                    boardsData.getBoards.map(item => (
-                      <option key={item.id} value={item.id}>{item.title}</option>
-                    ))
-                  )
-                )}
-              </select>
-            </div>
+        <FormCardItem title="Choose board">
+          <div className="form_block select">
+            <select
+              className="input_area select_area"
+              name="boardId"
+              value={values.boardId}
+              onChange={onChange}
+              required
+            >
+              <option>Select a board</option>
+              {loadingBoards ? (
+                <option>Loading...</option>
+              ) : (
+                boardsData && (
+                  boardsData.getBoards.map(item => (
+                    <option key={item.id} value={item.id}>{item.title}</option>
+                  ))
+                )
+              )}
+            </select>
           </div>
-        </div>
+        </FormCardItem>
 
         <div className="card_item">
           {loadingThread
             ? <Loader className="btn" />
-            : <input className="btn" type="submit" value="Create thread" />}
+            : <InputButton text="Create thread" />}
         </div>
 
         {error && <span className="form_error">{error}</span>}
@@ -323,46 +299,42 @@ const Modal = ({ open, close }) => {
   const answerContent = (
     <ModalBody title="Answer in thread" onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Content</div>
-
-            <div className="form_block">
-              <div className="form_foot">
-                <div className="act_group">
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-italic"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-bold"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-link"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-hide"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-image-alt"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-code-alt"></i>
-                  </div>
+        <FormCardItem title="Content">
+          <div className="form_block">
+            <div className="form_foot">
+              <div className="act_group">
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-italic"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-bold"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-link"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-hide"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-image-alt"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-code-alt"></i>
                 </div>
               </div>
+            </div>
 
-              <div className="text_area">
-                <textarea
-                  name="body"
-                  value={values.body}
-                  placeholder="Enter your message"
-                  onChange={onChange}
-                  required
-                />
-              </div>
+            <div className="text_area">
+              <textarea
+                name="body"
+                value={values.body}
+                placeholder="Enter your message"
+                onChange={onChange}
+                required
+              />
             </div>
           </div>
-        </div>
+        </FormCardItem>
 
         <div className="card_item">
           <div id="attached" className="attached_file card_left empty">
@@ -395,7 +367,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loadingAnswer
             ? <Loader className="btn" />
-            : <input className="btn" type="submit" value="Answer" />}
+            : <InputButton text="Answer" />}
         </div>
       </form>
     </ModalBody>
@@ -404,46 +376,42 @@ const Modal = ({ open, close }) => {
   const editAnswerContent = (
     <ModalBody title="Edit answer" onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Content</div>
-
-            <div className="form_block">
-              <div className="form_foot">
-                <div className="act_group">
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-italic"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-bold"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-link"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-hide"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-image-alt"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-code-alt"></i>
-                  </div>
+        <FormCardItem title="Content">
+          <div className="form_block">
+            <div className="form_foot">
+              <div className="act_group">
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-italic"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-bold"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-link"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-hide"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-image-alt"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-code-alt"></i>
                 </div>
               </div>
+            </div>
 
-              <div className="text_area">
-                <textarea
-                  name="body"
-                  value={values.body || postType.someData?.body || ''}
-                  placeholder="Enter your message"
-                  onChange={onChange}
-                  required
-                />
-              </div>
+            <div className="text_area">
+              <textarea
+                name="body"
+                value={values.body}
+                placeholder="Enter your message"
+                onChange={onChange}
+                required
+              />
             </div>
           </div>
-        </div>
+        </FormCardItem>
 
         <div className="card_item">
           <div id="attached" className="attached_file card_left empty">
@@ -476,7 +444,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loadingEditAnswer
             ? <Loader className="btn" />
-            : <input className="btn" type="submit" value="Edit" />}
+            : <InputButton text="Edit" />}
         </div>
       </form>
     </ModalBody>
@@ -485,64 +453,54 @@ const Modal = ({ open, close }) => {
   const editThreadContent = (
     <ModalBody title="Edit thread" onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Thread title</div>
+        <FormCardItem title="Thread title">
+          <div className="form_block">
+            <Input
+              name="title"
+              value={values.title}
+              placeholder="Enter title"
+              required
+              onChange={onChange}
+            />
+          </div>
+        </FormCardItem>
 
-            <div className="form_block">
-              <input
-                className="input_area"
-                type="text"
-                name="title"
-                value={values.title || postType.someData?.title || ''}
-                placeholder="Enter title"
+        <FormCardItem title="Content">
+          <div className="form_block">
+            <div className="form_foot">
+              <div className="act_group">
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-italic"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-bold"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-link"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-hide"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-image-alt"></i>
+                </div>
+                <div className="bb_btn" role="button">
+                  <i className="bx bx-code-alt"></i>
+                </div>
+              </div>
+            </div>
+
+            <div className="text_area">
+              <textarea
+                name="body"
+                value={values.body}
+                placeholder="Enter your message"
                 onChange={onChange}
                 required
               />
             </div>
           </div>
-        </div>
-
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">Content</div>
-
-            <div className="form_block">
-              <div className="form_foot">
-                <div className="act_group">
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-italic"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-bold"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-link"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-hide"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-image-alt"></i>
-                  </div>
-                  <div className="bb_btn" role="button">
-                    <i className="bx bx-code-alt"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text_area">
-                <textarea
-                  name="body"
-                  value={values.body || postType.someData?.body || ''}
-                  placeholder="Enter your message"
-                  onChange={onChange}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        </FormCardItem>
 
         <div className="card_item">
           <div id="attached" className="attached_file card_left empty">
@@ -573,7 +531,7 @@ const Modal = ({ open, close }) => {
         </div>
 
         <div className="card_item">
-          <input className="btn" type="submit" value="Edit" />
+          <InputButton text="Edit" />
         </div>
       </form>
     </ModalBody>

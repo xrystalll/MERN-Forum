@@ -98,6 +98,9 @@ a {
 a.flex_margin {
   margin: 0 .4rem;
 }
+br {
+  user-select: none;
+}
 ul {
   list-style: none;
 }
@@ -485,8 +488,35 @@ a.head_text:hover {
     display: block;
   }
 }
+.likes {
+  position: relative;
+}
 .liked {
   color: var(--main-danger-color);
+}
+.likes_list {
+  display: none;
+  align-items: center;
+  position: absolute;
+  bottom: 22px;
+  left: -4px;
+  background: rgb(0 0 0 / 50%);
+  border-radius: var(--border-radius);
+  padding: .15rem .25rem;
+  cursor: default;
+  z-index: 1;
+}
+.likes:hover .likes_list {
+  display: flex;
+}
+.likes_list .head_profile:not(:last-child) {
+  margin-right: .2rem;
+}
+.likes_list .head_profile {
+  cursor: pointer;
+}
+.likes_list span {
+  margin: 0 .5rem 0 .2rem;
 }
 
 

@@ -9,6 +9,7 @@ import Errorer from 'components/Errorer';
 import { USER_QUERY } from 'support/Queries';
 
 const User = ({ match }) => {
+  document.title = 'Forum | User'
   const { userId } = match.params
   const { loading, data } = useQuery(USER_QUERY, {
     variables: {

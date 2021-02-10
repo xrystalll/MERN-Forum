@@ -99,7 +99,7 @@ module.exports = {
       const thread = await Thread.findById(id)
 
       try {
-        if (username === thread.author.username) {
+        if (username === thread.author[0].username) {
           await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
             title,
             body,
@@ -152,7 +152,7 @@ module.exports = {
     },
 
     async likeThread(_, { id }, context) {
-      const { username } = checkAuth(context)
+      const { username, picture } = checkAuth(context)
 
       try {
         const thread = await Thread.findById(id)
@@ -163,6 +163,7 @@ module.exports = {
           } else {
             thread.likes.push({
               username,
+              picture,
               createdAt: new Date().toISOString()
             })
           }

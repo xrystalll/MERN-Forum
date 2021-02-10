@@ -12,6 +12,7 @@ import Errorer from 'components/Errorer';
 import { THREAD_ANSWERS_QUERY } from 'support/Queries';
 
 const Thread = ({ match }) => {
+  document.title = 'Forum | Thread'
   const { setPostType } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const { threadId } = match.params

@@ -7,6 +7,9 @@ import { useForm } from 'hooks/useForm';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
+import FormCardItem from 'components/Card/FormCardItem';
+import Input from 'components/Form/Input';
+import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
 
 import { LOGIN_USER } from 'support/Mutations';
@@ -46,43 +49,28 @@ const SignIn = ({ history }) => {
       <SectionHeader title="Log in account" />
 
       <form className="sign_form form_inner" onSubmit={onSubmit}>
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">
-              Username
-              {errors.username && <span className="form_error">{errors.username}</span>}
-            </div>
-
-            <div className={errors.username ? 'form_block error' : 'form_block' }>
-              <input
-                className="input_area"
-                type="text"
-                name="username"
-                value={values.username}
-                onChange={onChange}
-              />
-            </div>
+        <FormCardItem title={'Username'} error={errors.username}>
+          <div className={errors.username ? 'form_block error' : 'form_block' }>
+            <Input
+              name="username"
+              value={values.username}
+              required
+              onChange={onChange}
+            />
           </div>
-        </div>
+        </FormCardItem>
 
-        <div className="card_item">
-          <div className="card_body">
-            <div className="card_outside_title">
-              Password
-              {errors.password && <span className="form_error">{errors.password}</span>}
-            </div>
-
-            <div className={errors.password ? 'form_block error' : 'form_block' }>
-              <input
-                className="input_area"
-                type="password"
-                name="password"
-                value={values.password}
-                onChange={onChange}
-              />
-            </div>
+        <FormCardItem title={'Password'} error={errors.password}>
+          <div className={errors.password ? 'form_block error' : 'form_block' }>
+            <Input
+              type="password"
+              name="password"
+              value={values.password}
+              required
+              onChange={onChange}
+            />
           </div>
-        </div>
+        </FormCardItem>
 
         {errors.general && (
           <div className="card_item">
@@ -93,7 +81,7 @@ const SignIn = ({ history }) => {
         <div className="card_item center">
           {loading
             ? <Loader className="btn" />
-            : <input className="btn" type="submit" value="Sign In" />}
+            : <InputButton text="Sign In" />}
         </div>
 
         <div className="card_item center text_reference">
