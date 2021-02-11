@@ -3,8 +3,19 @@ import jwtDecode from 'jwt-decode';
 
 import Reducer from './Reducer';
 
+let user = null
+if (localStorage.getItem('token')) {
+  const decodedToken = jwtDecode(localStorage.getItem('token'))
+
+  if (decodedToken.exp * 1000 < Date.now()) {
+    localStorage.removeItem('token')
+  } else {
+    user = decodedToken
+  }
+}
+
 const initialState = {
-  user: null,
+  user,
   postType: {
     type: 'thread',
     id: null,
@@ -13,27 +24,7 @@ const initialState = {
   fab: true
 }
 
-if (localStorage.getItem('token')) {
-  const decodedToken = jwtDecode(localStorage.getItem('token'))
-
-  if (decodedToken.exp * 1000 < Date.now()) {
-    localStorage.removeItem('token')
-  } else {
-    initialState.user = decodedToken
-  }
-}
-
-const StoreContext = createContext({
-  user: null,
-  postType: {
-    type: 'thread',
-    id: null,
-    someData: null
-  },
-  fab: true,
-  login: (userData) => {},
-  logout: () => {}
-})
+const StoreContext = createContext(initialState)
 
 const Store = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState)

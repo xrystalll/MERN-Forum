@@ -8,15 +8,18 @@ const threadSchema = new Schema({
   title: String,
   body: String,
   createdAt: String,
-  author: [{
+  author: {
     id: Schema.Types.ObjectId,
-    username: String
-  }],
-  edited: [{
-    createdAt: String
-  }],
-  likes: [{
     username: String,
+    role: String
+  },
+  edited: {
+    createdAt: String
+  },
+  likes: [{
+    id: Schema.Types.ObjectId,
+    username: String,
+    picture: String,
     createdAt: String
   }],
   attach: [{

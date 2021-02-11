@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
-const AuthRoute = ({ component: Component, ...rest }) => {
+export const AuthRoute = ({ component: Component, ...rest }) => {
   const { user } = useContext(StoreContext)
 
   return (
@@ -12,6 +12,4 @@ const AuthRoute = ({ component: Component, ...rest }) => {
       render={(props) => (user ? <Redirect to="/" /> : <Component {...props} />)}
     />
   )
-};
-
-export default AuthRoute;
+}

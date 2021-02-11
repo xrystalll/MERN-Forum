@@ -50,7 +50,7 @@ const SignUp = ({ history }) => {
       <SectionHeader title="Create your account" />
 
       <form className="sign_form form_inner" onSubmit={onSubmit}>
-        <FormCardItem title={'Username'} error={errors.username}>
+        <FormCardItem title="Username" error={errors.username}>
           <div className={errors.username ? 'form_block error' : 'form_block' }>
             <Input
               name="username"
@@ -61,7 +61,7 @@ const SignUp = ({ history }) => {
           </div>
         </FormCardItem>
 
-        <FormCardItem title={'Email address'} error={errors.email}>
+        <FormCardItem title="Email address" error={errors.email}>
           <div className={errors.email ? 'form_block error' : 'form_block' }>
             <Input
               type="email"
@@ -73,7 +73,7 @@ const SignUp = ({ history }) => {
           </div>
         </FormCardItem>
 
-        <FormCardItem title={'Password'} error={errors.password}>
+        <FormCardItem title="Password" error={errors.password}>
           <div className={errors.password ? 'form_block error' : 'form_block' }>
             <Input
               type="password"
@@ -85,7 +85,7 @@ const SignUp = ({ history }) => {
           </div>
         </FormCardItem>
 
-        <FormCardItem title={'Confirm password'} error={errors.confirmPassword}>
+        <FormCardItem title="Confirm password" error={errors.confirmPassword}>
           <div className={errors.confirmPassword ? 'form_block error' : 'form_block' }>
             <Input
               type="password"

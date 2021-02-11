@@ -18,8 +18,11 @@
     "jwt-decode": "^3.0.0",
     "moment": "^2.29.1",
     "react": "^17.0.1",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0"
+    "react-markdown": "^5.0.3",
+    "react-router-dom": "^5.2.0",
+    "react-transition-group": "^4.4.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",

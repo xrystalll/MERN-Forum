@@ -2,6 +2,7 @@ import { Fragment, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StoreContext } from 'store/Store';
 
+import Dropdown from './Dropdown';
 import './style.css';
 
 const Header = ({ setMenuState }) => {
@@ -17,6 +18,7 @@ const Header = ({ setMenuState }) => {
           </div>
           <h1 className="app_name">Forum</h1>
         </div>
+
         <ul className="head_act">
           <li className="head_search">
             <input className="head_search_field" type="search" placeholder="Enter for search..." />
@@ -31,11 +33,8 @@ const Header = ({ setMenuState }) => {
                   : <i className="bx bx-notification"></i>
                 }
               </li>
-              <li className="head_act_item">
-                <div className="head_profile" style={user.picture && { backgroundImage: `url(${user.picture})` }}>
-                  {!user.picture && user.username.charAt(0)}
-                </div>
-              </li>
+
+              <Dropdown />
             </Fragment>
           ) : (
            <Fragment>
@@ -45,6 +44,7 @@ const Header = ({ setMenuState }) => {
                   <span>Sign Up</span>
                 </Link>
               </li>
+
               <li className="head_auth">
                 <Link to="/signin" className="btn media_hide hollow">
                   <i className="bx bx-log-in"></i>

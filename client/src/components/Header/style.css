@@ -71,6 +71,7 @@
   align-items: center;
   justify-content: center;
   color: var(--actions-color);
+  pointer-events: initial !important;
   user-select: none;
 }
 .head_search {

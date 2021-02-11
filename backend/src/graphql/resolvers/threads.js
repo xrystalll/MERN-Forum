@@ -9,7 +9,7 @@ module.exports = {
   Query: {
     async getThreads(_, { boardId, limit = 10, offset = 0 }) {
       try {
-        const threads = await Thread.paginate({ boardId }, { sort: { createdAt: -1 }, offset, limit })
+        const threads = await Thread.paginate({ boardId }, { sort: { pined: -1, createdAt: -1 }, offset, limit })
         return threads.docs
       } catch (err) {
         throw new Error(err)
@@ -25,7 +25,7 @@ module.exports = {
     },
     async getRecentlyThreads(_, { limit = 10, offset = 0 }) {
       try {
-        const recentlyThreads = await Thread.paginate({}, { sort: { createdAt: -1, pined: -1 }, offset, limit })
+        const recentlyThreads = await Thread.paginate({}, { sort: { pined: -1, createdAt: -1 }, offset, limit })
         return recentlyThreads.docs
       } catch (err) {
         throw new Error(err)
@@ -51,10 +51,11 @@ module.exports = {
         closed: false,
         title,
         body,
-        author: [{
+        author: {
           id: user.id,
-          username: user.username
-        }],
+          username: user.username,
+          role: user.role
+        },
         createdAt: new Date().toISOString()
       })
 
@@ -71,9 +72,8 @@ module.exports = {
       const { role } = checkAuth(context)
 
       try {
-        const thread = await Thread.findById(id)
-
         if (role === 'admin') {
+          const thread = await Thread.findById(id)
           await Answer.deleteMany({ threadId: id })
           await thread.delete()
           return 'Thread deleted successfully'
@@ -99,13 +99,13 @@ module.exports = {
       const thread = await Thread.findById(id)
 
       try {
-        if (username === thread.author[0].username) {
+        if (username === thread.author.username) {
           await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
             title,
             body,
-            edited: [{
+            edited: {
               createdAt: new Date().toISOString()
-            }]
+            }
           })
           const editedThread = await Thread.findById(id)
           return editedThread
@@ -128,8 +128,6 @@ module.exports = {
         throw new Error('Thread body must not be empty')
       }
 
-      const thread = await Thread.findById(id)
-
       try {
         if (role === 'admin') {
           await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
@@ -137,9 +135,9 @@ module.exports = {
             body,
             pined,
             closed,
-            edited: [{
+            edited: {
               createdAt: new Date().toISOString()
-            }]
+            }
           })
           const editedThread = await Thread.findById(id)
           return editedThread
@@ -152,18 +150,19 @@ module.exports = {
     },
 
     async likeThread(_, { id }, context) {
-      const { username, picture } = checkAuth(context)
+      const user = checkAuth(context)
 
       try {
         const thread = await Thread.findById(id)
 
         if (thread) {
-          if (thread.likes.find((like) => like.username === username)) {
-            thread.likes = thread.likes.filter((like) => like.username !== username)
+          if (thread.likes.find((like) => like.username === user.username)) {
+            thread.likes = thread.likes.filter((like) => like.username !== user.username)
           } else {
             thread.likes.push({
-              username,
-              picture,
+              id: user.id,
+              username: user.username,
+              picture: user.picture || '',
               createdAt: new Date().toISOString()
             })
           }

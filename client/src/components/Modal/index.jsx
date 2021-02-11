@@ -8,6 +8,8 @@ import { useForm } from 'hooks/useForm';
 import ModalBody from './ModalBody';
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
+import Textarea from 'components/Form/Textarea';
+import FileUploadForm from 'components/Form/FileUploadForm';
 import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
 
@@ -223,7 +225,7 @@ const Modal = ({ open, close }) => {
             </div>
 
             <div className="text_area">
-              <textarea
+              <Textarea
                 name="body"
                 value={values.body}
                 placeholder="Enter your message"
@@ -234,33 +236,7 @@ const Modal = ({ open, close }) => {
           </div>
         </FormCardItem>
 
-        <div className="card_item">
-          <div className="attached_file card_left empty">
-            <span className="remove_file">
-              <i className="bx bx-x"></i>
-            </span>
-          </div>
-
-          <div className="card_body file_input_body">
-            <div className="card_outside_title with_hint">
-              Attach file
-              <div className="title_hint">
-                <i className="bx bx-help-circle"></i>
-                <div className="hint_popover">Allowed: png, jpg, jpeg, gif, zip, rar, txt. Max size: 10Mb</div>
-              </div>
-            </div>
-
-            <div className="form_block">
-              <div className="file_area">
-                <input id="fileInput" type="file" />
-                <label htmlFor="fileInput" className="file_input" title="Choose file">
-                  <div className="secondary_btn">Choose</div>
-                  <span>File not selected</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FileUploadForm />
 
         <FormCardItem title="Choose board">
           <div className="form_block select">
@@ -325,7 +301,7 @@ const Modal = ({ open, close }) => {
             </div>
 
             <div className="text_area">
-              <textarea
+              <Textarea
                 name="body"
                 value={values.body}
                 placeholder="Enter your message"
@@ -336,33 +312,7 @@ const Modal = ({ open, close }) => {
           </div>
         </FormCardItem>
 
-        <div className="card_item">
-          <div id="attached" className="attached_file card_left empty">
-            <span className="remove_file">
-              <i className="bx bx-x"></i>
-            </span>
-          </div>
-
-          <div className="card_body file_input_body">
-            <div className="card_outside_title with_hint">
-              Attach file
-              <div className="title_hint">
-                <i className="bx bx-help-circle"></i>
-                <div className="hint_popover">Allowed: png, jpg, jpeg, gif, zip, rar, txt. Max size: 10Mb</div>
-              </div>
-            </div>
-
-            <div className="form_block">
-              <div className="file_area">
-                <input id="fileInput" type="file" />
-                <label htmlFor="fileInput" className="file_input" title="Choose file">
-                  <div className="secondary_btn">Choose</div>
-                  <span>File not selected</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FileUploadForm />
 
         <div className="card_item">
           {loadingAnswer
@@ -402,7 +352,7 @@ const Modal = ({ open, close }) => {
             </div>
 
             <div className="text_area">
-              <textarea
+              <Textarea
                 name="body"
                 value={values.body}
                 placeholder="Enter your message"
@@ -413,33 +363,7 @@ const Modal = ({ open, close }) => {
           </div>
         </FormCardItem>
 
-        <div className="card_item">
-          <div id="attached" className="attached_file card_left empty">
-            <span className="remove_file">
-              <i className="bx bx-x"></i>
-            </span>
-          </div>
-
-          <div className="card_body file_input_body">
-            <div className="card_outside_title with_hint">
-              Attach file
-              <div className="title_hint">
-                <i className="bx bx-help-circle"></i>
-                <div className="hint_popover">Allowed: png, jpg, jpeg, gif, zip, rar, txt. Max size: 10Mb</div>
-              </div>
-            </div>
-
-            <div className="form_block">
-              <div className="file_area">
-                <input id="fileInput" type="file" />
-                <label htmlFor="fileInput" className="file_input" title="Choose file">
-                  <div className="secondary_btn">Choose</div>
-                  <span>File not selected</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FileUploadForm />
 
         <div className="card_item">
           {loadingEditAnswer
@@ -491,7 +415,7 @@ const Modal = ({ open, close }) => {
             </div>
 
             <div className="text_area">
-              <textarea
+              <Textarea
                 name="body"
                 value={values.body}
                 placeholder="Enter your message"
@@ -502,33 +426,7 @@ const Modal = ({ open, close }) => {
           </div>
         </FormCardItem>
 
-        <div className="card_item">
-          <div id="attached" className="attached_file card_left empty">
-            <span className="remove_file">
-              <i className="bx bx-x"></i>
-            </span>
-          </div>
-
-          <div className="card_body file_input_body">
-            <div className="card_outside_title with_hint">
-              Attach file
-              <div className="title_hint">
-                <i className="bx bx-help-circle"></i>
-                <div className="hint_popover">Allowed: png, jpg, jpeg, gif, zip, rar, txt. Max size: 10Mb</div>
-              </div>
-            </div>
-
-            <div className="form_block">
-              <div className="file_area">
-                <input id="fileInput" type="file" />
-                <label htmlFor="fileInput" className="file_input" title="Choose file">
-                  <div className="secondary_btn">Choose</div>
-                  <span>File not selected</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FileUploadForm />
 
         <div className="card_item">
           <InputButton text="Edit" />

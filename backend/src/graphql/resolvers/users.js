@@ -129,6 +129,7 @@ module.exports = {
 
       try {
         if (username === user.username) {
+          console.log(file)
           const { createReadStream, filename } = await file
 
           const { ext } = path.parse(filename)
@@ -136,9 +137,10 @@ module.exports = {
 
           const stream = createReadStream()
           const pathName = path.join(__dirname, '..', '..', '..', `/public/users/images/${newFilename}`)
-          await sharp(stream)
-            .resize(300, 300)
-            .toFile(pathName)
+          // await sharp(stream)
+          //   .resize(300, 300)
+          //   .toFile(pathName)
+          await stream.pipe(fs.createWriteStream(pathName))
 
           const url = `http://localhost:${process.env.PORT || 8000}/users/images/${newFilename}`
 

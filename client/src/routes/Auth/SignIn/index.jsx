@@ -17,7 +17,6 @@ import { LOGIN_USER } from 'support/Mutations';
 const SignIn = ({ history }) => {
   document.title = 'Forum | Sign In'
   const context = useContext(StoreContext)
-
   const [errors, setErrors] = useState({})
 
   const loginUserCallback = () => {
@@ -49,7 +48,7 @@ const SignIn = ({ history }) => {
       <SectionHeader title="Log in account" />
 
       <form className="sign_form form_inner" onSubmit={onSubmit}>
-        <FormCardItem title={'Username'} error={errors.username}>
+        <FormCardItem title="Username" error={errors.username}>
           <div className={errors.username ? 'form_block error' : 'form_block' }>
             <Input
               name="username"
@@ -60,7 +59,7 @@ const SignIn = ({ history }) => {
           </div>
         </FormCardItem>
 
-        <FormCardItem title={'Password'} error={errors.password}>
+        <FormCardItem title="Password" error={errors.password}>
           <div className={errors.password ? 'form_block error' : 'form_block' }>
             <Input
               type="password"

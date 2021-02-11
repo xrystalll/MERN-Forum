@@ -51,6 +51,7 @@ export const LIKE_THREAD_MUTATION = gql`
       likes {
         id
         username
+        picture
       }
       likeCount
     }
@@ -64,6 +65,7 @@ export const LIKE_ANSWER_MUTATION = gql`
       likes {
         id
         username
+        picture
       }
       likeCount
     }
@@ -115,6 +117,14 @@ export const EDIT_ANSWER = gql`
       edited {
         createdAt
       }
+    }
+  }
+`;
+
+export const UPLOAD_USER_PICTURE = gql`
+  mutation($id: ID!, $file: Upload!) {
+    uploadUserAvatar(id: $id, file: $file) {
+      url
     }
   }
 `;

@@ -76,12 +76,15 @@ export const THREAD_ANSWERS_QUERY = gql`
       author {
         id
         username
+        role
       }
       edited {
         createdAt
       }
       likes {
+        id
         username
+        picture
       }
       likeCount
       attach {
@@ -98,12 +101,15 @@ export const THREAD_ANSWERS_QUERY = gql`
       author {
         id
         username
+        role
       }
       edited {
         createdAt
       }
       likes {
+        id
         username
+        picture
       }
       likeCount
       attach {

@@ -1,0 +1,75 @@
+/* Button */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: .5rem .8rem;
+  margin: .8rem 2px 1rem;
+  background-color: var(--accent-color);
+  color: var(--main-text-light);
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 50px;
+  transition: var(--transition-background);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+.btn:hover {
+  color: var(--main-text-light);
+  background-color: var(--accent-color-tint);
+}
+.btn i {
+  margin-right: .3rem;
+  font-size: 20px;
+}
+.btn.media_hide i {
+  margin-right: 0;
+  display: none;
+}
+@media (max-width: 420px) {
+  .btn span {
+    display: none;
+  }
+  .btn.media_hide i {
+    display: block;
+  }
+  .bx-user-plus, .bx-log-in {
+    position: relative;
+  }
+  .bx-user-plus {
+    left: 1px;
+  }
+  .bx-log-in {
+    right: 2px;
+  }
+}
+
+.btn.hollow {
+  background-color: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  transition: border-color .2s;
+}
+.btn.hollow:hover {
+  border-color: var(--accent-color-tint);
+}
+
+.secondary_btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  width: max-content;
+  min-width: 100px;
+  height: 36px;
+  background-color: var(--secondary-bg-tint);
+  color: var(--main-text);
+  font-size: 1rem;
+  border-radius: var(--border-radius);
+  margin: 8px;
+  cursor: pointer;
+  user-select: none;
+}

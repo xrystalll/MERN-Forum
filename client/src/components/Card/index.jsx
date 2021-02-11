@@ -1,10 +1,10 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import moment from 'moment';
+import ReactMarkdown from 'react-markdown';
 
 import { StoreContext } from 'store/Store';
-import { counter, declOfNum } from 'support/Utils';
+import { counter, declOfNum, dateFormat } from 'support/Utils';
 
 import Dropdown from './Dropdown';
 
@@ -17,7 +17,7 @@ import {
   ADMIN_EDIT_THREAD
 } from 'support/Mutations';
 
-const Card = ({ data, full, type }) => {
+const Card = ({ data, threadData, full = false, type }) => {
   const { user, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
   const history = useHistory()
   const [likes, setLikes] = useState(data.likeCount)
@@ -30,9 +30,6 @@ const Card = ({ data, full, type }) => {
   }, [type, data.closed, setFabVisible])
 
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
-  const imageFile = data?.attach?.length
-    ? imageTypes.find(i => i === data.attach.type) ? { backgroundImage: `url(${data.attach.file})`} : null
-    : null
 
   const [likeThread] = useMutation(LIKE_THREAD_MUTATION, {
     variables: { id: data.id },
@@ -164,10 +161,26 @@ const Card = ({ data, full, type }) => {
               )}
 
               <div className="card_info">
-                <Link to={'/user/' + data.author[0].id} className="head_text bold">{data.author[0].username}</Link>
+                <Link to={'/user/' + data.author.id} className="head_text bold">
+                  {data.author.username}
+                  {full && (
+                    data.author.role === 'admin' ? (
+                      <span className="user_status">admin</span>
+                    ) : (
+                      <Fragment>
+                        {type === 'thread' && <span className="user_status">owner</span>}
+                        {type === 'answer' && (
+                          data.author.id === threadData.author.id && (
+                            <span className="user_status">owner</span>
+                          )
+                        )}
+                      </Fragment>
+                    )
+                  )}
+                </Link>
                 <span className="bullet">•</span>
                 <span className="head_text">
-                  <time>{moment(data.createdAt).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YY, hh:mm' })}</time>
+                  <time>{dateFormat(data.createdAt)}</time>
                 </span>
               </div>
             </div>
@@ -181,7 +194,7 @@ const Card = ({ data, full, type }) => {
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
                   </Fragment>
                 )}
-                {user.username === data.author[0].username || user.role === 'admin'
+                {user.username === data.author.username || user.role === 'admin'
                   ? <div onClick={editClick} className="dropdown_item">Edit</div>
                   : null
                 }
@@ -190,13 +203,21 @@ const Card = ({ data, full, type }) => {
           </header>
 
           {full && (
-            <div className="card_content">
-              <p>{data.body}</p>
+            <div className="card_content markdown">
+              <ReactMarkdown>{data.body}</ReactMarkdown>
 
-              {imageFile && (
-                <div className="attached_file card_left empty visible" style={imageFile}>
-                  <div className="attached_info">{data.attach.type}</div>
-                </div>
+              {data.attach && (
+                data.attach.map((item, index) => (
+                  <Fragment key={index}>
+                    {imageTypes.find(i => i === item.type) ? (
+                      <div className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
+                    ) : (
+                      <div className="attached_file card_left empty">
+                        <div className="attached_info">{item.type}</div>
+                      </div>
+                    )}
+                  </Fragment>
+                ))
               )}
             </div>
           )}
@@ -218,7 +239,7 @@ const Card = ({ data, full, type }) => {
                       {user && (
                         <div className="likes_list">
                           {data.likes.slice(0, 4).map((item, index) => (
-                            <div key={index} className="head_profile" title={item.username} style={item.picture && { backgroundImage: `url(${item.picture})` }}>
+                            <div key={index} className="head_profile" title={item.username} style={{ backgroundImage: `url(${item.picture})` }}>
                               {!item.picture && item.username.charAt(0)}
                             </div>
                           ))}
@@ -247,14 +268,14 @@ const Card = ({ data, full, type }) => {
           </footer>
 
           {full && (
-            data?.edited?.length ? (
+            data.edited.createdAt && (
               <div className="act_btn foot_btn under_foot disable">
                 <i className="bx bx-pencil"></i>
                 <span className="card_count">
-                  {moment(data.edited[0].createdAt).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YY, hh:mm' })}
+                  {dateFormat(data.edited.createdAt)}
                 </span>
               </div>
-            ) : null
+            )
           )}
         </div>
       </div>

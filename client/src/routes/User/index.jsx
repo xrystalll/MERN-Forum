@@ -1,12 +1,14 @@
-import { Fragment } from 'react';
-import { useQuery } from '@apollo/client';
+import { Fragment, useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
+import FileUploadForm from 'components/Form/FileUploadForm';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 import { USER_QUERY } from 'support/Queries';
+import { UPLOAD_USER_PICTURE } from 'support/Mutations';
 
 const User = ({ match }) => {
   document.title = 'Forum | User'
@@ -14,6 +16,26 @@ const User = ({ match }) => {
   const { loading, data } = useQuery(USER_QUERY, {
     variables: {
       id: userId
+    }
+  })
+
+  const [formdata, setFormdata] = useState({})
+
+  const setFile = (files) => {
+    setFormdata(files)
+  }
+
+  const [uploadUserAvatar, { loadingUpload }] = useMutation(UPLOAD_USER_PICTURE, {
+    onError(err) {
+      console.error(err)
+    },
+    refetchQueries: [{
+      query: USER_QUERY,
+      variables: { id: userId }
+    }],
+    variables: {
+      id: userId,
+      file: { formdata }
     }
   })
 
@@ -28,6 +50,15 @@ const User = ({ match }) => {
 
           <SectionHeader title={data.getUser.username} />
 
+          <FileUploadForm
+            hint="Accepted: png. jpg, jpeg; Max files count: 1"
+            multiple={false}
+            accept="image/jpeg,image/png"
+            sendFiles={setFile}
+          />
+
+          <div className="btn" onClick={uploadUserAvatar}>UPLOAD</div>
+          {loadingUpload && <Loader className="btn" />}
         </Fragment>
       ) : (
         <Fragment>

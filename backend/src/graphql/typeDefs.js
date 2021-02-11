@@ -20,8 +20,8 @@ module.exports = gql`
     title: String!
     body: String!
     createdAt: String!
-    author: [Author]!
-    edited: [Edited]
+    author: Author!
+    edited: Edited
     likes: [Like]!
     likeCount: Int!
     attach: [Attach]
@@ -34,8 +34,8 @@ module.exports = gql`
     threadId: ID!
     body: String!
     createdAt: String!
-    author: [Author]!
-    edited: [Edited]
+    author: Author!
+    edited: Edited
     likes: [Like]!
     likeCount: Int!
     attach: [Attach]
@@ -44,9 +44,10 @@ module.exports = gql`
   type Author {
     id: ID!
     username: String!
+    role: String!
   }
   type Edited {
-    createdAt: String!
+    createdAt: String
   }
   type Like {
     id: ID!

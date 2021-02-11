@@ -55,9 +55,8 @@ module.exports = {
       const { role } = checkAuth(context)
 
       try {
-        const board = await Board.findById(id)
-
         if (role === 'admin') {
+          const board = await Board.findById(id)
           await board.delete()
           return 'Board deleted successfully'
         }

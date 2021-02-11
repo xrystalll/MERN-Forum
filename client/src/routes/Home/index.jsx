@@ -34,27 +34,34 @@ const Home = () => {
   return !loading ? (
     data ? (
       <Fragment>
-        <Section>
-          <SectionHeader title="Popular boards" link={{ title: 'All', url: '/boards' }} />
+        {data.getBoards.length && (
+          <Section>
+            <SectionHeader title="Popular boards" link={{ title: 'All', url: '/boards' }} />
 
-          <PopularBoardsContainer>
-            {data.getBoards.slice().sort((a, b) => b.threadsCount - a.threadsCount).slice(0, 6).map(item => (
-              <PopularBoardsItem key={item.id} data={item} />
-            ))}
-          </PopularBoardsContainer>
-        </Section>
+            <PopularBoardsContainer>
+              {data.getBoards.slice().sort((a, b) => b.threadsCount - a.threadsCount).slice(0, 6).map(item => (
+                <PopularBoardsItem key={item.id} data={item} />
+              ))}
+            </PopularBoardsContainer>
+          </Section>
+        )}
 
         <Section>
           <SectionHeader title="Recently threads" />
 
-          {data.getRecentlyThreads.map(item => (
-            <Card key={item.id} data={item} />
-          ))}
+          {data.getRecentlyThreads.length ? (
+            data.getRecentlyThreads.map(item => (
+              <Card key={item.id} data={item} />
+            ))
+          ) : (
+            <Errorer message="No threads yet" />
+          )}
         </Section>
 
         <Section>
           <SectionHeader title="Files/Uploads" link={{ title: 'All', url: '/uploads' }} />
 
+          <Errorer message="No uploads yet" />
         </Section>
       </Fragment>
     ) : (

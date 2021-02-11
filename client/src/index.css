@@ -90,6 +90,33 @@ body.noscroll {
   color: var(--actions-color);
   user-select: none;
 }
+.track-vertical {
+  width: 6px;
+  right: 3px;
+  bottom: 3px;
+  top: 3px;
+  border-radius: 4px;
+  z-index: 11;
+}
+.track-horizontal {
+  display: none;
+}
+@media (max-width: 570px) {
+  .track-vertical {
+    width: 4px !important;
+    right: 2px;
+    bottom: 2px;
+    top: 2px;
+    border-radius: 4px;
+    z-index: 11;
+  }
+}
+.thumb-vertical, .thumb-horizontal {
+  border-radius: inherit;
+  background-color: rgb(173 173 184 / 40%);
+  cursor: pointer;
+}
+
 a {
   color: var(--accent-color);
   text-decoration: none;
@@ -106,6 +133,13 @@ ul {
 }
 .anchor {
   visibility: hidden;
+}
+
+#root {
+  height: 100vh;
+}
+.view {
+  margin-bottom: -17px !important;
 }
 
 .content_loader {
@@ -154,9 +188,6 @@ ul {
   display: flex;
   align-items: flex-start;
   margin-bottom: .4rem;
-}
-.first_answer {
-  margin-top: 1.5rem;
 }
 .card_body {
   flex: 1 auto;
@@ -386,13 +417,20 @@ a.head_text:hover {
   }
 }
 
-.attached_file {
-  display: none;
-  border-radius: var(--border-radius);
-  margin: 0;
-}
-.attached_file.visible {
+.attach_list {
   display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.attached_file {
+  display: table;
+  border-radius: var(--border-radius);
+  margin: 0 .5rem 0 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 .attached_info {
   position: absolute;
@@ -423,15 +461,6 @@ a.head_text:hover {
 }
 .remove_file > * {
   pointer-events: none;
-}
-
-.card_content_image {
-  display: flex;
-  background-size: cover;
-  border-radius: var(--border-radius);
-  width: 100%;
-  max-width: 350px;
-  margin: .3rem 0;
 }
 
 .card_foot {
@@ -789,79 +818,79 @@ a.head_text:hover {
   pointer-events: none;
 }
 
-
-/* Buttons */
-.btn {
+/* Markdown */
+.markdown {
+  font-weight: 400;
+}
+.markdown em {
+  font-style: italic;
+}
+.markdown strong {
+  font-weight: 700;
+}
+.markdown ol, .markdown ul {
+  margin-left: 1.4rem;
+  margin-top: .3rem;
+  margin-bottom: .3rem;
+}
+.markdown ul {
+  list-style: initial;
+}
+.markdown ul > li > ul {
+  list-style: revert;
+}
+.markdown code {
+  font-family: monospace;
+  background-color: var(--secondary-bg-tint-focus);
+  border-radius: calc(var(--border-radius) / 2);
+  padding: 0 .5rem;
+  margin: .5rem 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: .5rem .8rem;
-  margin: .8rem 2px 1rem;
-  background-color: var(--accent-color);
-  color: var(--main-text-light);
-  font-size: 1rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 50px;
-  transition: var(--transition-background);
+  overflow: auto;
   white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
 }
-.btn:hover {
-  color: var(--main-text-light);
-  background-color: var(--accent-color-tint);
-}
-.btn i {
-  margin-right: .3rem;
-  font-size: 20px;
-}
-.btn.media_hide i {
-  margin-right: 0;
-  display: none;
-}
-@media (max-width: 420px) {
-  .btn span {
-    display: none;
-  }
-  .btn.media_hide i {
-    display: block;
-  }
-  .bx-user-plus, .bx-log-in {
-    position: relative;
-  }
-  .bx-user-plus {
-    left: 1px;
-  }
-  .bx-log-in {
-    right: 2px;
-  }
-}
-
-.btn.hollow {
-  background-color: transparent;
-  color: var(--accent-color);
-  border: 2px solid var(--accent-color);
-  transition: border-color .2s;
-}
-.btn.hollow:hover {
-  border-color: var(--accent-color-tint);
-}
-
-.secondary_btn {
+.markdown blockquote {
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 12px;
-  width: max-content;
-  min-width: 100px;
-  height: 36px;
-  background-color: var(--secondary-bg-tint);
-  color: var(--main-text);
+  color: var(--main-success-color);
+  margin-top: .5rem;
+  margin-bottom: .5rem;
+}
+.markdown blockquote:before {
+  content: '>';
+  position: relative;
+  top: -1px;
+  margin-right: .4rem;
+}
+.markdown h1 {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+.markdown h2 {
+  font-size: 1.5rem;
+  margin: .8rem 0;
+}
+.markdown h3 {
+  font-size: 1.25rem;
+  margin: .5rem 0;
+}
+.markdown h4 {
   font-size: 1rem;
+  margin: .4rem 0;
+}
+.markdown h5 {
+  font-size: .8rem;
+  margin: .3rem 0;
+}
+.markdown h6 {
+  font-size: 0.7rem;
+  margin: .2rem 0;
+}
+.markdown img {
+  display: flex;
+  background-size: cover;
   border-radius: var(--border-radius);
-  margin: 8px;
-  cursor: pointer;
-  user-select: none;
+  width: 100%;
+  max-width: 350px;
+  margin: .3rem 0;
 }

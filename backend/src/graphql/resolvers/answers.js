@@ -9,7 +9,7 @@ module.exports = {
   Query: {
     async getAnswers(_, { threadId, limit = 10, offset = 0 }) {
       try {
-        const answers = await Answer.paginate({ threadId }, { sort: { createdAt: -1 }, offset, limit })
+        const answers = await Answer.paginate({ threadId }, { sort: { createdAt: 1 }, offset, limit })
         return answers.docs
       } catch (err) {
         throw new Error(err)
@@ -37,10 +37,11 @@ module.exports = {
         boardId: thread.boardId, 
         threadId,
         body,
-        author: [{
+        author: {
           id: user.id,
-          username: user.username
-        }],
+          username: user.username,
+          role: user.role
+        },
         createdAt: new Date().toISOString()
       })
 
@@ -57,9 +58,8 @@ module.exports = {
       const { username, role } = checkAuth(context)
 
       try {
-        const answer = await Answer.findById(id)
-
         if (role === 'admin') {
+          const answer = await Answer.findById(id)
           await answer.delete()
           return 'Answer deleted successfully'
         }
@@ -87,12 +87,12 @@ module.exports = {
       }
 
       try {
-        if (username === answer.author[0].username || role === 'admin') {
+        if (username === answer.author.username || role === 'admin') {
           await Answer.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
             body,
-            edited: [{
+            edited: {
               createdAt: new Date().toISOString()
-            }]
+            }
           })
           const editedAnswer = await Answer.findById(id)
           return editedAnswer
@@ -105,18 +105,19 @@ module.exports = {
     },
 
     async likeAnswer(_, { id }, context) {
-      const { username, picture } = checkAuth(context)
+      const user = checkAuth(context)
 
       try {
         const answer = await Answer.findById(id)
 
         if (answer) {
-          if (answer.likes.find((like) => like.username === username)) {
-            answer.likes = answer.likes.filter((like) => like.username !== username)
+          if (answer.likes.find((like) => like.username === user.username)) {
+            answer.likes = answer.likes.filter((like) => like.username !== user.username)
           } else {
             answer.likes.push({
-              username,
-              picture,
+              id: user.id,
+              username: user.username,
+              picture: user.picture || '',
               createdAt: new Date().toISOString()
             })
           }

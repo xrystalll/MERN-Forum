@@ -42,12 +42,12 @@ const Thread = ({ match }) => {
               { title: data.getThread.boardTitle, link: '/boards/' + data.getThread.boardId }
             ]} />
 
-            <Card data={data.getThread} full={true} type="thread" />
+            <Card data={data.getThread} full type="thread" />
 
             <br />
 
-            {data.getAnswers.slice().reverse().map(item => (
-              <Card key={item.id} data={item} full={true} type="answer" />
+            {data.getAnswers.map(item => (
+              <Card key={item.id} data={item} threadData={data.getThread} full type="answer" />
             ))}
           </Fragment>
         ) : (
