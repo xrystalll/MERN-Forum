@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Store from 'store/Store';
 
@@ -15,6 +16,12 @@ import User from 'routes/User';
 import { NotFound } from 'routes/Error';
 
 const App = () => {
+  useEffect(() => {
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light')
+    }
+  }, [])
+
   return (
     <Store>
       <Router>

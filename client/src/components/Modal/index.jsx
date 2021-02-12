@@ -8,7 +8,7 @@ import { useForm } from 'hooks/useForm';
 import ModalBody from './ModalBody';
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
-import Textarea from 'components/Form/Textarea';
+import TextareaForm from 'components/Form/TextareaForm';
 import FileUploadForm from 'components/Form/FileUploadForm';
 import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
@@ -200,40 +200,13 @@ const Modal = ({ open, close }) => {
         </FormCardItem>
 
         <FormCardItem title="Content">
-          <div className="form_block">
-            <div className="form_foot">
-              <div className="act_group">
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-italic"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-bold"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-link"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-hide"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-image-alt"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-code-alt"></i>
-                </div>
-              </div>
-            </div>
-
-            <div className="text_area">
-              <Textarea
-                name="body"
-                value={values.body}
-                placeholder="Enter your message"
-                onChange={onChange}
-                required
-              />
-            </div>
-          </div>
+          <TextareaForm
+            name="body"
+            value={values.body}
+            placeholder="Enter your message"
+            onChange={onChange}
+            required
+          />
         </FormCardItem>
 
         <FileUploadForm />
@@ -276,40 +249,13 @@ const Modal = ({ open, close }) => {
     <ModalBody title="Answer in thread" onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
         <FormCardItem title="Content">
-          <div className="form_block">
-            <div className="form_foot">
-              <div className="act_group">
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-italic"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-bold"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-link"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-hide"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-image-alt"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-code-alt"></i>
-                </div>
-              </div>
-            </div>
-
-            <div className="text_area">
-              <Textarea
-                name="body"
-                value={values.body}
-                placeholder="Enter your message"
-                onChange={onChange}
-                required
-              />
-            </div>
-          </div>
+          <TextareaForm
+            name="body"
+            value={values.body}
+            placeholder="Enter your message"
+            onChange={onChange}
+            required
+          />
         </FormCardItem>
 
         <FileUploadForm />
@@ -327,40 +273,13 @@ const Modal = ({ open, close }) => {
     <ModalBody title="Edit answer" onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
         <FormCardItem title="Content">
-          <div className="form_block">
-            <div className="form_foot">
-              <div className="act_group">
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-italic"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-bold"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-link"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-hide"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-image-alt"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-code-alt"></i>
-                </div>
-              </div>
-            </div>
-
-            <div className="text_area">
-              <Textarea
-                name="body"
-                value={values.body}
-                placeholder="Enter your message"
-                onChange={onChange}
-                required
-              />
-            </div>
-          </div>
+          <TextareaForm
+            name="body"
+            value={values.body}
+            placeholder="Enter your message"
+            onChange={onChange}
+            required
+          />
         </FormCardItem>
 
         <FileUploadForm />
@@ -390,40 +309,13 @@ const Modal = ({ open, close }) => {
         </FormCardItem>
 
         <FormCardItem title="Content">
-          <div className="form_block">
-            <div className="form_foot">
-              <div className="act_group">
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-italic"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-bold"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-link"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-hide"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-image-alt"></i>
-                </div>
-                <div className="bb_btn" role="button">
-                  <i className="bx bx-code-alt"></i>
-                </div>
-              </div>
-            </div>
-
-            <div className="text_area">
-              <Textarea
-                name="body"
-                value={values.body}
-                placeholder="Enter your message"
-                onChange={onChange}
-                required
-              />
-            </div>
-          </div>
+          <TextareaForm
+            name="body"
+            value={values.body}
+            placeholder="Enter your message"
+            onChange={onChange}
+            required
+          />
         </FormCardItem>
 
         <FileUploadForm />

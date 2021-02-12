@@ -25,7 +25,7 @@ module.exports = {
     },
     async getRecentlyThreads(_, { limit = 10, offset = 0 }) {
       try {
-        const recentlyThreads = await Thread.paginate({}, { sort: { pined: -1, createdAt: -1 }, offset, limit })
+        const recentlyThreads = await Thread.paginate({}, { sort: { pined: -1, newestAnswer: -1 }, offset, limit })
         return recentlyThreads.docs
       } catch (err) {
         throw new Error(err)
@@ -56,7 +56,8 @@ module.exports = {
           username: user.username,
           role: user.role
         },
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        newestAnswer: new Date().toISOString()
       })
 
       const thread = await newThread.save()

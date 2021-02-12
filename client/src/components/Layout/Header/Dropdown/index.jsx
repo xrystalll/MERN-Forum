@@ -71,10 +71,21 @@ const DropdownMenu = ({ user, logout, setDropdownOpen }) => {
     history.push(data.url)
   }
 
+  const changeTheme = () => {
+    if (localStorage.getItem('theme') === 'light') {
+      localStorage.setItem('theme', 'dark')
+      document.body.classList.remove('light')
+    } else {
+      localStorage.setItem('theme', 'light')
+      document.body.classList.add('light')
+    }
+  }
+
   const onLogout = () => {
     setDropdownOpen(false)
     logout()
   }
+
   return (
     <div className="head_dropdown" style={{ height: menuHeight }} ref={dropdown}>
       <CustomScrollbar className="navigation__menu">
@@ -104,6 +115,7 @@ const DropdownMenu = ({ user, logout, setDropdownOpen }) => {
             </DropdownItem>
             <DropdownItem
               leftIcon="palette"
+              onClick={changeTheme}
             >
               <div className="menu-item-title">Toggle theme</div>
             </DropdownItem>

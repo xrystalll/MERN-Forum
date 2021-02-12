@@ -10,33 +10,35 @@ const FileUploadForm = ({ hint, sendFiles, multiple = true, accept }) => {
   const regexp = /(?:\.([^.]+))?$/
 
   useEffect(() => {
-    !files.length && setInputVisible(true)
-  }, [files])
+    if (files.length > 0) {
+      sendFiles && sendFiles(files)
+    } else {
+      setInputVisible(true)
+    }
+  }, [files, sendFiles])
 
   useEffect(() => {
     document.addEventListener('paste', handlePaste)
     return () => {
-      document.removeEventListener('mousedown', handlePaste)
+      document.removeEventListener('paste', handlePaste)
     }
   })
 
   const handlePaste = (e) => {
-    if (files.length >= maxCount + 1) return
+    if (files.length >= maxCount) return
 
     const newFile = e.clipboardData.files[0]
-    if (!newFile || newFile.type.indexOf('image' === -1)) return
+    if (!newFile || newFile.type.indexOf('image') === -1) return
 
     const mergedArray = [...files, newFile]
     let limitedArray = mergedArray.slice(0, maxCount)
     limitedArray.map(i => i.url = URL.createObjectURL(i))
     setFiles(limitedArray)
     setInputVisible(false)
-
-    sendFiles(files)
   }
 
   const handleFile = (e) => {
-    if (files.length >= maxCount + 1) return
+    if (files.length >= maxCount) return
 
     const newFiles = e.target.files
     const newFilesArray = Array.from(newFiles)
@@ -45,8 +47,6 @@ const FileUploadForm = ({ hint, sendFiles, multiple = true, accept }) => {
     limitedArray.map(i => i.url = URL.createObjectURL(i))
     setFiles(limitedArray)
     setInputVisible(false)
-
-    sendFiles(files)
   }
 
   const removeFile = (file) => {

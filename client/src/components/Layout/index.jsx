@@ -1,10 +1,10 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { StoreContext } from 'store/Store';
 
-import Header from 'components/Header';
-import LeftMenu from 'components/LeftMenu';
+import Header from './Header';
+import LeftMenu from './LeftMenu';
+import Footer from './Footer';
 import Modal from 'components/Modal';
-import Footer from 'components/Footer';
 import './style.css';
 
 const Layout = ({ children }) => {
@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
       <Header setMenuState={() => setMenuOpen(!menuOpen)} />
 
       <section className="container">
-        <LeftMenu open={menuOpen} />
+        <LeftMenu open={menuOpen} setMenuOpen={setMenuOpen} />
 
         <main className="content">
           {children}

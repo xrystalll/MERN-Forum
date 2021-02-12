@@ -1,12 +1,12 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import ReactMarkdown from 'react-markdown';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum, dateFormat } from 'support/Utils';
 
 import Dropdown from './Dropdown';
+import Markdown from 'components/Markdown';
 
 import { BOARDS_AND_RECENTLY_THREADS_QUERY, THREADS_QUERY, THREAD_ANSWERS_QUERY } from 'support/Queries';
 import {
@@ -204,7 +204,7 @@ const Card = ({ data, threadData, full = false, type }) => {
 
           {full && (
             <div className="card_content markdown">
-              <ReactMarkdown>{data.body}</ReactMarkdown>
+              <Markdown source={data.body} />
 
               {data.attach && (
                 data.attach.map((item, index) => (

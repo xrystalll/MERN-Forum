@@ -795,6 +795,7 @@ a.head_text:hover {
 .act_group {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .bb_btn {
@@ -816,6 +817,13 @@ a.head_text:hover {
 }
 .bb_btn > * {
   pointer-events: none;
+}
+.bb_btn.md {
+  margin-left: auto;
+  cursor: help;
+}
+.bb_btn.md:hover {
+  background: none;
 }
 
 /* Markdown */
@@ -839,11 +847,13 @@ a.head_text:hover {
 .markdown ul > li > ul {
   list-style: revert;
 }
-.markdown code {
+.markdown code, .markdown pre {
   font-family: monospace;
-  background-color: var(--secondary-bg-tint-focus);
+  background-color: var(--secondary-bg-tint-focus) !important;
   border-radius: calc(var(--border-radius) / 2);
-  padding: 0 .5rem;
+  padding: .2rem .5rem !important;
+}
+.markdown pre {
   margin: .5rem 0;
   display: flex;
   overflow: auto;
@@ -860,7 +870,7 @@ a.head_text:hover {
   content: '>';
   position: relative;
   top: -1px;
-  margin-right: .4rem;
+  margin-right: .2rem;
 }
 .markdown h1 {
   font-size: 2rem;
@@ -888,9 +898,28 @@ a.head_text:hover {
 }
 .markdown img {
   display: flex;
-  background-size: cover;
   border-radius: var(--border-radius);
   width: 100%;
   max-width: 350px;
   margin: .3rem 0;
+  user-select: none;
+}
+.markdown hr {
+  border: 1px solid var(--form-border-color);
+  margin: .7rem 0;
+}
+.markdown .spoiler {
+  background-color: var(--main-bg);
+  border-radius: calc(var(--border-radius) / 2);
+}
+.markdown .spoiler_text {
+  visibility: hidden;
+  user-select: none;
+}
+.markdown .spoiler:hover {
+  background-color: transparent;
+}
+.markdown .spoiler:hover .spoiler_text {
+  visibility: visible;
+  user-select: text;
 }

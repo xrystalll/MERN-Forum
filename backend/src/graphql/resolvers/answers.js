@@ -44,6 +44,7 @@ module.exports = {
         },
         createdAt: new Date().toISOString()
       })
+      await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, { newestAnswer: new Date().toISOString() })
 
       const answer = await newAnswer.save()
 

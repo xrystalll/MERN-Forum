@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 const bcrypt = require('bcryptjs');
+const Mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const { UserInputError } = require('apollo-server-express');
 
@@ -129,20 +130,25 @@ module.exports = {
 
       try {
         if (username === user.username) {
-          console.log(file)
-          const { createReadStream, filename } = await file
+          const { createReadStream, filename, mimetype } = await file
+
+          const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
+          if (!imageTypes.find(i => i === mimetype)) {
+            throw new UserInputError('File format not allowed')
+          }
 
           const { ext } = path.parse(filename)
-          const newFilename = generateRandomString(8) + ext
+          const newFilename = generateRandomString(4) + '_' + generateRandomString(8) + ext
+
+          const pathName = path.join(__dirname, '..', '..', '..', `/public/users/${newFilename}`)
 
           const stream = createReadStream()
-          const pathName = path.join(__dirname, '..', '..', '..', `/public/users/images/${newFilename}`)
           // await sharp(stream)
           //   .resize(300, 300)
           //   .toFile(pathName)
           await stream.pipe(fs.createWriteStream(pathName))
 
-          const url = `http://localhost:${process.env.PORT || 8000}/users/images/${newFilename}`
+          const url = `http://localhost:${process.env.PORT || 8000}/users/${newFilename}`
 
           await User.updateOne({ _id: Mongoose.Types.ObjectId(id) }, { picture: url })
           return url

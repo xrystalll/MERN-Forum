@@ -25,7 +25,8 @@ const threadSchema = new Schema({
   attach: [{
     file: String,
     type: String
-  }]
+  }],
+  newestAnswer: String
 })
 threadSchema.plugin(mongoosePaginate)
 

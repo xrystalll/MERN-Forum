@@ -20,10 +20,6 @@ module.exports = {
   Thread: {
     likeCount: (parent) => parent.likes.length,
     answersCount: async (parent) => await Answer.countDocuments({ threadId: parent.id }),
-    newestAnswer: async (parent) => {
-      const answer = await Answer.findOne({ threadId: parent.id }).sort({ createdAt: -1 })
-      return answer ? answer.createdAt : ''
-    },
     boardTitle: async (parent) => {
       const board = await Board.findById(parent.boardId)
       return board.title

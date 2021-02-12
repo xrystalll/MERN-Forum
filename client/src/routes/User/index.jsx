@@ -19,25 +19,26 @@ const User = ({ match }) => {
     }
   })
 
-  const [formdata, setFormdata] = useState({})
+  const [file, setFile] = useState({})
 
-  const setFile = (files) => {
-    setFormdata(files)
+  const getFile = (files) => {
+    setFile(files)
   }
 
   const [uploadUserAvatar, { loadingUpload }] = useMutation(UPLOAD_USER_PICTURE, {
-    onError(err) {
-      console.error(err)
-    },
-    refetchQueries: [{
-      query: USER_QUERY,
-      variables: { id: userId }
-    }],
-    variables: {
-      id: userId,
-      file: { formdata }
-    }
+    onCompleted: (data) => console.log(data)
   })
+
+  const upload = () => {
+    if (!file.length) return
+
+    uploadUserAvatar({
+      variables: {
+        id: userId,
+        file: file[0]
+      }
+    })
+  }
 
   return !loading ? (
     <Section>
@@ -51,13 +52,13 @@ const User = ({ match }) => {
           <SectionHeader title={data.getUser.username} />
 
           <FileUploadForm
-            hint="Accepted: png. jpg, jpeg; Max files count: 1"
+            hint="Accepted: png, jpg, jpeg; Max files count: 1"
             multiple={false}
             accept="image/jpeg,image/png"
-            sendFiles={setFile}
+            sendFiles={getFile}
           />
 
-          <div className="btn" onClick={uploadUserAvatar}>UPLOAD</div>
+          <div className="btn" onClick={upload}>UPLOAD</div>
           {loadingUpload && <Loader className="btn" />}
         </Fragment>
       ) : (
