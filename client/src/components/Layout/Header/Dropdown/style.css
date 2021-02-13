@@ -2,7 +2,7 @@
 .head_dropdown {
   position: absolute;
   top: 48px;
-  right: 0;
+  right: -2px;
   width: 250px;
   max-height: calc(100vh - 100px) !important;
   font-size: .95rem;
@@ -14,7 +14,7 @@
   transition: height .3s ease;
   pointer-events: initial !important;
   cursor: default;
-  z-index: 1;
+  z-index: 8;
 }
 
 .menu {
@@ -27,7 +27,7 @@
   height: 42px;
   display: flex;
   align-items: center;
-  border-radius: calc(var(--border-radius) / 2);
+  border-radius: var(--border-radius-inner);
   transition: var(--transition-background);
   padding: .3rem;
   cursor: pointer;

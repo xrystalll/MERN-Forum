@@ -37,8 +37,8 @@ export const CREATE_THREAD = gql`
 `;
 
 export const CREATE_ANSWER = gql`
-  mutation($threadId: ID!, $body: String!) {
-    createAnswer(threadId: $threadId, body: $body) {
+  mutation($threadId: ID!, $body: String!, $answeredTo: ID) {
+    createAnswer(threadId: $threadId, body: $body, answeredTo: $answeredTo) {
       threadId
     }
   }

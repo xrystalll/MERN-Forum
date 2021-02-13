@@ -56,6 +56,7 @@ const SignUp = ({ history }) => {
               name="username"
               value={values.username}
               required
+              maxlength="21"
               onChange={onChange}
             />
           </div>
@@ -68,6 +69,7 @@ const SignUp = ({ history }) => {
               name="email"
               value={values.email}
               required
+              maxlength="56"
               onChange={onChange}
             />
           </div>
@@ -80,6 +82,7 @@ const SignUp = ({ history }) => {
               name="password"
               value={values.password}
               required
+              maxlength="56"
               onChange={onChange}
             />
           </div>
@@ -92,6 +95,7 @@ const SignUp = ({ history }) => {
               name="confirmPassword"
               value={values.confirmPassword}
               required
+              maxlength="56"
               onChange={onChange}
             />
           </div>

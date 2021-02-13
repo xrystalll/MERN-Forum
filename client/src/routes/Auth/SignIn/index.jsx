@@ -54,6 +54,7 @@ const SignIn = ({ history }) => {
               name="username"
               value={values.username}
               required
+              maxlength="21"
               onChange={onChange}
             />
           </div>
@@ -66,6 +67,7 @@ const SignIn = ({ history }) => {
               name="password"
               value={values.password}
               required
+              maxlength="56"
               onChange={onChange}
             />
           </div>

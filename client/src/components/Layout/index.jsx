@@ -23,6 +23,7 @@ const Layout = ({ children }) => {
 
   const modalClose = () => {
     if (
+      postType.type === 'answer' ||
       postType.type === 'answerEdit' ||
       postType.type === 'userThreadEdit' ||
       postType.type === 'adminThreadEdit'

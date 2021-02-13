@@ -4,6 +4,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const answerSchema = new Schema({
   boardId: String,
   threadId: String,
+  answeredTo: String,
   body: String,
   createdAt: String,
   author: {

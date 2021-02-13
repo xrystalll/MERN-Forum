@@ -12,6 +12,7 @@ import SignIn from 'routes/Auth/SignIn';
 import Boards from 'routes/Forum/Boards';
 import Board from 'routes/Forum/Board';
 import Thread from 'routes/Forum/Thread';
+import Users from 'routes/Users';
 import User from 'routes/User';
 import { NotFound } from 'routes/Error';
 
@@ -34,6 +35,7 @@ const App = () => {
               <Route exact path="/boards" component={Boards} />
               <Route path="/boards/:boardId" component={Board} />
               <Route path="/thread/:threadId" component={Thread} />
+              <Route path="/users" component={Users} />
               <Route path="/user/:userId" component={User} />
               <Route path="*" component={NotFound} status={404} />
             </Switch>

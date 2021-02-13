@@ -77,7 +77,8 @@ const Modal = ({ open, close }) => {
     }],
     variables: {
       threadId: postType.id,
-      body: values.body
+      body: values.body,
+      answeredTo: postType?.someData?.toId || null
     }
   })
 
@@ -194,6 +195,7 @@ const Modal = ({ open, close }) => {
               value={values.title}
               placeholder="Enter title"
               required
+              maxlength="100"
               onChange={onChange}
             />
           </div>
@@ -303,6 +305,7 @@ const Modal = ({ open, close }) => {
               value={values.title}
               placeholder="Enter title"
               required
+              maxlength="100"
               onChange={onChange}
             />
           </div>

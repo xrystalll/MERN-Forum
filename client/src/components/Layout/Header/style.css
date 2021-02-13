@@ -52,7 +52,7 @@
 .head_act_item:hover {
   background-color: var(--secondary-bg-tint-focus)
 }
-.head_act_item > *, .head_search > i {
+.head_act_item > *, .head_search.open > i {
   pointer-events: none;
 }
 .head_act_item i, .head_search i, .open_nav i {

@@ -21,6 +21,9 @@ app.use(express.static(path.join(__dirname, '..', '/public')))
 app.use(cors())
 
 const server = new ApolloServer({
+  subscriptions: {
+    path: '/gql'
+  },
   typeDefs,
   resolvers,
   context: ({ req }) => ({ req, pubsub })

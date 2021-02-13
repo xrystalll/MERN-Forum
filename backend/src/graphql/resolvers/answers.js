@@ -18,7 +18,7 @@ module.exports = {
   },
 
   Mutation: {
-    async createAnswer(_, { threadId, body }, context) {
+    async createAnswer(_, { threadId, body, answeredTo }, context) {
       const user = checkAuth(context)
 
       if (body.trim() === '') {
@@ -36,6 +36,7 @@ module.exports = {
       const newAnswer = new Answer({
         boardId: thread.boardId, 
         threadId,
+        answeredTo,
         body,
         author: {
           id: user.id,

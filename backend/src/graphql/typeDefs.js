@@ -32,6 +32,7 @@ module.exports = gql`
     id: ID!
     boardId: ID!
     threadId: ID!
+    answeredTo: ID
     body: String!
     createdAt: String!
     author: Author!
@@ -111,14 +112,13 @@ module.exports = gql`
     adminEditThread(id: ID!, title: String!, body: String!, pined: Boolean, closed: Boolean): Thread!
     likeThread(id: ID!): Thread!
 
-    createAnswer(threadId: ID!, body: String!): Answer!
+    createAnswer(threadId: ID!, answeredTo: ID, body: String!): Answer!
     deleteAnswer(id: ID!): String!
     editAnswer(id: ID!, body: String!): Answer!
     likeAnswer(id: ID!): Answer!
   }
 
   type Subscription {
-    newThread: Thread!
     newAnswer: Answer!
   }
 `;

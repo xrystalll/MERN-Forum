@@ -76,6 +76,24 @@ const Card = ({ data, threadData, full = false, type }) => {
     setModalOpen(true)
   }
 
+  const answerTo = (toId, username) => {
+    let id
+    if (type === 'answer') {
+      id = data.threadId
+    } else {
+      id = data.id
+    }
+    setPostType({
+      type: 'answer',
+      id,
+      someData: {
+        toId,
+        body: `**${username}**, `
+      }
+    })
+    setModalOpen(true)
+  }
+
   const [deleteThread] = useMutation(DELETE_THREAD, {
     refetchQueries: [{
       query: BOARDS_AND_RECENTLY_THREADS_QUERY,
@@ -147,11 +165,13 @@ const Card = ({ data, threadData, full = false, type }) => {
           <header className="card_head">
             <div className="card_head_inner">
               {full ? (
-                <div className="card_title full">
-                  {data.pined && <i className="thread_pin bx bx-pin"></i>}
-                  {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
-                  {data.title}
-                </div>
+                data.title && (
+                  <div className="card_title full">
+                    {data.pined && <i className="thread_pin bx bx-pin"></i>}
+                    {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                    {data.title}
+                  </div>
+                )
               ) : (
                 <Link to={'/thread/' + data.id} className="card_title">
                   {data.pined && <i className="thread_pin bx bx-pin"></i>}
@@ -194,7 +214,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
                   </Fragment>
                 )}
-                {user.username === data.author.username || user.role === 'admin'
+                {user.id === data.author.id || user.role === 'admin'
                   ? <div onClick={editClick} className="dropdown_item">Edit</div>
                   : null
                 }
@@ -225,10 +245,12 @@ const Card = ({ data, threadData, full = false, type }) => {
           <footer className="card_foot">
             {full ? (
               <Fragment>
-                <div className="act_btn foot_btn">
-                  <i className="bx bx-reply bx-flip-horizontal"></i>
-                  <span>Answer</span>
-                </div>
+                {user && user.id !== data.author.id && (
+                  <div className="act_btn foot_btn" onClick={() => answerTo(data.id, data.author.username)}>
+                    <i className="bx bx-reply bx-flip-horizontal"></i>
+                    <span>Answer</span>
+                  </div>
+                )}
 
                 <div className="act_btn foot_btn likes" onClick={onLike}>
                   <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'}></i>
@@ -313,4 +335,28 @@ const BoardCard = ({ data }) => {
   )
 }
 
-export { Card, BoardCard };
+const UserCard = ({ data }) => {
+  return (
+    <div className="card_item">
+      <div className="card_body">
+        <div className="card_block">
+          <Link to={'/user/' + data.id} className="card_head user_head">
+            <div className="card_head_inner">
+              <div className="card_title user_title">
+                <div className="head_profile" style={{ backgroundImage: `url(${data.picture})` }}>
+                  {!data.picture && data.username.charAt(0)}
+                </div>
+                <div className="user_info">
+                  {data.username}
+                  {data.role === 'admin' && <span className="user_status">admin</span>}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export { Card, BoardCard, UserCard };

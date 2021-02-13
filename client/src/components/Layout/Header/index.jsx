@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useEffect, useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StoreContext } from 'store/Store';
 
@@ -7,7 +7,25 @@ import './style.css';
 
 const Header = ({ setMenuState }) => {
   const { user } = useContext(StoreContext)
+  const searchField = useRef()
+  const [searchActive, setSearchActive] = useState(false)
   const [notification] = useState(false)
+
+  useEffect(() => {
+    if (searchActive) {
+      searchField.current?.focus()
+      document.addEventListener('click', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [searchActive])
+
+  const handleClickOutside = ({ target }) => {
+    if (searchField.current?.contains(target)) return
+
+    setSearchActive(false)
+  }
 
   return (
     <header className="app_head">
@@ -20,9 +38,9 @@ const Header = ({ setMenuState }) => {
         </div>
 
         <ul className="head_act">
-          <li className="head_search">
-            <input className="head_search_field" type="search" placeholder="Enter for search..." />
-            <i className="head_search_ic bx bx-search"></i>
+          <li className={searchActive ? 'head_search open' : 'head_search'}>
+            <input ref={searchField} className="head_search_field" type="search" placeholder="Enter for search..." />
+            <i className="head_search_ic bx bx-search" onClick={() => setSearchActive(!searchActive)}></i>
           </li>
 
           {user ? (

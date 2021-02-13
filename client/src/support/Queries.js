@@ -96,6 +96,7 @@ export const THREAD_ANSWERS_QUERY = gql`
     getAnswers(threadId: $id) {
       id
       threadId
+      answeredTo
       body
       createdAt
       author {
@@ -129,6 +130,19 @@ export const USER_QUERY = gql`
       onlineAt
       picture
       role
+    }
+  }
+`;
+
+export const USERS_QUERY = gql`
+  query($sort: String) {
+    getUsers(sort: $sort) {
+      id
+      username
+      picture
+      role
+      createdAt
+      onlineAt
     }
   }
 `;

@@ -9,14 +9,14 @@
     "dev": "nodemon src/index"
   },
   "dependencies": {
-    "apollo-server-express": "^2.19.2",
+    "apollo-server-express": "^2.21.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "graphql": "^15.3.0",
+    "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.9",
+    "mongoose": "^5.11.16",
     "mongoose-paginate-v2": "^1.3.14",
     "sharp": "^0.27.1"
   },

@@ -4,12 +4,11 @@ const sharp = require('sharp');
 const bcrypt = require('bcryptjs');
 const Mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const { UserInputError } = require('apollo-server-express');
+const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
 const User = require('../../models/User');
 const { validateRegisterInput, validateLoginInput } = require('../../util/validators');
 const checkAuth = require('../../util/checkAuth');
-const generateRandomString = require('../../util/generateRandomString');
 
 const generateToken = (user) => {
   return jwt.sign({
@@ -26,9 +25,13 @@ module.exports = {
       try {
         let users
         if (sort === 'online') {
-          users = await User.paginate({}, { sort: { onlineAt: -1 }, offset, limit })
+          const date = new Date()
+          date.setMinutes(date.getMinutes() - 5)
+          users = await User.paginate({ onlineAt: { $gte: date.toISOString() } }, { sort: { onlineAt: -1 }, offset, limit })
         } else if (sort === 'admin') {
           users = await User.paginate({ role: 'admin' }, { sort: { onlineAt: -1 }, offset, limit })
+        } else if (sort === 'old') {
+          users = await User.paginate({}, { sort: { createdAt: 1 }, offset, limit })
         } else {
           users = await User.paginate({}, { sort: { createdAt: -1 }, offset, limit })
         }
@@ -126,9 +129,9 @@ module.exports = {
     async uploadUserAvatar(_, { id, file }, context) {
       const { username } = checkAuth(context)
 
-      const user = await User.findById(id)
-
       try {
+        const user = await User.findById(id)
+
         if (username === user.username) {
           const { createReadStream, filename, mimetype } = await file
 
@@ -138,11 +141,12 @@ module.exports = {
           }
 
           const { ext } = path.parse(filename)
-          const newFilename = generateRandomString(4) + '_' + generateRandomString(8) + ext
+          const newFilename = id + ext
 
           const pathName = path.join(__dirname, '..', '..', '..', `/public/users/${newFilename}`)
 
           const stream = createReadStream()
+          console.log(stream)
           // await sharp(stream)
           //   .resize(300, 300)
           //   .toFile(pathName)
