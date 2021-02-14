@@ -3,6 +3,7 @@ const Mongoose = require('mongoose');
 
 const Thread = require('../../models/Thread');
 const Answer = require('../../models/Answer');
+const Notification = require('../../models/Notification');
 const checkAuth = require('../../util/checkAuth');
 
 module.exports = {
@@ -37,7 +38,7 @@ module.exports = {
         boardId: thread.boardId, 
         threadId,
         answeredTo,
-        body,
+        body: body.substring(0, 1000),
         author: {
           id: user.id,
           username: user.username,
@@ -52,6 +53,54 @@ module.exports = {
       context.pubsub.publish('NEW_ANSWER', {
         newAnswer: answer
       })
+
+      if (user.id !== thread.author.id.toString()) {
+        if (answeredTo === threadId || !answeredTo) {
+          const newAnswerToThread = new Notification({
+            type: 'answerToThread',
+            to: thread.author.id,
+            from: {
+              id: answer.author.id,
+              username: answer.author.username,
+              role: answer.author.role
+            },
+            threadId,
+            title: thread.title,
+            body: body.substring(0, 1000),
+            createdAt: new Date().toISOString(),
+            read: false
+          })
+          const answerToThread = await newAnswerToThread.save()
+
+          context.pubsub.publish('NEW_NOTIFICATION', {
+            newNotification: answerToThread
+          })
+        }
+
+        if (answeredTo && answeredTo !== threadId) {
+          const answerTo = await Answer.findById(answeredTo)
+
+          const newAnswerToAnswer = new Notification({
+            type: 'answerToAnswer',
+            to: answerTo.author.id,
+            from: {
+              id: answer.author.id,
+              username: answer.author.username,
+              role: answer.author.role
+            },
+            threadId,
+            title: thread.title,
+            body: body.substring(0, 1000),
+            createdAt: new Date().toISOString(),
+            read: false
+          })
+          const answerToAnswer = await newAnswerToAnswer.save()
+
+          context.pubsub.publish('NEW_NOTIFICATION', {
+            newNotification: answerToAnswer
+          })
+        }
+      }
 
       return answer
     },
@@ -91,7 +140,7 @@ module.exports = {
       try {
         if (username === answer.author.username || role === 'admin') {
           await Answer.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
-            body,
+            body: body.substring(0, 1000),
             edited: {
               createdAt: new Date().toISOString()
             }

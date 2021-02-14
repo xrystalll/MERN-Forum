@@ -10,6 +10,8 @@
   --accent-color: hsl(266deg 42% 59%);
   --accent-color-tint: hsl(266deg 42% 53%);
 
+  --dark-bg: #191919;
+
   --main-info-color: #b6bfb7;
   --main-success-color: #4CAF50;
   --main-danger-color: #E53935;
@@ -868,15 +870,18 @@ a.head_text:hover {
 }
 .markdown code, .markdown pre {
   font-family: monospace;
-  background-color: var(--secondary-bg-tint-focus) !important;
+  background-color: var(--dark-bg) !important;
   border-radius: var(--border-radius-inner);
-  padding: .2rem .5rem !important;
 }
 .markdown pre {
   margin: .5rem 0;
+  padding: .2rem .3rem !important;
   display: flex;
   overflow: auto;
   white-space: nowrap;
+}
+.markdown .linenumber {
+  min-width: 36px !important;
 }
 .markdown blockquote {
   position: relative;

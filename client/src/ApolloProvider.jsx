@@ -3,6 +3,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { createUploadLink } from 'apollo-upload-client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { setContext } from 'apollo-link-context';
+import { onError } from 'apollo-link-error';
 import App from 'App';
 
 const httpLink = createUploadLink({
@@ -39,8 +40,18 @@ const splitLink = split(
   httpLink
 )
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.log('GraphQL error: ', `Message: ${message}, Location: ${locations}, Path: ${path}`)
+    })
+  }
+
+  if (networkError) console.log('Network error: ', networkError)
+})
+
 const client = new ApolloClient({
-  link: ApolloLink.from([authLink, splitLink]),
+  link: ApolloLink.from([authLink, errorLink, splitLink]),
   cache: new InMemoryCache()
 })
 

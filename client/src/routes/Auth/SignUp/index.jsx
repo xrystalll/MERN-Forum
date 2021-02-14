@@ -38,7 +38,12 @@ const SignUp = ({ history }) => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors)
     },
-    variables: values
+    variables: {
+      username: values.username.substring(0, 21),
+      email: values.email.substring(0, 56),
+      password: values.password.substring(0, 56),
+      confirmPassword: values.confirmPassword.substring(0, 56)
+    }
   })
 
   return (
@@ -56,7 +61,7 @@ const SignUp = ({ history }) => {
               name="username"
               value={values.username}
               required
-              maxlength="21"
+              maxLength="21"
               onChange={onChange}
             />
           </div>
@@ -69,7 +74,7 @@ const SignUp = ({ history }) => {
               name="email"
               value={values.email}
               required
-              maxlength="56"
+              maxLength="56"
               onChange={onChange}
             />
           </div>
@@ -82,7 +87,7 @@ const SignUp = ({ history }) => {
               name="password"
               value={values.password}
               required
-              maxlength="56"
+              maxLength="56"
               onChange={onChange}
             />
           </div>
@@ -95,7 +100,7 @@ const SignUp = ({ history }) => {
               name="confirmPassword"
               value={values.confirmPassword}
               required
-              maxlength="56"
+              maxLength="56"
               onChange={onChange}
             />
           </div>

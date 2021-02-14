@@ -56,6 +56,11 @@
   border-color: var(--accent-color-tint);
 }
 
+.btn.main {
+  padding: .3rem .8rem;
+  margin: .3rem 0;
+}
+
 .secondary_btn {
   position: relative;
   display: flex;

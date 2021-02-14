@@ -2,8 +2,8 @@ const { model, Schema } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const answerSchema = new Schema({
-  boardId: String,
-  threadId: String,
+  boardId: Schema.Types.ObjectId,
+  threadId: Schema.Types.ObjectId,
   answeredTo: String,
   body: String,
   createdAt: String,

@@ -3,6 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const boardSchema = new Schema({
   title: String,
+  body: String,
   position: Number,
   createdAt: String
 })

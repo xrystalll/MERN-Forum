@@ -4,6 +4,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import FileUploadForm from 'components/Form/FileUploadForm';
+import { Button } from 'components/Button';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
@@ -58,8 +59,9 @@ const User = ({ match }) => {
             sendFiles={getFile}
           />
 
-          <div className="btn" onClick={upload}>UPLOAD</div>
-          {loadingUpload && <Loader className="btn" />}
+          <div className="card_item">
+            <Button text="Upload" onClick={upload} className="main hollow" />
+          </div>
         </Fragment>
       ) : (
         <Fragment>

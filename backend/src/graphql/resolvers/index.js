@@ -2,6 +2,7 @@ const boardsResolvers = require('./boards');
 const threadsResolvers = require('./threads');
 const answersResolvers = require('./answers');
 const usersResolvers = require('./users');
+const notificationsResolvers = require('./notifications');
 
 const Board = require('../../models/Board');
 const Thread = require('../../models/Thread');
@@ -38,18 +39,20 @@ module.exports = {
     ...boardsResolvers.Query,
     ...threadsResolvers.Query,
     ...answersResolvers.Query,
-    ...usersResolvers.Query
+    ...usersResolvers.Query,
+    ...notificationsResolvers.Query
   },
 
   Mutation: {
     ...usersResolvers.Mutation,
     ...boardsResolvers.Mutation,
     ...threadsResolvers.Mutation,
-    ...answersResolvers.Mutation
+    ...answersResolvers.Mutation,
+    ...notificationsResolvers.Mutation
   },
 
   Subscription: {
-    ...threadsResolvers.Subscription,
-    ...answersResolvers.Subscription
+    ...answersResolvers.Subscription,
+    ...notificationsResolvers.Subscription
   }
 };

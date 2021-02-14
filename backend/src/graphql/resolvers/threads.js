@@ -49,8 +49,8 @@ module.exports = {
         boardId,
         pined: false,
         closed: false,
-        title,
-        body,
+        title: title.substring(0, 100),
+        body: body.substring(0, 1000),
         author: {
           id: user.id,
           username: user.username,
@@ -97,8 +97,8 @@ module.exports = {
       try {
         if (username === thread.author.username) {
           await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
-            title,
-            body,
+            title: title.substring(0, 100),
+            body: body.substring(0, 1000),
             edited: {
               createdAt: new Date().toISOString()
             }
@@ -127,8 +127,8 @@ module.exports = {
       try {
         if (role === 'admin') {
           await Thread.updateOne({ _id: Mongoose.Types.ObjectId(id) }, {
-            title,
-            body,
+            title: title.substring(0, 100),
+            body: body.substring(0, 1000),
             pined,
             closed,
             edited: {

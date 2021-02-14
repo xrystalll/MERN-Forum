@@ -58,6 +58,9 @@
 .head_act_item i, .head_search i, .open_nav i {
   font-size: 22px;
 }
+.notifications {
+  color: var(--main-text);
+}
 .bx-notification.bx-tada {
   color: var(--accent-color);
 }

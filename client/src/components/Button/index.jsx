@@ -6,4 +6,12 @@ const InputButton = ({ text }) => {
   )
 }
 
-export { InputButton };
+const Button = ({ text, className, onClick }) => {
+  return (
+    <div onClick={onClick} className={'btn ' + className}>
+      {text}
+    </div>
+  )
+}
+
+export { InputButton, Button };

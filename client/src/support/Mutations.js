@@ -121,6 +121,16 @@ export const EDIT_ANSWER = gql`
   }
 `;
 
+export const EDIT_USER = gql`
+  mutation($id: ID!, $onlineAt: String) {
+    editUser(id: $id, onlineAt: $onlineAt) {
+      id
+      username
+      onlineAt
+    }
+  }
+`
+
 export const UPLOAD_USER_PICTURE = gql`
   mutation($id: ID!, $file: Upload!) {
     uploadUserAvatar(id: $id, file: $file) {
@@ -128,3 +138,10 @@ export const UPLOAD_USER_PICTURE = gql`
     }
   }
 `;
+
+export const DELETE_NOTIFICATIONS = gql`
+  mutation($userId: ID!) {
+    deleteNotifications(userId: $userId)
+  }
+`;
+

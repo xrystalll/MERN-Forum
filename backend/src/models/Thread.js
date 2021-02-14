@@ -2,7 +2,7 @@ const { model, Schema } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const threadSchema = new Schema({
-  boardId: String,
+  boardId: Schema.Types.ObjectId,
   pined: Boolean,
   closed: Boolean,
   title: String,

@@ -45,12 +45,12 @@ const Header = ({ setMenuState }) => {
 
           {user ? (
             <Fragment>
-              <li className="head_act_item">
+              <Link className="head_act_item notifications" to="/notifications">
                 {notification
                   ? <i className="bx bx-notification bx-tada"></i>
                   : <i className="bx bx-notification"></i>
                 }
-              </li>
+              </Link>
 
               <Dropdown />
             </Fragment>

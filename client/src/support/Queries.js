@@ -146,3 +146,23 @@ export const USERS_QUERY = gql`
     }
   }
 `;
+
+export const GET_NOTIFICATIONS = gql`
+  query($userId: ID!, $limit: Int, $sort: String) {
+    getNotifications(userId: $userId, limit: $limit, sort: $sort) {
+      id
+      type
+      to
+      from {
+        id
+        username
+        role
+      }
+      threadId
+      title
+      body
+      createdAt
+      read
+    }
+  }
+`;

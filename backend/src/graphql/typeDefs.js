@@ -4,7 +4,7 @@ module.exports = gql`
   type Board {
     id: ID!
     title: String!
-    body: String!
+    body: String
     position: Int!
     createdAt: String!
     threadsCount: Int!
@@ -40,6 +40,17 @@ module.exports = gql`
     likes: [Like]!
     likeCount: Int!
     attach: [Attach]
+  }
+  type Notification {
+    id: ID!
+    type: String!
+    to: ID!
+    from: Author!
+    threadId: ID!
+    title: String!
+    body: String!
+    createdAt: String!
+    read: Boolean!
   }
 
   type Author {
@@ -95,11 +106,14 @@ module.exports = gql`
 
     getUsers(limit: Int, offset: Int, sort: String): [User]
     getUser(id: ID!): User
+
+    getNotifications(userId: ID!, limit: Int, offset: Int, sort: String): [Notification]
   }
 
   type Mutation {
     login(username: String!, password: String!): User!
     register(registerInput: RegisterInput): User!
+    editUser(id: ID!, onlineAt: String): User!
     uploadUserAvatar(id: ID!, file: Upload!): File!
 
     createBoard(title: String!, body: String, position: Int!): Board!
@@ -116,9 +130,12 @@ module.exports = gql`
     deleteAnswer(id: ID!): String!
     editAnswer(id: ID!, body: String!): Answer!
     likeAnswer(id: ID!): Answer!
+
+    deleteNotifications(userId: ID!): String!
   }
 
   type Subscription {
     newAnswer: Answer!
+    newNotification: Notification!
   }
 `;

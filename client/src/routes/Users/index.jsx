@@ -31,9 +31,7 @@ const Users = () => {
 
   const [sort, setSort] = useState('default')
   const { loading, data } = useQuery(USERS_QUERY, {
-    variables: {
-      sort
-    }
+    variables: { sort }
   })
 
   return !loading ? (
@@ -45,8 +43,8 @@ const Users = () => {
           ]} />
 
           <SortNav links={[
-            { title: 'By newest', sort: 'default' },
-            { title: 'By oldest', sort: 'old' },
+            { title: 'Newest', sort: 'default' },
+            { title: 'Oldest', sort: 'old' },
             { title: 'Online', sort: 'online' }
           ]} setSort={setSort} state={sort} />
 

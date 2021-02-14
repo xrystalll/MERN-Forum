@@ -109,7 +109,7 @@ module.exports = {
 
       const newUser = new User({
         email,
-        username,
+        username: username.substring(0, 21),
         password,
         createdAt: new Date().toISOString(),
         onlineAt: new Date().toISOString(),
@@ -126,13 +126,28 @@ module.exports = {
       }
     },
 
-    async uploadUserAvatar(_, { id, file }, context) {
-      const { username } = checkAuth(context)
+    async editUser(_, { id, onlineAt }, context) {
+      const { id: userId, role } = checkAuth(context)
 
       try {
-        const user = await User.findById(id)
+        if (userId === id || role === 'admin') {
+          await User.updateOne({ _id: Mongoose.Types.ObjectId(id) }, { onlineAt })
 
-        if (username === user.username) {
+          const editedUser = await User.findById(id)
+          return editedUser
+        }
+
+        throw new AuthenticationError('Action not allowed')
+      } catch (err) {
+        throw new Error(err)
+      }
+    },
+
+    async uploadUserAvatar(_, { id, file }, context) {
+      const { id: userId } = checkAuth(context)
+
+      try {
+        if (userId === id) {
           const { createReadStream, filename, mimetype } = await file
 
           const imageTypes = ['image/jpeg', 'image/png', 'image/gif']

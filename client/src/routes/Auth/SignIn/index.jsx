@@ -36,7 +36,10 @@ const SignIn = ({ history }) => {
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors)
     },
-    variables: values
+    variables: {
+      username: values.username.substring(0, 21),
+      password: values.password.substring(0, 56)
+    }
   })
 
   return (
@@ -54,7 +57,7 @@ const SignIn = ({ history }) => {
               name="username"
               value={values.username}
               required
-              maxlength="21"
+              maxLength="21"
               onChange={onChange}
             />
           </div>
@@ -67,7 +70,7 @@ const SignIn = ({ history }) => {
               name="password"
               value={values.password}
               required
-              maxlength="56"
+              maxLength="56"
               onChange={onChange}
             />
           </div>

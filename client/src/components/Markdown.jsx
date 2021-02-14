@@ -9,7 +9,7 @@ const Markdown = ({ source }) => {
     return text.replace(reUrl, '$1[$2]($2)$3')
   }
   const renderers = {
-    code: ({ language, value }) => <SyntaxHighlighter style={materialDark} language={language} children={value} />,
+    code: ({ language, value }) => <SyntaxHighlighter style={materialDark} language={language} showLineNumbers children={value} />,
     link: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>,
     thematicBreak: () => <hr />,
     inlineCode: ({ children }) => <span className="spoiler"><span className="spoiler_text">{children}</span></span>

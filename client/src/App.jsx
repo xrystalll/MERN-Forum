@@ -14,6 +14,7 @@ import Board from 'routes/Forum/Board';
 import Thread from 'routes/Forum/Thread';
 import Users from 'routes/Users';
 import User from 'routes/User';
+import Notifications from 'routes/Notifications';
 import { NotFound } from 'routes/Error';
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/thread/:threadId" component={Thread} />
               <Route path="/users" component={Users} />
               <Route path="/user/:userId" component={User} />
+              <Route path="/notifications" component={Notifications} />
               <Route path="*" component={NotFound} status={404} />
             </Switch>
           </Layout>

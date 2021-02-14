@@ -359,4 +359,39 @@ const UserCard = ({ data }) => {
   )
 }
 
-export { Card, BoardCard, UserCard };
+const NotificationCard = ({ data }) => {
+  return (
+    <div className="card_item">
+      <div className="card_body">
+        <div className="card_block">
+          <header className="card_head">
+            <div className="card_head_inner">
+              <Link to={'/thread/' + data.threadId} className="card_title">
+                {data.title}
+              </Link>
+
+              <div className="card_info">
+                <Link to={'/user/' + data.from.id} className="head_text bold">
+                  {data.from.username}
+                  {data.from.role === 'admin' && (
+                    <span className="user_status">admin</span>
+                  )}
+                </Link>
+                <span className="bullet">•</span>
+                <span className="head_text">
+                  <time>{dateFormat(data.createdAt)}</time>
+                </span>
+              </div>
+            </div>
+          </header>
+
+          <div className="card_content markdown">
+            <Markdown source={data.body} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export { Card, BoardCard, UserCard, NotificationCard };

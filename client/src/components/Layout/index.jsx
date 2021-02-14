@@ -1,5 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { StoreContext } from 'store/Store';
+import { useMutation } from '@apollo/client';
 
 import Header from './Header';
 import LeftMenu from './LeftMenu';
@@ -7,10 +8,36 @@ import Footer from './Footer';
 import Modal from 'components/Modal';
 import './style.css';
 
+import { EDIT_USER } from 'support/Mutations';
+
 const Layout = ({ children }) => {
   const { user, modalOpen, setModalOpen, postType, setPostType, fab } = useContext(StoreContext)
   const [menuOpen, setMenuOpen] = useState(false)
   const coverOpen = menuOpen || modalOpen  ? 'cover open' : 'cover'
+
+  const [onlineIndicator, setOnlineIndicator] = useState(0)
+
+  useEffect(() => {
+    if (user) {
+      updateLastSeen()
+      setOnlineIndicator(setInterval(() => updateLastSeen(), 60000))
+    }
+
+    return () => {
+      clearInterval(onlineIndicator)
+    }
+  }, [user])
+
+  const [updateLastSeenMutation] = useMutation(EDIT_USER)
+
+  const updateLastSeen = () => {
+    updateLastSeenMutation({
+      variables: {
+        id: user.id,
+        onlineAt: new Date().toISOString()
+      }
+    })
+  }
 
   const fabClick = () => {
     setModalOpen(!modalOpen)

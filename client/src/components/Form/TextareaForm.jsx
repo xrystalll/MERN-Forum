@@ -23,7 +23,7 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
         break
       case 'code':
         // eslint-disable-next-line
-        pasteCode({ code: '\`\`\`\`\`\`', cursor: 3 })
+        pasteCode({ code: '\`\`\`\n\n\`\`\`', cursor: 4 })
         break
       default:
         return
@@ -39,7 +39,6 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
     area.focus()
     area.selectionEnd = end + code.length - cursor
   }
-
 
   return (
     <div className="form_block">
@@ -77,6 +76,7 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
           placeholder={placeholder}
           onChange={onChange}
           required={required}
+          maxLength="1000"
         />
       </div>
     </div>

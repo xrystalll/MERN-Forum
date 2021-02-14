@@ -77,7 +77,7 @@ const Modal = ({ open, close }) => {
     }],
     variables: {
       threadId: postType.id,
-      body: values.body,
+      body: values.body.substring(0, 1000),
       answeredTo: postType?.someData?.toId || null
     }
   })
@@ -101,8 +101,8 @@ const Modal = ({ open, close }) => {
     }],
     variables: {
       boardId: values.boardId,
-      title: values.title,
-      body: values.body
+      title: values.title.substring(0, 100),
+      body: values.body.substring(0, 1000)
     }
   })
 
@@ -125,7 +125,7 @@ const Modal = ({ open, close }) => {
     }],
     variables: {
       id: postType?.someData?.id || '',
-      body: values.body
+      body: values.body.substring(0, 1000)
     }
   })
 
@@ -151,8 +151,8 @@ const Modal = ({ open, close }) => {
     }],
     variables: {
       id: postType.id,
-      title: values.title,
-      body: values.body
+      title: values.title.substring(0, 100),
+      body: values.body.substring(0, 1000)
     }
   })
 
@@ -178,8 +178,8 @@ const Modal = ({ open, close }) => {
     }],
     variables: {
       id: postType.id,
-      title: values.title,
-      body: values.body
+      title: values.title.substring(0, 100),
+      body: values.body.substring(0, 1000)
     }
   })
 
@@ -195,7 +195,7 @@ const Modal = ({ open, close }) => {
               value={values.title}
               placeholder="Enter title"
               required
-              maxlength="100"
+              maxLength="100"
               onChange={onChange}
             />
           </div>
@@ -242,7 +242,11 @@ const Modal = ({ open, close }) => {
             : <InputButton text="Create thread" />}
         </div>
 
-        {error && <span className="form_error">{error}</span>}
+        {error && (
+          <div className="card_item">
+            <span className="form_error">{error}</span>
+          </div>
+        )}
       </form>
     </ModalBody>
   )
@@ -305,7 +309,7 @@ const Modal = ({ open, close }) => {
               value={values.title}
               placeholder="Enter title"
               required
-              maxlength="100"
+              maxLength="100"
               onChange={onChange}
             />
           </div>
