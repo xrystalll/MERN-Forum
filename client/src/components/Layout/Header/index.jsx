@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { StoreContext } from 'store/Store';
 
 import Dropdown from './Dropdown';
+import Notifications from './Notifications';
 import './style.css';
 
 const Header = ({ setMenuState }) => {
   const { user } = useContext(StoreContext)
   const searchField = useRef()
   const [searchActive, setSearchActive] = useState(false)
-  const [notification] = useState(false)
 
   useEffect(() => {
     if (searchActive) {
@@ -45,12 +45,7 @@ const Header = ({ setMenuState }) => {
 
           {user ? (
             <Fragment>
-              <Link className="head_act_item notifications" to="/notifications">
-                {notification
-                  ? <i className="bx bx-notification bx-tada"></i>
-                  : <i className="bx bx-notification"></i>
-                }
-              </Link>
+              <Notifications user={user} />
 
               <Dropdown />
             </Fragment>

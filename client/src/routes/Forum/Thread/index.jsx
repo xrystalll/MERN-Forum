@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useSubscription } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 
@@ -10,6 +10,7 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 import { THREAD_ANSWERS_QUERY } from 'support/Queries';
+import { NEW_ANSWER } from 'support/Subscriptions';
 
 const Thread = ({ match }) => {
   document.title = 'Forum | Thread'
@@ -26,9 +27,11 @@ const Thread = ({ match }) => {
   }, [setInit, init, setPostType, threadId])
 
   const { loading, data } = useQuery(THREAD_ANSWERS_QUERY, {
-    variables: {
-      id: threadId
-    }
+    variables: { id: threadId }
+  })
+
+  const { data: newAnswerData } = useSubscription(NEW_ANSWER, {
+    variables: { threadId }
   })
 
   return !loading ? (

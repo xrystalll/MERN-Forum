@@ -21,6 +21,7 @@ const App = () => {
   useEffect(() => {
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light')
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eef0f1')
     }
   }, [])
 

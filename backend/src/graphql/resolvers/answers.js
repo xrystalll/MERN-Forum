@@ -1,4 +1,5 @@
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
+const { withFilter } = require('apollo-server');
 const Mongoose = require('mongoose');
 
 const Thread = require('../../models/Thread');
@@ -185,7 +186,10 @@ module.exports = {
 
   Subscription: {
     newAnswer: {
-      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_ANSWER')
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator('NEW_ANSWER'),
+        (payload, variables) => payload.newAnswer.threadId.toString() === variables.threadId
+      )
     }
   }
 };

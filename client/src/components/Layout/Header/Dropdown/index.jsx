@@ -75,9 +75,11 @@ const DropdownMenu = ({ user, logout, setDropdownOpen }) => {
     if (localStorage.getItem('theme') === 'light') {
       localStorage.setItem('theme', 'dark')
       document.body.classList.remove('light')
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#161616')
     } else {
       localStorage.setItem('theme', 'light')
       document.body.classList.add('light')
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eef0f1')
     }
   }
 

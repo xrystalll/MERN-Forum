@@ -15,9 +15,7 @@ const User = ({ match }) => {
   document.title = 'Forum | User'
   const { userId } = match.params
   const { loading, data } = useQuery(USER_QUERY, {
-    variables: {
-      id: userId
-    }
+    variables: { id: userId }
   })
 
   const [file, setFile] = useState({})

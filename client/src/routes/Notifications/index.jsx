@@ -12,7 +12,7 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 import { GET_NOTIFICATIONS } from 'support/Queries';
-import { DELETE_NOTIFICATIONS } from 'support/Mutations';
+import { READ_NOTIFICATIONS, DELETE_NOTIFICATIONS } from 'support/Mutations';
 
 const Notifications = () => {
   document.title = 'Forum | Notifications'
@@ -48,6 +48,18 @@ const Notifications = () => {
     }],
     variables: { userId: user.id }
   })
+
+  const [readNotifications] = useMutation(READ_NOTIFICATIONS, {
+    variables: { userId: user.id }
+  })
+
+  useEffect(() => {
+    if (data && data.getNotifications.length) {
+      if (data.getNotifications[0].read === false) {
+        readNotifications()
+      }
+    }
+  }, [data])
 
   return !loading ? (
     <Section>

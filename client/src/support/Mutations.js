@@ -139,9 +139,14 @@ export const UPLOAD_USER_PICTURE = gql`
   }
 `;
 
+export const READ_NOTIFICATIONS = gql`
+  mutation($userId: ID!) {
+    readNotifications(userId: $userId)
+  }
+`;
+
 export const DELETE_NOTIFICATIONS = gql`
   mutation($userId: ID!) {
     deleteNotifications(userId: $userId)
   }
 `;
-

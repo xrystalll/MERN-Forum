@@ -131,11 +131,12 @@ module.exports = gql`
     editAnswer(id: ID!, body: String!): Answer!
     likeAnswer(id: ID!): Answer!
 
+    readNotifications(userId: ID!): String!
     deleteNotifications(userId: ID!): String!
   }
 
   type Subscription {
-    newAnswer: Answer!
-    newNotification: Notification!
+    newAnswer(threadId: ID!): Answer!
+    newNotification(userId: ID!): Notification!
   }
 `;

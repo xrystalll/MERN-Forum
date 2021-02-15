@@ -1,4 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
+const { withFilter } = require('apollo-server');
 
 const Notification = require('../../models/Notification');
 const checkAuth = require('../../util/checkAuth');
@@ -23,6 +24,22 @@ module.exports = {
   },
 
   Mutation: {
+    async readNotifications(_, { userId }, context) {
+      const { id } = checkAuth(context)
+
+      try {
+        if (id === userId) {
+          await Notification.updateMany({ to: userId, read: false }, { read: true })
+
+          return 'Notifications read successfully'
+        }
+
+        throw new AuthenticationError('Action not allowed')
+      } catch (err) {
+        throw new Error(err)
+      }
+    },
+
     async deleteNotifications(_, { userId }, context) {
       const { id } = checkAuth(context)
 
@@ -42,7 +59,10 @@ module.exports = {
 
   Subscription: {
     newNotification: {
-      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_NOTIFICATION')
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator('NEW_NOTIFICATION'),
+        (payload, variables) => payload.newNotification.to.toString() === variables.userId
+      )
     }
   }
 };
