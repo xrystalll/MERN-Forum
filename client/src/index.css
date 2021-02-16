@@ -149,8 +149,10 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 55vh;
   margin-top: 5rem;
+}
+.content > .content_loader {
+  height: 55vh;
 }
 
 /* Errorer */

@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useQuery, useSubscription } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 
@@ -9,8 +9,9 @@ import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-import { THREAD_ANSWERS_QUERY } from 'support/Queries';
-import { NEW_ANSWER } from 'support/Subscriptions';
+import { THREAD_QUERY, ANSWERS_QUERY } from 'support/Queries';
+
+import Answers from './Answers';
 
 const Thread = ({ match }) => {
   document.title = 'Forum | Thread'
@@ -26,32 +27,38 @@ const Thread = ({ match }) => {
     setInit(false)
   }, [setInit, init, setPostType, threadId])
 
-  const { loading, data } = useQuery(THREAD_ANSWERS_QUERY, {
+  const { loading: loadingThread, data: threadData } = useQuery(THREAD_QUERY, {
     variables: { id: threadId }
   })
 
-  const { data: newAnswerData } = useSubscription(NEW_ANSWER, {
-    variables: { threadId }
+  const { loading: loadingAnswers, data: answersData, subscribeToMore } = useQuery(ANSWERS_QUERY, {
+    variables: { id: threadId }
   })
 
-  return !loading ? (
+  return !loadingThread ? (
     <Section>
-      {data ? (
-        data.getThread ? (
+      {threadData ? (
+        threadData.getThread ? (
           <Fragment>
-            <Breadcrumbs current={data.getThread.title} links={[
+            <Breadcrumbs current={threadData.getThread.title} links={[
               { title: 'Home', link: '/' },
               { title: 'All boards', link: '/boards' },
-              { title: data.getThread.boardTitle, link: '/boards/' + data.getThread.boardId }
+              { title: threadData.getThread.boardTitle, link: '/boards/' + threadData.getThread.boardId }
             ]} />
 
-            <Card data={data.getThread} full type="thread" />
+            <Card data={threadData.getThread} full type="thread" />
 
             <br />
 
-            {data.getAnswers.map(item => (
-              <Card key={item.id} data={item} threadData={data.getThread} full type="answer" />
-            ))}
+            {!loadingAnswers ? (
+              <Answers
+                answers={answersData.getAnswers}
+                thread={threadData.getThread}
+                subscribeToMore={subscribeToMore}
+              />
+            ) : (
+              <Loader color="#64707d" />
+            )}
           </Fragment>
         ) : (
           <Fragment>

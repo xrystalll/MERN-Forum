@@ -16,7 +16,8 @@ import Loader from 'components/Loader';
 import {
   BOARDS_QUERY,
   THREADS_QUERY,
-  THREAD_ANSWERS_QUERY,
+  THREAD_QUERY,
+  ANSWERS_QUERY,
   BOARDS_AND_RECENTLY_THREADS_QUERY
 } from 'support/Queries';
 import {
@@ -70,9 +71,6 @@ const Modal = ({ open, close }) => {
       console.error(err)
     },
     refetchQueries: [{
-      query: THREAD_ANSWERS_QUERY,
-      variables: { id: postType.id }
-    }, {
       query: BOARDS_QUERY
     }],
     variables: {
@@ -118,7 +116,7 @@ const Modal = ({ open, close }) => {
       console.error(err)
     },
     refetchQueries: [{
-      query: THREAD_ANSWERS_QUERY,
+      query: ANSWERS_QUERY,
       variables: { id: postType.id }
     }, {
       query: BOARDS_QUERY
@@ -141,7 +139,7 @@ const Modal = ({ open, close }) => {
       console.error(err)
     },
     refetchQueries: [{
-      query: THREAD_ANSWERS_QUERY,
+      query: THREAD_QUERY,
       variables: { id: postType.id }
     }, {
       query: BOARDS_AND_RECENTLY_THREADS_QUERY,
@@ -168,7 +166,7 @@ const Modal = ({ open, close }) => {
       console.error(err)
     },
     refetchQueries: [{
-      query: THREAD_ANSWERS_QUERY,
+      query: THREAD_QUERY,
       variables: { id: postType.id }
     }, {
       query: BOARDS_AND_RECENTLY_THREADS_QUERY,

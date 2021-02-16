@@ -62,7 +62,7 @@ export const THREADS_QUERY = gql`
   }
 `;
 
-export const THREAD_ANSWERS_QUERY = gql`
+export const THREAD_QUERY = gql`
   query($id: ID!) {
     getThread(id: $id) {
       id
@@ -93,6 +93,11 @@ export const THREAD_ANSWERS_QUERY = gql`
       }
       answersCount
     }
+  }
+`;
+
+export const ANSWERS_QUERY = gql`
+  query($id: ID!) {
     getAnswers(threadId: $id) {
       id
       threadId

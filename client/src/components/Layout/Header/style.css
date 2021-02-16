@@ -52,18 +52,21 @@
 .head_act_item:hover {
   background-color: var(--secondary-bg-tint-focus)
 }
-.head_act_item > *, .head_search.open > i {
+.head_search.open > i {
   pointer-events: none;
 }
 .head_act_item i, .head_search i, .open_nav i {
   font-size: 22px;
 }
+
 .notifications {
+  position: relative;
   color: var(--main-text);
 }
 .bx-notification.bx-tada {
   color: var(--accent-color);
 }
+
 .head_profile {
   width: 32px;
   height: 32px;

@@ -8,7 +8,7 @@ import { counter, declOfNum, dateFormat } from 'support/Utils';
 import Dropdown from './Dropdown';
 import Markdown from 'components/Markdown';
 
-import { BOARDS_AND_RECENTLY_THREADS_QUERY, THREADS_QUERY, THREAD_ANSWERS_QUERY } from 'support/Queries';
+import { BOARDS_AND_RECENTLY_THREADS_QUERY, THREADS_QUERY, ANSWERS_QUERY } from 'support/Queries';
 import {
   LIKE_THREAD_MUTATION,
   LIKE_ANSWER_MUTATION,
@@ -107,7 +107,7 @@ const Card = ({ data, threadData, full = false, type }) => {
 
   const [deleteAnswer] = useMutation(DELETE_ANSWER, {
     refetchQueries: [{
-      query: THREAD_ANSWERS_QUERY,
+      query: ANSWERS_QUERY,
       variables: { id: data.threadId }
     }],
     variables: { id: data.id }
