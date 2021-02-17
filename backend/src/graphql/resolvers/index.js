@@ -52,6 +52,7 @@ module.exports = {
   },
 
   Subscription: {
+    ...threadsResolvers.Subscription,
     ...answersResolvers.Subscription,
     ...notificationsResolvers.Subscription
   }

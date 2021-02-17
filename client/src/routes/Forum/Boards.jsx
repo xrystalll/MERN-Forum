@@ -28,7 +28,9 @@ const Boards = () => {
     setInit(false)
   }, [setInit, init, setPostType, setFabVisible])
 
-  const { loading, data } = useQuery(BOARDS_QUERY)
+  const { loading, data } = useQuery(BOARDS_QUERY, {
+    fetchPolicy: 'no-cache'
+  })
   const [sort, setSort] = useState('default')
 
   const sortFunc = (a, b) => {

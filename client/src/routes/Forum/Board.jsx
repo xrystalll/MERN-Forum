@@ -30,6 +30,7 @@ const Board = ({ match }) => {
   }, [setInit, init, setPostType, setFabVisible, boardId])
 
   const { loading, data } = useQuery(THREADS_QUERY, {
+    fetchPolicy: 'no-cache',
     variables: { boardId }
   })
   const [sort, setSort] = useState('default')

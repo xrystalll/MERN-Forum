@@ -28,6 +28,7 @@ const Home = () => {
   }, [setInit, init, setPostType, setFabVisible])
 
   const { loading, data } = useQuery(BOARDS_AND_RECENTLY_THREADS_QUERY, {
+    fetchPolicy: 'no-cache',
     variables: { limit: 5 }
   })
 

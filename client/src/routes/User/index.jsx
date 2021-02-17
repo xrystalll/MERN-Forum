@@ -1,5 +1,7 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
+
+import { StoreContext } from 'store/Store';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -14,6 +16,7 @@ import { UPLOAD_USER_PICTURE } from 'support/Mutations';
 const User = ({ match }) => {
   document.title = 'Forum | User'
   const { userId } = match.params
+  const { user } = useContext(StoreContext)
   const { loading, data } = useQuery(USER_QUERY, {
     variables: { id: userId }
   })
@@ -29,6 +32,7 @@ const User = ({ match }) => {
   })
 
   const upload = () => {
+    if (true) return // Upload not working on backend
     if (!file.length) return
 
     uploadUserAvatar({
@@ -50,16 +54,20 @@ const User = ({ match }) => {
 
           <SectionHeader title={data.getUser.username} />
 
-          <FileUploadForm
-            hint="Accepted: png, jpg, jpeg; Max files count: 1"
-            multiple={false}
-            accept="image/jpeg,image/png"
-            sendFiles={getFile}
-          />
+          {user.id === userId && (
+            <Fragment>
+              <FileUploadForm
+                hint="Accepted: png, jpg, jpeg; Max files count: 1"
+                multiple={false}
+                accept="image/jpeg,image/png"
+                sendFiles={getFile}
+              />
 
-          <div className="card_item">
-            <Button text="Upload" onClick={upload} className="main hollow" />
-          </div>
+              <div className="card_item">
+                <Button text="Upload" onClick={upload} className="main hollow" />
+              </div>
+            </Fragment>
+          )}
         </Fragment>
       ) : (
         <Fragment>

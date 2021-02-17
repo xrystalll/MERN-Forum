@@ -13,13 +13,7 @@ import FileUploadForm from 'components/Form/FileUploadForm';
 import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
 
-import {
-  BOARDS_QUERY,
-  THREADS_QUERY,
-  THREAD_QUERY,
-  ANSWERS_QUERY,
-  BOARDS_AND_RECENTLY_THREADS_QUERY
-} from 'support/Queries';
+import { BOARDS_QUERY, ANSWERS_QUERY } from 'support/Queries';
 import {
   CREATE_THREAD,
   CREATE_ANSWER,
@@ -70,9 +64,6 @@ const Modal = ({ open, close }) => {
     onError(err) {
       console.error(err)
     },
-    refetchQueries: [{
-      query: BOARDS_QUERY
-    }],
     variables: {
       threadId: postType.id,
       body: values.body.substring(0, 1000),
@@ -88,15 +79,6 @@ const Modal = ({ open, close }) => {
     onError(err) {
       console.error(err)
     },
-    refetchQueries: [{
-      query: THREADS_QUERY,
-      variables: { boardId: values.boardId }
-    }, {
-      query: BOARDS_AND_RECENTLY_THREADS_QUERY,
-      variables: { limit: 5 }
-    }, {
-      query: BOARDS_QUERY
-    }],
     variables: {
       boardId: values.boardId,
       title: values.title.substring(0, 100),
@@ -118,8 +100,6 @@ const Modal = ({ open, close }) => {
     refetchQueries: [{
       query: ANSWERS_QUERY,
       variables: { id: postType.id }
-    }, {
-      query: BOARDS_QUERY
     }],
     variables: {
       id: postType?.someData?.id || '',
@@ -138,15 +118,6 @@ const Modal = ({ open, close }) => {
     onError(err) {
       console.error(err)
     },
-    refetchQueries: [{
-      query: THREAD_QUERY,
-      variables: { id: postType.id }
-    }, {
-      query: BOARDS_AND_RECENTLY_THREADS_QUERY,
-      variables: { limit: 5 }
-    }, {
-      query: BOARDS_QUERY
-    }],
     variables: {
       id: postType.id,
       title: values.title.substring(0, 100),
@@ -165,15 +136,6 @@ const Modal = ({ open, close }) => {
     onError(err) {
       console.error(err)
     },
-    refetchQueries: [{
-      query: THREAD_QUERY,
-      variables: { id: postType.id }
-    }, {
-      query: BOARDS_AND_RECENTLY_THREADS_QUERY,
-      variables: { limit: 5 }
-    }, {
-      query: BOARDS_QUERY
-    }],
     variables: {
       id: postType.id,
       title: values.title.substring(0, 100),

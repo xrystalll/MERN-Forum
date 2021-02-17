@@ -136,6 +136,7 @@ module.exports = gql`
   }
 
   type Subscription {
+    newThread: Thread!
     newAnswer(threadId: ID!): Answer!
     newNotification(userId: ID!): Notification!
   }

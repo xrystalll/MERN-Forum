@@ -31,6 +31,7 @@ const Users = () => {
 
   const [sort, setSort] = useState('default')
   const { loading, data } = useQuery(USERS_QUERY, {
+    fetchPolicy: 'no-cache',
     variables: { sort }
   })
 

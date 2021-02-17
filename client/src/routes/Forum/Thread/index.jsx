@@ -28,6 +28,7 @@ const Thread = ({ match }) => {
   }, [setInit, init, setPostType, threadId])
 
   const { loading: loadingThread, data: threadData } = useQuery(THREAD_QUERY, {
+    fetchPolicy: 'no-cache',
     variables: { id: threadId }
   })
 

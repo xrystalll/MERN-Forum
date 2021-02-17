@@ -61,6 +61,11 @@ module.exports = {
       })
 
       const thread = await newThread.save()
+
+      context.pubsub.publish('NEW_THREAD', {
+        newAnswer: thread
+      })
+
       return thread
     },
 
@@ -169,6 +174,12 @@ module.exports = {
       } catch (err) {
         throw new Error(err)
       }
+    }
+  },
+
+  Subscription: {
+    newThread: {
+      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_THREAD')
     }
   }
 };

@@ -55,8 +55,8 @@ module.exports = {
         newAnswer: answer
       })
 
-      if (user.id !== thread.author.id.toString()) {
-        if (answeredTo === threadId || !answeredTo) {
+      if (answeredTo === threadId || !answeredTo) {
+        if (user.id !== thread.author.id.toString()) {
           const newAnswerToThread = new Notification({
             type: 'answerToThread',
             to: thread.author.id,
@@ -77,30 +77,30 @@ module.exports = {
             newNotification: answerToThread
           })
         }
+      }
 
-        if (answeredTo && answeredTo !== threadId) {
-          const answerTo = await Answer.findById(answeredTo)
+      if (answeredTo && answeredTo !== threadId) {
+        const answerTo = await Answer.findById(answeredTo)
 
-          const newAnswerToAnswer = new Notification({
-            type: 'answerToAnswer',
-            to: answerTo.author.id,
-            from: {
-              id: answer.author.id,
-              username: answer.author.username,
-              role: answer.author.role
-            },
-            threadId,
-            title: thread.title,
-            body: body.substring(0, 1000),
-            createdAt: new Date().toISOString(),
-            read: false
-          })
-          const answerToAnswer = await newAnswerToAnswer.save()
+        const newAnswerToAnswer = new Notification({
+          type: 'answerToAnswer',
+          to: answerTo.author.id,
+          from: {
+            id: answer.author.id,
+            username: answer.author.username,
+            role: answer.author.role
+          },
+          threadId,
+          title: thread.title,
+          body: body.substring(0, 1000),
+          createdAt: new Date().toISOString(),
+          read: false
+        })
+        const answerToAnswer = await newAnswerToAnswer.save()
 
-          context.pubsub.publish('NEW_NOTIFICATION', {
-            newNotification: answerToAnswer
-          })
-        }
+        context.pubsub.publish('NEW_NOTIFICATION', {
+          newNotification: answerToAnswer
+        })
       }
 
       return answer
