@@ -347,8 +347,11 @@ const UserCard = ({ data }) => {
                   {!data.picture && data.username.charAt(0)}
                 </div>
                 <div className="user_info">
-                  {data.username}
-                  {data.role === 'admin' && <span className="user_status">admin</span>}
+                  <div className="user_info_top">
+                    {data.username}
+                    {data.role === 'admin' && <span className="user_status">admin</span>}
+                  </div>
+                  <div className="head_text">{dateFormat(data.onlineAt)}</div>
                 </div>
               </div>
             </div>

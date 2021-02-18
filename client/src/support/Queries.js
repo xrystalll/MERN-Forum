@@ -140,8 +140,8 @@ export const USER_QUERY = gql`
 `;
 
 export const USERS_QUERY = gql`
-  query($sort: String) {
-    getUsers(sort: $sort) {
+  query($sort: String, $limit: Int, $offset: Int) {
+    getUsers(sort: $sort, limit: $limit, offset: $offset) {
       id
       username
       picture

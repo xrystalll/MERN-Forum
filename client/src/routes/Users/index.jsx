@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
@@ -30,10 +30,41 @@ const Users = () => {
   }, [setInit, init, setPostType, setFabVisible])
 
   const [sort, setSort] = useState('default')
-  const { loading, data } = useQuery(USERS_QUERY, {
+  const [offset, setOffset] = useState(0)
+  const limit = 100
+
+  const { loading, data, fetchMore } = useQuery(USERS_QUERY, {
     fetchPolicy: 'no-cache',
-    variables: { sort }
+    variables: { sort, offset, limit }
   })
+
+  // const loadMore = () => {
+  //   fetchMore({
+  //     variables: { sort, offset, limit },
+  //     updateQuery: (prev, { fetchMoreResult }) => {
+  //       if (!fetchMoreResult) return prev
+
+  //       return {
+  //         getUsers: [...prev.getUsers, ...fetchMoreResult.getUsers]
+  //       }
+  //     }
+  //   })
+  // }
+
+  // const scrollHandler = () => {
+  //   if (document.documentElement.scrollHeight === document.documentElement.scrollTop + window.innerHeight) {
+  //     setOffset(offset + limit)
+  //     loadMore()
+  //   }
+  // }
+
+  // useLayoutEffect(() => {
+  //   document.addEventListener('scroll', scrollHandler)
+  //   scrollHandler()
+  //   return () => {
+  //     document.removeEventListener('scroll', scrollHandler)
+  //   }
+  // }, [])
 
   return !loading ? (
     <Section>

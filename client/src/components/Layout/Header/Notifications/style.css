@@ -9,10 +9,9 @@
 
 @media (max-width: 400px) {
   .with_notifications {
-    width: 100vw;
-    max-height: calc(100vh - 66px) !important;
     right: -68px;
+    width: 100vw;
     max-width: initial !important;
-    max-height: initial !important;
+    max-height: calc(100vh - 66px) !important;
   }
 }

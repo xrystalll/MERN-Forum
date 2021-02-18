@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Store from 'store/Store';
 
 import Layout from 'components/Layout';
-import CustomScrollbar from 'components/CustomScrollbar';
 import { AuthRoute } from 'components/ProtectedRoute';
 
 import Home from 'routes/Home';
@@ -27,21 +26,19 @@ const App = () => {
   return (
     <Store>
       <Router>
-        <CustomScrollbar className="view">
-          <Layout>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <AuthRoute path="/signup" component={SignUp} />
-              <AuthRoute path="/signin" component={SignIn} />
-              <Route exact path="/boards" component={Boards} />
-              <Route path="/boards/:boardId" component={Board} />
-              <Route path="/thread/:threadId" component={Thread} />
-              <Route path="/users" component={Users} />
-              <Route path="/user/:userId" component={User} />
-              <Route path="*" component={NotFound} status={404} />
-            </Switch>
-          </Layout>
-        </CustomScrollbar>
+        <Layout>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <AuthRoute path="/signup" component={SignUp} />
+            <AuthRoute path="/signin" component={SignIn} />
+            <Route exact path="/boards" component={Boards} />
+            <Route path="/boards/:boardId" component={Board} />
+            <Route path="/thread/:threadId" component={Thread} />
+            <Route path="/users" component={Users} />
+            <Route path="/user/:userId" component={User} />
+            <Route path="*" component={NotFound} status={404} />
+          </Switch>
+        </Layout>
       </Router>
     </Store>
   )
