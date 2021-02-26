@@ -1,5 +1,4 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 
@@ -9,8 +8,6 @@ import SortNav from 'components/SortNav';
 import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
-
-import { THREADS_QUERY } from 'support/Queries';
 
 const Board = ({ match }) => {
   document.title = 'Forum | Board'
@@ -29,10 +26,6 @@ const Board = ({ match }) => {
     setInit(false)
   }, [setInit, init, setPostType, setFabVisible, boardId])
 
-  const { loading, data } = useQuery(THREADS_QUERY, {
-    fetchPolicy: 'no-cache',
-    variables: { boardId }
-  })
   const [sort, setSort] = useState('default')
 
   const sortFunc = (a, b) => {
@@ -46,37 +39,29 @@ const Board = ({ match }) => {
     }
   }
 
+  const [board] = useState([])
+  const [threads] = useState([])
+  const loading = false
+
   return !loading ? (
     <Section>
-      {data ? (
-        <Fragment>
-          <Breadcrumbs current={data.getBoard.title} links={[
-            { title: 'Home', link: '/' },
-            { title: 'All boards', link: '/boards' }
-          ]} />
+      <Breadcrumbs current={board[0].title} links={[
+        { title: 'Home', link: '/' },
+        { title: 'All boards', link: '/boards' }
+      ]} />
 
-          <SortNav links={[
-            { title: 'Default', sort: 'default' },
-            { title: 'Recently answered', sort: 'recently' },
-            { title: 'By answers count', sort: 'answers' }
-          ]} setSort={setSort} state={sort} />
+      <SortNav links={[
+        { title: 'Default', sort: 'default' },
+        { title: 'Recently answered', sort: 'recently' },
+        { title: 'By answers count', sort: 'answers' }
+      ]} setSort={setSort} state={sort} />
 
-          {data.getThreads.length ? (
-            data.getThreads.slice().sort(sortFunc).map(item => (
-              <Card key={item.id} data={item} />
-            ))
-          ) : (
-            <Errorer message="No threads yet" />
-          )}
-        </Fragment>
+      {threads.length ? (
+        threads.slice().sort(sortFunc).map(item => (
+          <Card key={item.id} data={item} />
+        ))
       ) : (
-        <Fragment>
-          <Breadcrumbs current="Error" links={[
-            { title: 'Home', link: '/' },
-            { title: 'All boards', link: '/boards' }
-          ]} />
-          <Errorer message="Unable to display threads" />
-        </Fragment>
+        <Errorer message="No threads yet" />
       )}
     </Section>
   ) : (

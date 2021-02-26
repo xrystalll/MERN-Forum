@@ -4,18 +4,21 @@ import jwtDecode from 'jwt-decode';
 import Reducer from './Reducer';
 
 let user = null
+let token = null
 if (localStorage.getItem('token')) {
   const decodedToken = jwtDecode(localStorage.getItem('token'))
 
   if (decodedToken.exp * 1000 < Date.now()) {
     localStorage.removeItem('token')
   } else {
-    user = decodedToken
+    user = { ...decodedToken, picture: localStorage.getItem('userPicture') + '' || null}
+    token = localStorage.getItem('token')
   }
 }
 
 const initialState = {
   user,
+  token,
   postType: {
     type: 'thread',
     id: null,
@@ -30,11 +33,15 @@ const Store = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState)
   const [modalOpen, setModalOpen] = useState(false)
 
-  const login = (userData) => {
-    localStorage.setItem('token', userData.token)
+  const login = (payload) => {
+    localStorage.setItem('token', payload.accessToken)
+    dispatch({
+      type: 'SET_TOKEN',
+      payload: payload.accessToken
+    })
     dispatch({
       type: 'LOGIN',
-      payload: userData
+      payload: payload.user
     })
   }
 
@@ -43,23 +50,33 @@ const Store = ({ children }) => {
     dispatch({ type: 'LOGOUT' })
   }
 
+  const setUserPicture = (payload) => {
+    localStorage.setItem('userPicture', payload)
+    dispatch({
+      type: 'SET_USER_PICTURE',
+      payload
+    })
+  }
+
   const setPostType = (payload) => {
     dispatch({
       type: 'SET_POST_TYPE',
-      payload: payload
+      payload
     })
   }
 
   const setFabVisible = (payload) => {
     dispatch({
       type: 'SET_FAB_VISIBLE',
-      payload: payload
+      payload
     })
   }
 
   return (
     <StoreContext.Provider value={{
+      token: state.token,
       user: state.user,
+      setUserPicture,
       modalOpen,
       setModalOpen,
       postType: state.postType,

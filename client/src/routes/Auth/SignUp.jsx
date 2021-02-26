@@ -1,50 +1,76 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 import { useForm } from 'hooks/useForm';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
-import Input from 'components/Form/Input';
 import FormCardItem from 'components/Card/FormCardItem';
+import Input from 'components/Form/Input';
 import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
-
-import { REGISTER_USER } from 'support/Mutations';
 
 const SignUp = ({ history }) => {
   document.title = 'Forum | Sign Up'
   const context = useContext(StoreContext)
   const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false)
 
-  const registerUser = () => {
-    addUser()
+  const registerUserCallback = () => {
+    registerUser()
   }
 
-  const { onChange, onSubmit, values } = useForm(registerUser, {
+  const { onChange, onSubmit, values } = useForm(registerUserCallback, {
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
   })
 
-  const [addUser, { loading }] = useMutation(REGISTER_USER, {
-    update(_, { data: { register: userData } }) {
-      context.login(userData)
-      history.push('/user/' + userData.id)
-    },
-    onError(err) {
-      setErrors(err.graphQLErrors[0].extensions.exception.errors)
-    },
-    variables: {
-      username: values.username.substring(0, 21),
-      email: values.email.substring(0, 56),
-      password: values.password.substring(0, 56),
-      confirmPassword: values.confirmPassword.substring(0, 56)
+  const registerUser = () => {
+    if (loading) return
+
+    setErrors({})
+
+    if (!values.username) {
+      return setErrors({ username: 'Enter your name' })
     }
-  })
+    if (!values.email) {
+      return setErrors({ email: 'Enter email' })
+    }
+    if (!values.password) {
+      return setErrors({ password: 'Enter password' })
+    }
+    if (values.password !== values.confirmPassword) {
+      return setErrors({ confirmPassword: 'Passwords not match' })
+    }
+
+    setLoading(true)
+
+    const { confirmPassword, ...body } = values
+
+    fetch('http://localhost:8000' + '/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+      .then(response => {
+        setLoading(false)
+        return response.json()
+      })
+      .then(data => {
+        if (data.accessToken) {
+          context.login(data)
+          history.push('/user/' + data.user.id)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        setErrors({ general: err.message })
+      })
+  }
 
   return (
     <Section>
@@ -60,7 +86,6 @@ const SignUp = ({ history }) => {
             <Input
               name="username"
               value={values.username}
-              required
               maxLength="21"
               onChange={onChange}
             />
@@ -73,8 +98,7 @@ const SignUp = ({ history }) => {
               type="email"
               name="email"
               value={values.email}
-              required
-              maxLength="56"
+              maxLength="50"
               onChange={onChange}
             />
           </div>
@@ -86,8 +110,7 @@ const SignUp = ({ history }) => {
               type="password"
               name="password"
               value={values.password}
-              required
-              maxLength="56"
+              maxLength="50"
               onChange={onChange}
             />
           </div>
@@ -99,8 +122,7 @@ const SignUp = ({ history }) => {
               type="password"
               name="confirmPassword"
               value={values.confirmPassword}
-              required
-              maxLength="56"
+              maxLength="50"
               onChange={onChange}
             />
           </div>

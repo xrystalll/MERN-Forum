@@ -182,7 +182,7 @@ const Dropdown = () => {
         style={user.picture && { backgroundImage: `url(${user.picture})` }}
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
-        {!user.picture && user.username.charAt(0)}
+        {!user.picture && user.displayName.charAt(0)}
       </div>
 
       {dropdownOpen && <DropdownMenu user={user} logout={logout} setDropdownOpen={setDropdownOpen} />}

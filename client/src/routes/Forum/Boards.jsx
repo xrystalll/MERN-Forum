@@ -1,5 +1,4 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 
@@ -9,8 +8,6 @@ import SortNav from 'components/SortNav';
 import { BoardCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
-
-import { BOARDS_QUERY } from 'support/Queries';
 
 const Boards = () => {
   document.title = 'Forum | Boards'
@@ -28,9 +25,6 @@ const Boards = () => {
     setInit(false)
   }, [setInit, init, setPostType, setFabVisible])
 
-  const { loading, data } = useQuery(BOARDS_QUERY, {
-    fetchPolicy: 'no-cache'
-  })
   const [sort, setSort] = useState('default')
 
   const sortFunc = (a, b) => {
@@ -44,35 +38,27 @@ const Boards = () => {
     }
   }
 
+  const [boards] = useState([])
+  const loading = false
+
   return !loading ? (
     <Section>
-      {data ? (
-        <Fragment>
-          <Breadcrumbs current="All boards" links={[
-            { title: 'Home', link: '/' }
-          ]} />
+      <Breadcrumbs current="All boards" links={[
+        { title: 'Home', link: '/' }
+      ]} />
 
-          <SortNav links={[
-            { title: 'Default', sort: 'default' },
-            { title: 'Popular', sort: 'popular' },
-            { title: 'Answers count', sort: 'answers' }
-          ]} setSort={setSort} state={sort} />
+      <SortNav links={[
+        { title: 'Default', sort: 'default' },
+        { title: 'Popular', sort: 'popular' },
+        { title: 'Answers count', sort: 'answers' }
+      ]} setSort={setSort} state={sort} />
 
-          {data.getBoards.length ? (
-            data.getBoards.slice().sort(sortFunc).map(item => (
-              <BoardCard key={item.id} data={item} />
-            ))
-          ) : (
-            <Errorer message="No boards yet" />
-          )}
-        </Fragment>
+      {boards.length ? (
+        boards.slice().sort(sortFunc).map(item => (
+          <BoardCard key={item.id} data={item} />
+        ))
       ) : (
-        <Fragment>
-          <Breadcrumbs current="Error" links={[
-            { title: 'Home', link: '/' }
-          ]} />
-          <Errorer message="Unable to display boards" />
-        </Fragment>
+        <Errorer message="No boards yet" />
       )}
     </Section>
   ) : (

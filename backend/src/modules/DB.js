@@ -8,6 +8,10 @@ const DB = () => {
       useFindAndModify: false,
       useCreateIndex: true
     })
+  } else {
+    return new Promise((resolve, reject) => {
+      reject('Set MONGODB url in env')
+    })
   }
 }
 

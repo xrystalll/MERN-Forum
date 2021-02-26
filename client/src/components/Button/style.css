@@ -57,8 +57,9 @@
 }
 
 .btn.main {
+  height: 36px !important;
   padding: .3rem .8rem;
-  margin: .3rem 0;
+  margin: .3rem 0 !important;
 }
 
 .secondary_btn {

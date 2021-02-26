@@ -1,21 +1,11 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum, dateFormat } from 'support/Utils';
 
 import Dropdown from './Dropdown';
 import Markdown from 'components/Markdown';
-
-import { BOARDS_AND_RECENTLY_THREADS_QUERY, THREADS_QUERY, ANSWERS_QUERY } from 'support/Queries';
-import {
-  LIKE_THREAD_MUTATION,
-  LIKE_ANSWER_MUTATION,
-  DELETE_THREAD,
-  DELETE_ANSWER,
-  ADMIN_EDIT_THREAD
-} from 'support/Mutations';
 
 const Card = ({ data, threadData, full = false, type }) => {
   const { user, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
@@ -31,19 +21,13 @@ const Card = ({ data, threadData, full = false, type }) => {
 
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
 
-  const [likeThread] = useMutation(LIKE_THREAD_MUTATION, {
-    variables: { id: data.id },
-    update(_, { data: { likeThread } }) {
-      setLikes(likeThread.likeCount)
-    }
-  })
+  const likeThread = () => {
+    console.log('like thread')
+  }
 
-  const [likeAnswer] = useMutation(LIKE_ANSWER_MUTATION, {
-    variables: { id: data.id },
-    update(_, { data: { likeAnswer } }) {
-      setLikes(likeAnswer.likeCount)
-    }
-  })
+  const likeAnswer = () => {
+    console.log('like answer')
+  }
 
   const onLike = () => {
     if (user) {
@@ -94,24 +78,13 @@ const Card = ({ data, threadData, full = false, type }) => {
     setModalOpen(true)
   }
 
-  const [deleteThread] = useMutation(DELETE_THREAD, {
-    refetchQueries: [{
-      query: BOARDS_AND_RECENTLY_THREADS_QUERY,
-      variables: { limit: 5 }
-    }, {
-      query: THREADS_QUERY,
-      variables: { boardId: data.boardId }
-    }],
-    variables: { id: data.id }
-  })
+  const deleteThread = () => {
+    console.log('delete thread')
+  }
 
-  const [deleteAnswer] = useMutation(DELETE_ANSWER, {
-    refetchQueries: [{
-      query: ANSWERS_QUERY,
-      variables: { id: data.threadId }
-    }],
-    variables: { id: data.id }
-  })
+  const deleteAnswer = () => {
+    console.log('delete answer')
+  }
 
   const onDelete = () => {
     if (type === 'answer') {
@@ -125,20 +98,11 @@ const Card = ({ data, threadData, full = false, type }) => {
   const [pined, setPined] = useState(data.pined)
   const [closed, setClosed] = useState(data.closed)
 
-  const [adminEditThread] = useMutation(ADMIN_EDIT_THREAD)
-
   const onPin = () => {
     if (type !== 'answer') {
       setPined(!pined)
-      adminEditThread({
-        variables: {
-          id: data.id,
-          title: data.title,
-          body: data.body,
-          pined: !pined,
-          closed
-        }
-      })
+
+      // pin function
     }
   }
 
@@ -146,15 +110,8 @@ const Card = ({ data, threadData, full = false, type }) => {
     if (type !== 'answer') {
       setClosed(!closed)
       setFabVisible(closed)
-      adminEditThread({
-        variables: {
-          id: data.id,
-          title: data.title,
-          body: data.body,
-          pined,
-          closed: !closed
-        }
-      })
+
+      // close function
     }
   }
 
@@ -340,15 +297,15 @@ const UserCard = ({ data }) => {
     <div className="card_item">
       <div className="card_body">
         <div className="card_block">
-          <Link to={'/user/' + data.id} className="card_head user_head">
+          <Link to={'/user/' + data._id} className="card_head user_head">
             <div className="card_head_inner">
               <div className="card_title user_title">
                 <div className="head_profile" style={{ backgroundImage: `url(${data.picture})` }}>
-                  {!data.picture && data.username.charAt(0)}
+                  {!data.picture && data.displayName.charAt(0)}
                 </div>
                 <div className="user_info">
                   <div className="user_info_top">
-                    {data.username}
+                    {data.displayName}
                     {data.role === 'admin' && <span className="user_status">admin</span>}
                   </div>
                   <div className="head_text">{dateFormat(data.onlineAt)}</div>

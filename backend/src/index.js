@@ -5,48 +5,54 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
+const RateLimit = require('express-rate-limit');
+const createError = require('http-errors');
 
-const { ApolloServer, PubSub } = require('apollo-server-express');
-
-const DB = require('./models/index')
-
-const typeDefs = require('./graphql/typeDefs');
-const resolvers = require('./graphql/resolvers');
-
-const pubsub = new PubSub()
+const DB = require('./modules/DB');
 
 const app = express()
 
 app.use(express.static(path.join(__dirname, '..', '/public')))
 app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
-const server = new ApolloServer({
-  subscriptions: {
-    path: '/gql'
-  },
-  typeDefs,
-  resolvers,
-  context: ({ req }) => ({ req, pubsub })
+const limiter = new RateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 50,
+  message: {
+    error: {
+      status: 429,
+      message: 'Too many requests per minute'
+    }
+  }
+})
+app.use('/auth', limiter)
+app.use('/api', limiter) 
+
+app.use('/', require('./routes'))
+app.use('/auth', require('./routes/auth'))
+app.use('/api', require('./routes/api'))
+
+app.use((req, res, next) => {
+  next(createError.NotFound())
 })
 
-server.applyMiddleware({ app, path: '/gql' })
-
-app.use((req, res) => {
-  res.status(404)
+app.use((err, req, res, next) => {
+  res.status(err.status || 500)
   res.json({
     error: {
-      status: 404,
-      message: '404 Not Found'
+      status: err.status || 500,
+      message: err.message
     }
   })
 })
 
 const httpServer = http.createServer(app)
-server.installSubscriptionHandlers(httpServer)
 const port = process.env.PORT || 8000;
 
 DB().then(() => {
   httpServer.listen({ port }, () => {
-    console.log(`Apollo Server run on http://localhost:${port}/gql`)
+    console.log(`Server run on ${process.env.BACKEND}`)
   })
 }).catch(console.error)

@@ -1,5 +1,4 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 
@@ -8,8 +7,6 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
-
-import { THREAD_QUERY, ANSWERS_QUERY } from 'support/Queries';
 
 import Answers from './Answers';
 
@@ -27,56 +24,42 @@ const Thread = ({ match }) => {
     setInit(false)
   }, [setInit, init, setPostType, threadId])
 
-  const { loading: loadingThread, data: threadData } = useQuery(THREAD_QUERY, {
-    fetchPolicy: 'no-cache',
-    variables: { id: threadId }
-  })
+  const [board] = useState({})
+  const [thread] = useState({})
+  const [answers] = useState([])
+  const loading = false
+  const loadingAnswers = false
 
-  const { loading: loadingAnswers, data: answersData, subscribeToMore } = useQuery(ANSWERS_QUERY, {
-    variables: { id: threadId }
-  })
-
-  return !loadingThread ? (
+  return !loading ? (
     <Section>
-      {threadData ? (
-        threadData.getThread ? (
-          <Fragment>
-            <Breadcrumbs current={threadData.getThread.title} links={[
-              { title: 'Home', link: '/' },
-              { title: 'All boards', link: '/boards' },
-              { title: threadData.getThread.boardTitle, link: '/boards/' + threadData.getThread.boardId }
-            ]} />
+      {thread ? (
+        <Fragment>
+          <Breadcrumbs current={thread.title} links={[
+            { title: 'Home', link: '/' },
+            { title: 'All boards', link: '/boards' },
+            { title: board.boardTitle, link: '/boards/' + thread.boardId }
+          ]} />
 
-            <Card data={threadData.getThread} full type="thread" />
+          <Card data={thread} full type="thread" />
 
-            <br />
+          <br />
 
-            {!loadingAnswers ? (
-              <Answers
-                answers={answersData.getAnswers}
-                thread={threadData.getThread}
-                subscribeToMore={subscribeToMore}
-              />
-            ) : (
-              <Loader color="#64707d" />
-            )}
-          </Fragment>
-        ) : (
-          <Fragment>
-            <Breadcrumbs current="Error" links={[
-              { title: 'Home', link: '/' },
-              { title: 'All boards', link: '/boards' }
-            ]} />
-            <Errorer message="Thread not found" />
-          </Fragment>
-        )
+          {!loadingAnswers ? (
+            <Answers
+              answers={answers}
+              thread={thread}
+            />
+          ) : (
+            <Loader color="#64707d" />
+          )}
+        </Fragment>
       ) : (
         <Fragment>
           <Breadcrumbs current="Error" links={[
             { title: 'Home', link: '/' },
             { title: 'All boards', link: '/boards' }
           ]} />
-          <Errorer message="Unable to display thread" />
+          <Errorer message="Thread not found" />
         </Fragment>
       )}
     </Section>

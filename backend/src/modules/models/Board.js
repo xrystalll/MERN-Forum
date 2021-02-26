@@ -5,7 +5,10 @@ const boardSchema = new Schema({
   title: String,
   body: String,
   position: Number,
-  createdAt: String
+  createdAt: String,
+  threadsCount: Number,
+  newestThread: String,
+  newestAnswer: String
 })
 boardSchema.plugin(mongoosePaginate)
 

@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/client';
 
 import { StoreContext } from 'store/Store';
 import { useForm } from 'hooks/useForm';
@@ -13,22 +12,14 @@ import FileUploadForm from 'components/Form/FileUploadForm';
 import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
 
-import { BOARDS_QUERY, ANSWERS_QUERY } from 'support/Queries';
-import {
-  CREATE_THREAD,
-  CREATE_ANSWER,
-  ADMIN_EDIT_THREAD,
-  USER_EDIT_THREAD,
-  EDIT_ANSWER
-} from 'support/Mutations';
-
 const Modal = ({ open, close }) => {
   const history = useHistory()
   const { postType, setPostType } = useContext(StoreContext)
   const modalOpen = open ? 'modal open' : 'modal'
   const [error, setError] = useState('')
+  const loading = false
 
-  const createCallback = () => {
+  const formCallback = () => {
     if (postType.type === 'answer') {
       createAnswer()
     }
@@ -51,99 +42,43 @@ const Modal = ({ open, close }) => {
     }
   }
 
-  const { onChange, onSubmit, values } = useForm(createCallback, {
+  const { onChange, onSubmit, values } = useForm(formCallback, {
     boardId: postType.id || '',
     title: postType?.someData?.title || '',
     body: postType?.someData?.body || ''
   })
 
-  const [createAnswer, { loadingAnswer }] = useMutation(CREATE_ANSWER, {
-    update(_, { data: { createAnswer } }) {
-      close()
-    },
-    onError(err) {
-      console.error(err)
-    },
-    variables: {
-      threadId: postType.id,
-      body: values.body.substring(0, 1000),
-      answeredTo: postType?.someData?.toId || null
-    }
-  })
+  const [boardsList] = useState([])
 
-  const [createThread, { loadingThread }] = useMutation(CREATE_THREAD, {
-    update(_, { data: { createThread } }) {
-      close()
-      history.push('/thread/' + createThread.id)
-    },
-    onError(err) {
-      console.error(err)
-    },
-    variables: {
-      boardId: values.boardId,
-      title: values.title.substring(0, 100),
-      body: values.body.substring(0, 1000)
-    }
-  })
+  const boards = () => {
+    console.log(1)
+    return
+  }
 
-  const [editAnswer, { loadingEditAnswer }] = useMutation(EDIT_ANSWER, {
-    update(_, { data: { editAnswer } }) {
-      close()
-      setPostType({
-        type: 'answer',
-        id: postType.id
-      })
-    },
-    onError(err) {
-      console.error(err)
-    },
-    refetchQueries: [{
-      query: ANSWERS_QUERY,
-      variables: { id: postType.id }
-    }],
-    variables: {
-      id: postType?.someData?.id || '',
-      body: values.body.substring(0, 1000)
-    }
-  })
+  const createThread = () => {
+    console.log(2)
+    return
+  }
 
-  const [editThread] = useMutation(USER_EDIT_THREAD, {
-    update(_, { data: { editThread } }) {
-      close()
-      setPostType({
-        type: 'answer',
-        id: postType.id
-      })
-    },
-    onError(err) {
-      console.error(err)
-    },
-    variables: {
-      id: postType.id,
-      title: values.title.substring(0, 100),
-      body: values.body.substring(0, 1000)
-    }
-  })
+  const createAnswer = () => {
+    console.log(3)
+    return
+  }
 
-  const [adminEditThread] = useMutation(ADMIN_EDIT_THREAD, {
-    update(_, { data: { adminEditThread } }) {
-      close()
-      setPostType({
-        type: 'answer',
-        id: postType.id
-      })
-    },
-    onError(err) {
-      console.error(err)
-    },
-    variables: {
-      id: postType.id,
-      title: values.title.substring(0, 100),
-      body: values.body.substring(0, 1000)
-    }
-  })
+  const editThread = () => {
+    console.log(4)
+    return
+  }
 
-  const { loading: loadingBoards, data: boardsData } = useQuery(BOARDS_QUERY)
+  const adminEditThread = () => {
+    console.log(5)
+    return
+  }
+
+  const editAnswer = () => {
+    console.log(6)
+    return
+  }
 
   const threadContent = (
     <ModalBody title="New thread" onClick={close}>
@@ -183,23 +118,22 @@ const Modal = ({ open, close }) => {
               required
             >
               <option>Select a board</option>
-              {loadingBoards ? (
-                <option>Loading...</option>
+              {boardsList.length ? (
+                boardsList.map(item => (
+                  <option key={item.id} value={item.id}>{item.title}</option>
+                ))
               ) : (
-                boardsData && (
-                  boardsData.getBoards.map(item => (
-                    <option key={item.id} value={item.id}>{item.title}</option>
-                  ))
-                )
+                <option>Loading...</option>
               )}
             </select>
           </div>
         </FormCardItem>
 
         <div className="card_item">
-          {loadingThread
+          {loading
             ? <Loader className="btn" />
-            : <InputButton text="Create thread" />}
+            : <InputButton text="Create thread" />
+          }
         </div>
 
         {error && (
@@ -227,9 +161,10 @@ const Modal = ({ open, close }) => {
         <FileUploadForm />
 
         <div className="card_item">
-          {loadingAnswer
+          {loading
             ? <Loader className="btn" />
-            : <InputButton text="Answer" />}
+            : <InputButton text="Answer" />
+          }
         </div>
       </form>
     </ModalBody>
@@ -251,9 +186,10 @@ const Modal = ({ open, close }) => {
         <FileUploadForm />
 
         <div className="card_item">
-          {loadingEditAnswer
+          {loading
             ? <Loader className="btn" />
-            : <InputButton text="Edit" />}
+            : <InputButton text="Edit" />
+          }
         </div>
       </form>
     </ModalBody>
@@ -288,7 +224,10 @@ const Modal = ({ open, close }) => {
         <FileUploadForm />
 
         <div className="card_item">
-          <InputButton text="Edit" />
+          {loading
+            ? <Loader className="btn" />
+            : <InputButton text="Edit" />
+          }
         </div>
       </form>
     </ModalBody>

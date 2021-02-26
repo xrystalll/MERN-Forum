@@ -1,22 +1,22 @@
-import { Fragment, useContext, useEffect, useLayoutEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+import { useContext, useEffect, useState } from 'react';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
-import { UserCard } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
-import { USERS_QUERY } from 'support/Queries';
+import Newest from './Newest';
+import Old from './Old';
+import Online from './Online';
 
-const Users = () => {
+const Users = ({ history }) => {
   document.title = 'Forum | Users'
   const { setPostType, setFabVisible } = useContext(StoreContext)
+  const { path } = useRouteMatch()
   const [init, setInit] = useState(true)
+  const [sort, setSort] = useState('default')
 
   useEffect(() => {
     if (init) {
@@ -29,76 +29,37 @@ const Users = () => {
     setInit(false)
   }, [setInit, init, setPostType, setFabVisible])
 
-  const [sort, setSort] = useState('default')
-  const [offset, setOffset] = useState(0)
-  const limit = 100
+  useEffect(() => {
+    let route
+    if (sort === 'old') {
+      route = path + '/oldest'
+    } else if (sort === 'online') {
+      route = path + '/online'
+    } else {
+      route = path + '/'
+    }
 
-  const { loading, data, fetchMore } = useQuery(USERS_QUERY, {
-    fetchPolicy: 'no-cache',
-    variables: { sort, offset, limit }
-  })
+    history.push(route)
+  }, [sort])
 
-  // const loadMore = () => {
-  //   fetchMore({
-  //     variables: { sort, offset, limit },
-  //     updateQuery: (prev, { fetchMoreResult }) => {
-  //       if (!fetchMoreResult) return prev
-
-  //       return {
-  //         getUsers: [...prev.getUsers, ...fetchMoreResult.getUsers]
-  //       }
-  //     }
-  //   })
-  // }
-
-  // const scrollHandler = () => {
-  //   if (document.documentElement.scrollHeight === document.documentElement.scrollTop + window.innerHeight) {
-  //     setOffset(offset + limit)
-  //     loadMore()
-  //   }
-  // }
-
-  // useLayoutEffect(() => {
-  //   document.addEventListener('scroll', scrollHandler)
-  //   scrollHandler()
-  //   return () => {
-  //     document.removeEventListener('scroll', scrollHandler)
-  //   }
-  // }, [])
-
-  return !loading ? (
+  return (
     <Section>
-      {data ? (
-        <Fragment>
-          <Breadcrumbs current="Users" links={[
-            { title: 'Home', link: '/' }
-          ]} />
+      <Breadcrumbs current="Users" links={[
+        { title: 'Home', link: '/' }
+      ]} />
 
-          <SortNav links={[
-            { title: 'Newest', sort: 'default' },
-            { title: 'Oldest', sort: 'old' },
-            { title: 'Online', sort: 'online' }
-          ]} setSort={setSort} state={sort} />
+      <SortNav links={[
+        { title: 'Newest', sort: 'default' },
+        { title: 'Oldest', sort: 'old' },
+        { title: 'Online', sort: 'online' }
+      ]} setSort={setSort} state={sort} />
 
-          {data.getUsers.length ? (
-            data.getUsers.map(item => (
-              <UserCard key={item.id} data={item} />
-            ))
-          ) : (
-            <Errorer message="No users yet" />
-          )}
-        </Fragment>
-      ) : (
-        <Fragment>
-          <Breadcrumbs current="Error" links={[
-            { title: 'Home', link: '/' }
-          ]} />
-          <Errorer message="Unable to display users" />
-        </Fragment>
-      )}
+      <Switch>
+        <Route path={path + '/oldest'} exact component={Old} />
+        <Route path={path + '/online'} exact component={Online} />
+        <Route path={path} exact component={Newest} />
+      </Switch>
     </Section>
-  ) : (
-    <Loader color="#64707d" />
   )
 }
 

@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 
 import FileInput from './FileInput';
 
-const FileUploadForm = ({ hint, sendFiles, multiple = true, accept }) => {
+const FileUploadForm = ({ hint, sendFiles, clearFiles, multiple = true, accept }) => {
   const [files, setFiles] = useState([])
   const [inputVisible, setInputVisible] = useState(true)
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
@@ -10,12 +10,16 @@ const FileUploadForm = ({ hint, sendFiles, multiple = true, accept }) => {
   const regexp = /(?:\.([^.]+))?$/
 
   useEffect(() => {
+    if (clearFiles) {
+      setFiles([])
+      setInputVisible(true)
+    }
     if (files.length > 0) {
       sendFiles && sendFiles(files)
     } else {
       setInputVisible(true)
     }
-  }, [files, sendFiles])
+  }, [files, sendFiles, clearFiles])
 
   useEffect(() => {
     document.addEventListener('paste', handlePaste)
@@ -51,6 +55,7 @@ const FileUploadForm = ({ hint, sendFiles, multiple = true, accept }) => {
 
   const removeFile = (file) => {
     setFiles(files.filter(i => i.url !== file.url))
+    sendFiles(files.filter(i => i.url !== file.url))
   }
 
   return (

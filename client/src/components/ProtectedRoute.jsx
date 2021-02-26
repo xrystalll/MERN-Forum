@@ -13,3 +13,14 @@ export const AuthRoute = ({ component: Component, ...rest }) => {
     />
   )
 }
+
+export const UsersOnlyRoute = ({ component: Component, ...rest }) => {
+  const { user } = useContext(StoreContext)
+
+  return (
+    <Route
+      {...rest}
+      render={(props) => (user ? <Component {...props} /> : <Redirect to="/" />)}
+    />
+  )
+}

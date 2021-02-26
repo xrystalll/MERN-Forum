@@ -1,5 +1,4 @@
-import { Fragment, useContext, useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -10,76 +9,128 @@ import { Button } from 'components/Button';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-import { USER_QUERY } from 'support/Queries';
-import { UPLOAD_USER_PICTURE } from 'support/Mutations';
-
 const User = ({ match }) => {
-  document.title = 'Forum | User'
   const { userId } = match.params
-  const { user } = useContext(StoreContext)
-  const { loading, data } = useQuery(USER_QUERY, {
-    variables: { id: userId }
-  })
+  const { user, setUserPicture, token } = useContext(StoreContext)
 
-  const [file, setFile] = useState({})
+  const [init, setInit] = useState(true)
+  const [userData, setUserData] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [noData, setNoData] = useState(false)
+
+  useEffect(() => {
+    const profileName = userData.displayName || ''
+    document.title = 'Forum | Profile ' + profileName
+    const fetchUser = async () => {
+      try {
+        const isProfile = user.id === userId ? '/profile' : `/user?userId=${userId}`
+        const data = await fetch(`${'http://localhost:8000'}/api${isProfile}`, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+        const response = await data.json()
+
+        if (!response.error) {
+          setInit(false)
+          setUserData(response)
+          setLoading(false)
+          setNoData(false)
+        } else throw Error(response.error.message)
+      } catch(err) {
+        setInit(false)
+        setLoading(false)
+        setNoData(true)
+      }
+    }
+
+    init && fetchUser()
+  }, [init, userData])
+
+  const [file, setFile] = useState([])
+  const [uploading, setUploading] = useState(false)
+  const [clearFiles, setClearFiles] = useState(false)
 
   const getFile = (files) => {
+    setClearFiles(false)
     setFile(files)
   }
 
-  const [uploadUserAvatar, { loadingUpload }] = useMutation(UPLOAD_USER_PICTURE, {
-    onCompleted: (data) => console.log(data)
-  })
+  useEffect(() => {
+    if (clearFiles) {
+      setFile([])
+    }
+  }, [clearFiles])
 
   const upload = () => {
-    if (true) return // Upload not working on backend
+    if (uploading) return
     if (!file.length) return
 
-    uploadUserAvatar({
-      variables: {
-        id: userId,
-        file: file[0]
-      }
+    setUploading(true)
+
+    const formData = new FormData()
+    formData.append('picture', file[0])
+
+    fetch('http://localhost:8000' + '/api/profile/upload/picture', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      body: formData
     })
+      .then(response => {
+        setClearFiles(true)
+        setUploading(false)
+        return response.json()
+      })
+      .then(data => {
+        if (data.picture) {
+          setUserPicture(data.picture)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
-  return !loading ? (
+  return (
     <Section>
-      {data ? (
-        <Fragment>
-          <Breadcrumbs current={data.getUser.username} links={[
-            { title: 'Home', link: '/' },
-            { title: 'Users', link: '/users' }
-          ]} />
+      <Breadcrumbs current={userData.displayName || 'View profile'} links={[
+        { title: 'Home', link: '/' },
+        { title: 'Users', link: '/users' }
+      ]} />
 
-          <SectionHeader title={data.getUser.username} />
+      {!noData ? (
+        !loading ? (
+          <Fragment>
+            <SectionHeader title={userData.displayName} />
 
-          {user.id === userId && (
-            <Fragment>
-              <FileUploadForm
-                hint="Accepted: png, jpg, jpeg; Max files count: 1"
-                multiple={false}
-                accept="image/jpeg,image/png"
-                sendFiles={getFile}
-              />
+            {user.id === userId && (
+              <Fragment>
+                <FileUploadForm
+                  hint="Accepted: png, jpg, jpeg, gif; Max files count: 1; Max size: 8 Mb"
+                  multiple={false}
+                  accept="image/jpeg,image/png,image/gif"
+                  sendFiles={getFile}
+                  clearFiles={clearFiles}
+                />
 
-              <div className="card_item">
-                <Button text="Upload" onClick={upload} className="main hollow" />
-              </div>
-            </Fragment>
-          )}
-        </Fragment>
+                <div className="card_item">
+                  {uploading
+                    ? <Loader className="btn main" />
+                    : <Button text="Upload" onClick={upload} className="main hollow" />
+                  }
+                </div>
+              </Fragment>
+            )}
+          </Fragment>
+        ) : (
+          <Loader color="#64707d" />
+        )
       ) : (
-        <Fragment>
-          <Breadcrumbs current="Error" links={[
-            { title: 'Home', link: '/' }
-          ]} />
-          <Errorer message="Unable to display user profile" />
-        </Fragment>
+        <Errorer message="Unable to display user profile" />
       )}
     </Section>
-  ) : (
-    <Loader color="#64707d" />
   )
 }
 
