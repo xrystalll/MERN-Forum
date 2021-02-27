@@ -154,6 +154,10 @@ ul {
 .content > .content_loader {
   height: 55vh;
 }
+.more_loader {
+  height: 36px;
+  margin-top: 1.5rem;
+}
 
 /* Errorer */
 .empty-results {

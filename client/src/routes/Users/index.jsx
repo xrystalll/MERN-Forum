@@ -11,12 +11,12 @@ import Newest from './Newest';
 import Old from './Old';
 import Online from './Online';
 
-const Users = ({ history }) => {
+const Users = ({ history, location: { pathname } }) => {
   document.title = 'Forum | Users'
   const { setPostType, setFabVisible } = useContext(StoreContext)
   const { path } = useRouteMatch()
   const [init, setInit] = useState(true)
-  const [sort, setSort] = useState('default')
+  const [sort, setSort] = useState(pathname.substr(pathname.lastIndexOf('/') + 1) || 'users')
 
   useEffect(() => {
     if (init) {
@@ -31,7 +31,7 @@ const Users = ({ history }) => {
 
   useEffect(() => {
     let route
-    if (sort === 'old') {
+    if (sort === 'oldest') {
       route = path + '/oldest'
     } else if (sort === 'online') {
       route = path + '/online'
@@ -49,8 +49,8 @@ const Users = ({ history }) => {
       ]} />
 
       <SortNav links={[
-        { title: 'Newest', sort: 'default' },
-        { title: 'Oldest', sort: 'old' },
+        { title: 'Newest', sort: 'users' },
+        { title: 'Oldest', sort: 'oldest' },
         { title: 'Online', sort: 'online' }
       ]} setSort={setSort} state={sort} />
 
