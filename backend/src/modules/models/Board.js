@@ -7,6 +7,7 @@ const boardSchema = new Schema({
   position: Number,
   createdAt: String,
   threadsCount: Number,
+  answersCount: Number,
   newestThread: String,
   newestAnswer: String
 })

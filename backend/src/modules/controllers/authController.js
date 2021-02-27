@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const { isJapanese, toRomaji } = require('wanakana');
 
 const User = require('../models/User');
 const { registerSchema, loginSchema } = require('../utils/validationSchema');
@@ -13,15 +14,21 @@ const register = async (req, res, next) => {
       throw createError.Conflict('E-mail is already been registered')
     }
 
-    const username = result.username.toLowerCase()
-    const userNamedoesExist = await User.findOne({ name: username })
+    let name = result.username.toLowerCase().replace(/\s/g, '')
+    if (isJapanese(name)) {
+      name = toRomaji(name)
+    }
+
+    const userNamedoesExist = await User.findOne({ name })
     if (userNamedoesExist) {
       throw createError.Conflict('Username is already been registered')
     }
 
+    let displayName = result.username.replace(/\s/g, '')
+
     const user = new User({
-      name: username,
-      displayName: result.username,
+      name,
+      displayName,
       email: result.email,
       password: result.password,
       createdAt: new Date().toISOString(),
@@ -51,8 +58,12 @@ const login = async (req, res, next) => {
   try {
     const result = await loginSchema.validateAsync(req.body)
 
-    const username = result.username.toLowerCase()
-    const user = await User.findOne({ name: username })
+    let name = result.username.toLowerCase().replace(/\s/g, '')
+    if (isJapanese(name)) {
+      name = toRomaji(name)
+    }
+
+    const user = await User.findOne({ name })
     if (!user) throw createError.NotFound('User not registered')
 
     const isMatch = await user.isValidPassword(result.password)

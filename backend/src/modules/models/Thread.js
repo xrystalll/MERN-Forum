@@ -19,6 +19,7 @@ const threadSchema = new Schema({
     file: String,
     type: String
   }],
+  answersCount: String,
   newestAnswer: String
 })
 threadSchema.plugin(mongoosePaginate)
