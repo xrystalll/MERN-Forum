@@ -1,0 +1,34 @@
+/* Admin */
+.admin__nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-gap: 8px;
+  margin-top: 2rem;
+}
+.admin__nav_item {
+  background-color: var(--secondary-bg-tint);
+  color: var(--main-text);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 142px;
+  font-size: .9rem;
+  transition: var(--transition-background);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.admin__nav_item:hover {
+  background-color: var(--secondary-bg-tint-focus);
+}
+.admin__nav_item i {
+  font-size: 36px;
+  margin: .8rem;
+  color: var(--secondary-text);
+}
+@media (max-width: 400px) {
+  .admin__nav {
+    grid-template-columns: auto;
+  }
+}

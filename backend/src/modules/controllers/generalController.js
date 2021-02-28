@@ -31,16 +31,10 @@ const getUser = async (req, res, next) => {
   try {
     const { userId } = req.query
 
-    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(userId) })
-    res.json({
-      id: user._id,
-      name: user.name,
-      displayName: user.displayName,
-      createdAt: user.createdAt,
-      onlineAt: user.onlineAt,
-      picture: user.picture,
-      role: user.role
-    })
+    const select = '_id name displayName createdAt onlineAt picture role'
+    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(userId) }, select)
+
+    res.json(user)
   } catch(err) {
     next(createError.InternalServerError(err))
   }

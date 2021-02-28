@@ -204,7 +204,7 @@ const Card = ({ data, threadData, full = false, type }) => {
               <Fragment>
                 {user && user.id !== data.author.id && (
                   <div className="act_btn foot_btn" onClick={() => answerTo(data.id, data.author.username)}>
-                    <i className="bx bx-reply bx-flip-horizontal"></i>
+                    <i className="bx bx-redo"></i>
                     <span>Answer</span>
                   </div>
                 )}

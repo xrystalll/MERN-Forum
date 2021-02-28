@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 
 import FileInput from './FileInput';
 
-const FileUploadForm = ({ hint, sendFiles, clearFiles, multiple = true, accept }) => {
+const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, accept }) => {
   const [files, setFiles] = useState([])
   const [inputVisible, setInputVisible] = useState(true)
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
@@ -84,7 +84,7 @@ const FileUploadForm = ({ hint, sendFiles, clearFiles, multiple = true, accept }
       {inputVisible && (
         <div className="card_body file_input_body">
           <div className="card_outside_title with_hint">
-            Attach file
+            {title || 'Attach file'}
             <div className="title_hint">
               <i className="bx bx-help-circle"></i>
               <div className="hint_popover">{hint || 'Max files count: 4'}</div>

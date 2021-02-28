@@ -1,8 +1,8 @@
 import './style.css';
 
-const InputButton = ({ text }) => {
+const InputButton = ({ text, className }) => {
   return (
-    <input className="btn" type="submit" value={text} />
+    <input className={className ? 'btn ' + className : 'btn'} type="submit" value={text} />
   )
 }
 

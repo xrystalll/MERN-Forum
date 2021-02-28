@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Store from 'store/Store';
 
 import Layout from 'components/Layout';
-import { AuthRoute, UsersOnlyRoute } from 'components/ProtectedRoute';
+import { AuthRoute, UsersOnlyRoute, AdminsOnlyRoute } from 'components/ProtectedRoute';
 
 import Home from 'routes/Home';
 import SignUp from 'routes/Auth/SignUp';
@@ -13,6 +13,7 @@ import Board from 'routes/Forum/Board';
 import Thread from 'routes/Forum/Thread';
 import Users from 'routes/Users';
 import User from 'routes/User';
+import Dashboard from 'routes/Dashboard';
 import { NotFound } from 'routes/Error';
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="/thread/:threadId" component={Thread} />
             <Route path="/users" component={Users} />
             <UsersOnlyRoute path="/user/:userId" component={User} />
+            <AdminsOnlyRoute path="/dashboard" component={Dashboard} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>
         </Layout>

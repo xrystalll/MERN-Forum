@@ -1,5 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 
+import { BACKEND } from 'support/Constants';
+
 import { UserCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
@@ -21,7 +23,7 @@ const Old = () => {
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${'http://localhost:8000'}/api/users?limit=${limit}&page=${page}&sort=old`)
+        const data = await fetch(`${BACKEND}/api/users?limit=${limit}&page=${page}&sort=old`)
         const response = await data.json()
 
         if (!response.error) {

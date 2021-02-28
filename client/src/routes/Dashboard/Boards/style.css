@@ -1,0 +1,42 @@
+/* Boards actions */
+.edit_action_menu {
+  display: flex;
+  align-items: center;
+}
+.edit_action_menu .action {
+  border-radius: var(--border-radius);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-background);
+  cursor: pointer;
+}
+.edit_action_menu .action:not(:first-child) {
+  margin-left: .3rem;
+}
+.edit_action_menu .action:hover {
+  background-color: var(--secondary-bg-tint);
+}
+.edit_action_menu .action i {
+  font-size: 18px;
+}
+
+.edit {
+  color: var(--main-success-color);
+}
+.delete {
+  color: var(--main-danger-color);
+}
+.cancel {
+  color: var(--main-info-color);
+}
+.cancel i {
+  font-size: 22px !important;
+}
+
+.form_inner.edit_form {
+  max-width: initial !important;
+  margin: .25rem !important;
+}

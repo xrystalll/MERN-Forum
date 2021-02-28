@@ -1,5 +1,5 @@
 /* PopularBoards */
-.boards_slide_list {
+.boards_slide_list, .slides_list {
   display: grid;
   grid-template-columns: repeat(6, minmax(112px, 1fr));
   grid-gap: 12px;
@@ -9,13 +9,16 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
+.slides_list {
+  grid-template-columns: repeat(5, minmax(112px, 1fr));
+}
 @media (max-width: 746px) {
-  .boards_slide_list::-webkit-scrollbar, .sort_nav::-webkit-scrollbar, .breadcrumb_body::-webkit-scrollbar {
+  .boards_slide_list::-webkit-scrollbar, .slides_list::-webkit-scrollbar, .sort_nav::-webkit-scrollbar, .breadcrumb_body::-webkit-scrollbar {
     width: 0px;
     height: 0px;
   }
 }
-.boards_slide_item {
+.boards_slide_item, .stats_item {
   width: 112px;
   height: 112px;
   border-radius: var(--border-radius);
@@ -23,7 +26,18 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
-.boards_slide_item a {
+.stats_item {
+  width: 100%;
+  background-color: var(--secondary-bg-tint);
+}
+.stats_item .slide_item_text {
+  color: var(--main-text) !important;
+}
+.stats_item .slide_content {
+  font-size: .9rem;
+  color: var(--secondary-text);
+}
+.boards_slide_item .slide_item_text {
   display: flex;
   flex-direction: column;
   color: var(--main-text-light);

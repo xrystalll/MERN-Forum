@@ -4,12 +4,33 @@ const router = express.Router();
 const { verifyAccessToken } = require('../modules/utils/jwt');
 const GeneralController = require('../modules/controllers/generalController');
 const ProfileController = require('../modules/controllers/profileController');
+const ForumController = require('../modules/controllers/forumController');
 
 router.get('/users', GeneralController.getUsers)
 router.get('/user', verifyAccessToken, GeneralController.getUser)
 
 router.get('/profile', verifyAccessToken, ProfileController.getProfile)
-router.post('/profile/upload/picture', verifyAccessToken, ProfileController.uploadUserPicture)
-router.post('/profile/setOnline', verifyAccessToken, ProfileController.setOnline)
+router.put('/profile/upload/picture', verifyAccessToken, ProfileController.uploadUserPicture)
+router.put('/profile/setOnline', verifyAccessToken, ProfileController.setOnline)
+
+router.get('/boards', ForumController.getBoards)
+router.post('/board/create', verifyAccessToken, ForumController.createBoard)
+router.delete('/board/delete', verifyAccessToken, ForumController.deleteBoard)
+router.put('/board/edit', verifyAccessToken, ForumController.editBoard)
+
+router.get('/threads/recently', ForumController.getRecentlyThreads)
+router.get('/threads', ForumController.getThreads)
+
+router.get('/thread', ForumController.getThread)
+// router.post('/thread/create', verifyAccessToken, ForumController.createThread)
+// router.delete('/thread/delete', verifyAccessToken, ForumController.deleteThread)
+// router.put('/thread/edit', verifyAccessToken, ForumController.editThread)
+// router.put('/thread/like', verifyAccessToken, ForumController.likeThread)
+
+router.get('/answers', ForumController.getAnswers)
+// router.post('/answer/create', verifyAccessToken, ForumController.createAnswer)
+// router.delete('/answer/delete', verifyAccessToken, ForumController.deleteAnswer)
+// router.put('/answer/edit', verifyAccessToken, ForumController.editAnswer)
+// router.put('/answer/like', verifyAccessToken, ForumController.likeAnswer)
 
 module.exports = router

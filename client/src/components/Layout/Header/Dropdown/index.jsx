@@ -122,6 +122,13 @@ const DropdownMenu = ({ user, logout, setDropdownOpen }) => {
               <div className="menu-item-title">Toggle theme</div>
             </DropdownItem>
             <DropdownItem
+              leftIcon="cog"
+              onClick={goTo}
+              data={{ url: '/user/' + user.id + '/settings' }}
+            >
+              <div className="menu-item-title">Settings</div>
+            </DropdownItem>
+            <DropdownItem
               leftIcon="log-out"
               onClick={onLogout}
             >

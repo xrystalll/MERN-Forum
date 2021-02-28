@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { StoreContext } from 'store/Store';
 import { useForm } from 'hooks/useForm';
 
+import { BACKEND } from 'support/Constants';
+
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import FormCardItem from 'components/Card/FormCardItem';
@@ -40,7 +42,7 @@ const SignIn = ({ history }) => {
 
     setLoading(true)
 
-    fetch('http://localhost:8000' + '/auth/login', {
+    fetch(BACKEND + '/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

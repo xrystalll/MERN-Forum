@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
@@ -15,12 +15,21 @@ const LeftMenu = ({ open, setMenuOpen }) => {
       <nav className="main_nav">
         <ul className="nav_links">
           {user && (
-            <li className="nav_item">
-              <NavLink to="/messages" onClick={() => setMenuOpen(false)}>
-                <span className="nav_text">Messages</span>
-                {messages > 0 && <span className="nav_counter">{counter(messages)}</span>}
-              </NavLink>
-            </li>
+            <Fragment>
+              {user.role === 'admin' && (
+                <li className="nav_item">
+                  <NavLink to="/dashboard" onClick={() => setMenuOpen(false)}>
+                    <span className="nav_text">Dashboard</span>
+                  </NavLink>
+                </li>
+              )}
+              <li className="nav_item">
+                <NavLink to="/messages" onClick={() => setMenuOpen(false)}>
+                  <span className="nav_text">Messages</span>
+                  {messages > 0 && <span className="nav_counter">{counter(messages)}</span>}
+                </NavLink>
+              </li>
+            </Fragment>
           )}
           <li className="nav_item">
             <NavLink to="/boards" onClick={() => setMenuOpen(false)}>

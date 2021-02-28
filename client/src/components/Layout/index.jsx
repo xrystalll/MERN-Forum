@@ -1,5 +1,8 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
+
 import { StoreContext } from 'store/Store';
+
+import { BACKEND } from 'support/Constants';
 
 import Header from './Header';
 import LeftMenu from './LeftMenu';
@@ -26,8 +29,8 @@ const Layout = ({ children }) => {
   }, [user])
 
   const updateLastSeen = () => {
-    fetch('http://localhost:8000' + '/api/profile/setOnline', {
-      method: 'POST',
+    fetch(BACKEND + '/api/profile/setOnline', {
+      method: 'PUT',
       headers: {
         Authorization: 'Bearer ' + token
       }

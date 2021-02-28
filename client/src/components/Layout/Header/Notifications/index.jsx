@@ -14,8 +14,8 @@ const Notifications = ({ user }) => {
   return (
     <li className="head_act_item notifications">
       {notification
-        ? <i className="bx bx-notification bx-tada" onClick={openNotifications}></i>
-        : <i className="bx bx-notification" onClick={openNotifications}></i>
+        ? <i className="bx bxs-bell bx-tada" onClick={openNotifications}></i>
+        : <i className="bx bx-bell" onClick={openNotifications}></i>
       }
 
       {dropdownOpen && (

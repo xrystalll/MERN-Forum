@@ -4,6 +4,7 @@ const path = require('path');
 
 const http = require('http');
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const RateLimit = require('express-rate-limit');
 const createError = require('http-errors');
@@ -14,8 +15,7 @@ const app = express()
 
 app.use(express.static(path.join(__dirname, '..', '/public')))
 app.use(cors())
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 const limiter = new RateLimit({
   windowMs: 1 * 60 * 1000,

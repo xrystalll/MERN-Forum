@@ -33,17 +33,10 @@ const upload = multer({
 
 const getProfile = async (req, res, next) => {
   try {
-    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(req.payload.id) })
-    res.json({
-      id: user._id,
-      name: user.name,
-      displayName: user.displayName,
-      email: user.email,
-      createdAt: user.createdAt,
-      onlineAt: user.onlineAt,
-      picture: user.picture,
-      role: user.role
-    })
+    const select = '_id name displayName email createdAt onlineAt picture role'
+    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, select)
+
+    res.json(user)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
