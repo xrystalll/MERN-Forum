@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -9,10 +9,17 @@ import { BoardCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
+import Default from './Default';
+import Popular from './Popular';
+import NewestAnswer from './NewestAnswer';
+import NewestThread from './NewestThread';
+import Answers from './Answers';
+
 const Boards = () => {
   document.title = 'Forum | Boards'
   const { setPostType, setFabVisible } = useContext(StoreContext)
   const [init, setInit] = useState(true)
+  const [sort, setSort] = useState('boards')
 
   useEffect(() => {
     if (init) {
@@ -25,44 +32,26 @@ const Boards = () => {
     setInit(false)
   }, [setInit, init, setPostType, setFabVisible])
 
-  const [sort, setSort] = useState('default')
-
-  const sortFunc = (a, b) => {
-    switch (sort) {
-      case 'popular':
-        return b.threadsCount - a.threadsCount
-      case 'answers':
-        return b.answersCount - a.answersCount
-      default:
-        return b.position - a.position
-    }
-  }
-
-  const [boards] = useState([])
-  const loading = false
-
-  return !loading ? (
+  return (
     <Section>
       <Breadcrumbs current="All boards" links={[
         { title: 'Home', link: '/' }
       ]} />
 
       <SortNav links={[
-        { title: 'Default', sort: 'default' },
+        { title: 'Default', sort: 'boards' },
         { title: 'Popular', sort: 'popular' },
+        { title: 'NewestAnswer', sort: 'newestanswer' },
+        { title: 'NewestThread', sort: 'newestthread' },
         { title: 'Answers count', sort: 'answers' }
       ]} setSort={setSort} state={sort} />
 
-      {boards.length ? (
-        boards.slice().sort(sortFunc).map(item => (
-          <BoardCard key={item.id} data={item} />
-        ))
-      ) : (
-        <Errorer message="No boards yet" />
-      )}
+      {sort === 'popular' && <Popular />}
+      {sort === 'newestanswer' && <NewestAnswer />}
+      {sort === 'newestthread' && <NewestThread />}
+      {sort === 'answers' && <Answers />}
+      {sort === 'boards' && <Default />}
     </Section>
-  ) : (
-    <Loader color="#64707d" />
   )
 }
 

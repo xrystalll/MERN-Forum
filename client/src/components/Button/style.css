@@ -9,6 +9,8 @@
   color: var(--main-text-light);
   font-size: 1rem;
   font-weight: 500;
+  font-family: var(--font-ss);
+  line-height: 1;
   border: none;
   border-radius: 50px;
   transition: var(--transition-background);
@@ -62,6 +64,11 @@
   margin: .3rem 0 !important;
 }
 
+.btn.secondary {
+  border: 2px solid var(--secondary-bg-tint);
+  background-color: transparent;
+}
+
 .secondary_btn {
   position: relative;
   display: flex;
@@ -78,4 +85,12 @@
   margin: 8px;
   cursor: pointer;
   user-select: none;
+}
+
+.buttons_group {
+  display: flex;
+  align-items: center;
+}
+.buttons_group .btn:not(:first-child) {
+  margin-left: .5rem;
 }

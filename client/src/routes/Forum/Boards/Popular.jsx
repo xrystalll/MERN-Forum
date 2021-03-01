@@ -2,12 +2,12 @@ import { Fragment, useEffect, useState } from 'react';
 
 import { BACKEND } from 'support/Constants';
 
-import { UserCard } from 'components/Card';
+import { BoardCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Newest = () => {
-  const [users, setUsers] = useState([])
+const Popular = () => {
+  const [boards, setBoards] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -18,16 +18,16 @@ const Newest = () => {
   const [moreTrigger, setMoreTrigger] = useState(true)
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchBoards = async () => {
       if (!hasNextPage) return
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${BACKEND}/api/users?limit=${limit}&page=${page}`)
+        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}&sort=poular`)
         const response = await data.json()
 
         if (!response.error) {
-          setUsers(prev => [...prev, ...response.docs])
+          setBoards(prev => [...prev, ...response.docs])
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -42,7 +42,7 @@ const Newest = () => {
       }
     }
 
-    fetchUsers()
+    fetchBoards()
   }, [page])
 
   useEffect(() => {
@@ -65,19 +65,19 @@ const Newest = () => {
 
   return !noData ? (
     !loading ? (
-      users.length ? (
+      boards.length ? (
         <Fragment>
           <div className="items_list">
-            {users.map(item => (
-              <UserCard key={item._id} data={item} />
+            {boards.map(item => (
+              <BoardCard key={item._id} data={item} />
             ))}
           </div>
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message="No users yet" />
+      ) : <Errorer message="No boards yet" />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message="Unable to display users" />
+  ) : <Errorer message="Unable to display boards" />
 }
 
-export default Newest;
+export default Popular;

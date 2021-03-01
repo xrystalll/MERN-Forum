@@ -11,7 +11,7 @@ const Card = ({ data, threadData, full = false, type }) => {
   const { user, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
   const history = useHistory()
   const [likes, setLikes] = useState(data.likeCount)
-  const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i.username === user.username) : false)
+  const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
 
   useEffect(() => { 
     if (type === 'thread' && data.closed) {
@@ -50,9 +50,9 @@ const Card = ({ data, threadData, full = false, type }) => {
     }
     setPostType({
       type: postType,
-      id: data.id,
+      id: data._id,
       someData: {
-        id: data.id,
+        id: data._id,
         title: data.title,
         body: data.body
       }
@@ -60,19 +60,19 @@ const Card = ({ data, threadData, full = false, type }) => {
     setModalOpen(true)
   }
 
-  const answerTo = (toId, username) => {
+  const answerTo = (toId, displayName) => {
     let id
     if (type === 'answer') {
       id = data.threadId
     } else {
-      id = data.id
+      id = data._id
     }
     setPostType({
       type: 'answer',
       id,
       someData: {
         toId,
-        body: `**${username}**, `
+        body: `**${displayName}**, `
       }
     })
     setModalOpen(true)
@@ -130,7 +130,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                   </div>
                 )
               ) : (
-                <Link to={'/thread/' + data.id} className="card_title">
+                <Link to={'/thread/' + data._id} className="card_title">
                   {data.pined && <i className="thread_pin bx bx-pin"></i>}
                   {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
                   {data.title}
@@ -138,8 +138,8 @@ const Card = ({ data, threadData, full = false, type }) => {
               )}
 
               <div className="card_info">
-                <Link to={'/user/' + data.author.id} className="head_text bold">
-                  {data.author.username}
+                <Link to={'/user/' + data.author._id} className="head_text bold">
+                  {data.author.displayName}
                   {full && (
                     data.author.role === 'admin' ? (
                       <span className="user_status">admin</span>
@@ -147,7 +147,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                       <Fragment>
                         {type === 'thread' && <span className="user_status">owner</span>}
                         {type === 'answer' && (
-                          data.author.id === threadData.author.id && (
+                          data.author._id === threadData.author._id && (
                             <span className="user_status">owner</span>
                           )
                         )}
@@ -171,7 +171,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
                   </Fragment>
                 )}
-                {user.id === data.author.id || user.role === 'admin'
+                {user.id === data.author._id || user.role === 'admin'
                   ? <div onClick={editClick} className="dropdown_item">Edit</div>
                   : null
                 }
@@ -202,8 +202,8 @@ const Card = ({ data, threadData, full = false, type }) => {
           <footer className="card_foot">
             {full ? (
               <Fragment>
-                {user && user.id !== data.author.id && (
-                  <div className="act_btn foot_btn" onClick={() => answerTo(data.id, data.author.username)}>
+                {user && user.id !== data.author._id && (
+                  <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
                     <i className="bx bx-redo"></i>
                     <span>Answer</span>
                   </div>
@@ -218,8 +218,8 @@ const Card = ({ data, threadData, full = false, type }) => {
                       {user && (
                         <div className="likes_list">
                           {data.likes.slice(0, 4).map((item, index) => (
-                            <div key={index} className="head_profile" title={item.username} style={{ backgroundImage: `url(${item.picture})` }}>
-                              {!item.picture && item.username.charAt(0)}
+                            <div key={index} className="head_profile" title={item.displayName} style={{ backgroundImage: `url(${item.picture})` }}>
+                              {!item.picture && item.displayName.charAt(0)}
                             </div>
                           ))}
                           {data.likes.length > 4 && <span>4 and others</span>}
@@ -269,7 +269,7 @@ const BoardCard = ({ data }) => {
         <div className="card_block">
           <header className="card_head">
             <div className="card_head_inner">
-              <Link to={'/boards/' + data.id} className="card_title">{data.title}</Link>
+              <Link to={'/boards/' + data.name} className="card_title">{data.title}</Link>
             </div>
           </header>
 

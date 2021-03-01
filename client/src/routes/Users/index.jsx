@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
@@ -36,7 +36,7 @@ const Users = ({ history, location: { pathname } }) => {
     } else if (sort === 'online') {
       route = path + '/online'
     } else {
-      route = path + '/'
+      route = path
     }
 
     history.push(route)
@@ -58,6 +58,9 @@ const Users = ({ history, location: { pathname } }) => {
         <Route path={path + '/oldest'} exact component={Old} />
         <Route path={path + '/online'} exact component={Online} />
         <Route path={path} exact component={Newest} />
+        <Route>
+          <Redirect to={path} />
+        </Route>
       </Switch>
     </Section>
   )

@@ -151,7 +151,7 @@ ul {
   justify-content: center;
   margin-top: 5rem;
 }
-.content > .content_loader {
+.content > .content_loader, .main_section > .content_loader {
   height: 55vh;
 }
 .more_loader {

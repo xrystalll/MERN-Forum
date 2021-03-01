@@ -13,7 +13,8 @@ const Board = ({ match }) => {
   document.title = 'Forum | Board'
   const { setPostType, setFabVisible } = useContext(StoreContext)
   const [init, setInit] = useState(true)
-  const { boardId } = match.params
+  const { boardName } = match.params
+  const boardId = 0
 
   useEffect(() => {
     if (init) {
@@ -24,28 +25,16 @@ const Board = ({ match }) => {
       })
     }
     setInit(false)
-  }, [setInit, init, setPostType, setFabVisible, boardId])
+  }, [setInit, init, setPostType, setFabVisible, boardName])
 
   const [sort, setSort] = useState('default')
 
-  const sortFunc = (a, b) => {
-    switch (sort) {
-      case 'answers':
-        return b.answersCount - a.answersCount
-      case 'recently':
-        return a.newestAnswer > b.newestAnswer ? -1 : 1
-      default:
-        return b.newestAnswer - a.newestAnswer
-    }
-  }
-
-  const [board] = useState([])
   const [threads] = useState([])
   const loading = false
 
   return !loading ? (
     <Section>
-      <Breadcrumbs current={board[0].title} links={[
+      <Breadcrumbs current="Title" links={[
         { title: 'Home', link: '/' },
         { title: 'All boards', link: '/boards' }
       ]} />
@@ -57,7 +46,7 @@ const Board = ({ match }) => {
       ]} setSort={setSort} state={sort} />
 
       {threads.length ? (
-        threads.slice().sort(sortFunc).map(item => (
+        threads.map(item => (
           <Card key={item.id} data={item} />
         ))
       ) : (

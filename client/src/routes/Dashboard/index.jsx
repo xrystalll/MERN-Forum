@@ -3,6 +3,8 @@ import { NavLink, Switch, Redirect, Route, useRouteMatch } from 'react-router-do
 
 import { StoreContext } from 'store/Store';
 
+import { BACKEND } from 'support/Constants';
+
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import { SlidesContainer, SlideItem } from 'components/PopularBoards';
@@ -14,35 +16,27 @@ const Dashboard = () => {
   document.title = 'Forum | Admin dashboard'
   const { setFabVisible } = useContext(StoreContext)
   const { path } = useRouteMatch()
+  const [stats, setStats] = useState([])
 
   useEffect(() => {
     setFabVisible(false)
   }, [])
 
-  // mock data
-  const [stats] = useState([
-    {
-      id: 1,
-      title: 'Users',
-      count: 99
-    }, {
-      id: 2,
-      title: 'Boards',
-      count: 12
-    }, {
-      id: 3,
-      title: 'Threads',
-      count: 145
-    }, {
-      id: 4,
-      title: 'Answers',
-      count: 313
-    }, {
-      id: 5,
-      title: 'Bans',
-      count: 32
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await fetch(BACKEND + '/api/stats')
+        const response = await data.json()
+
+        if (!response.error) {
+          setStats(response)
+        } else throw Error(response.error.message)
+      } catch(err) {
+      }
     }
-  ])
+
+    fetchStats()
+  }, [])
 
   return (
     <Section>
@@ -55,11 +49,13 @@ const Dashboard = () => {
 
           <SectionHeader title="Admin dashboard" />
 
-          <SlidesContainer>
-            {stats.map(item => (
-              <SlideItem key={item.id} title={item.title} count={item.count} />
-            ))}
-          </SlidesContainer>
+          {stats.length ? (
+            <SlidesContainer>
+              {stats.map(item => (
+                <SlideItem key={item._id} title={item.title} count={item.count} />
+              ))}
+            </SlidesContainer>
+          ) : null}
 
           <div className="admin__nav">
             <NavLink to={path + '/boards'} className="admin__nav_item">

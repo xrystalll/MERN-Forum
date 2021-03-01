@@ -37,6 +37,7 @@
 }
 
 .form_inner.edit_form {
-  max-width: initial !important;
+  width: 100%;
+  max-width: initial;
   margin: .25rem !important;
 }

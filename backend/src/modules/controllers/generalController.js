@@ -2,6 +2,38 @@ const Mongoose = require('mongoose');
 const createError = require('http-errors');
 
 const User = require('../models/User');
+const Board = require('../models/Board');
+const Thread = require('../models/Thread');
+const Answer = require('../models/Answer');
+const Ban = require('../models/Ban');
+
+const getStats = async (req, res, next) => { 
+  try {
+    res.json([{
+      _id: 1,
+      title: 'Users',
+      count: await User.countDocuments()
+    }, {
+      _id: 2,
+      title: 'Boards',
+      count: await Board.countDocuments()
+    }, {
+      _id: 3,
+      title: 'Threads',
+      count: await Thread.countDocuments()
+    }, {
+      _id: 4,
+      title: 'Answers',
+      count: await Answer.countDocuments()
+    }, {
+      _id: 5,
+      title: 'Bans',
+      count: await Ban.countDocuments()
+    }])
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
 
 const getUsers = async (req, res, next) => { 
   try {
@@ -40,4 +72,4 @@ const getUser = async (req, res, next) => {
   }
 }
 
-module.exports = { getUsers, getUser }
+module.exports = { getStats, getUsers, getUser }

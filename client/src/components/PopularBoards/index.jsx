@@ -16,7 +16,7 @@ const PopularBoardsContainer = ({ children }) => {
 const PopularBoardsItem = ({ data }) => {
   return (
     <li className="boards_slide_item">
-      <Link to={'/boards/' + data.id} className="slide_item_text">
+      <Link to={'/boards/' + data.name} className="slide_item_text">
         <span className="slide_title">{data.title}</span>
         <span className="slide_content">
           {counter(data.threadsCount)} {declOfNum(data.threadsCount, ['thread', 'threads', 'threads'])}

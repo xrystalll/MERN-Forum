@@ -33,7 +33,7 @@ const App = () => {
             <AuthRoute path="/signup" component={SignUp} />
             <AuthRoute path="/signin" component={SignIn} />
             <Route exact path="/boards" component={Boards} />
-            <Route path="/boards/:boardId" component={Board} />
+            <Route path="/boards/:boardName" component={Board} />
             <Route path="/thread/:threadId" component={Thread} />
             <Route path="/users" component={Users} />
             <UsersOnlyRoute path="/user/:userId" component={User} />
@@ -44,6 +44,6 @@ const App = () => {
       </Router>
     </Store>
   )
-};
+}
 
 export default App;

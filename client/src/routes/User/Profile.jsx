@@ -59,9 +59,7 @@ const Profile = ({ userId }) => {
             <SectionHeader title={userData.displayName} />
 
           </Fragment>
-        ) : (
-          <Loader color="#64707d" />
-        )
+        ) : <Loader color="#64707d" />
       ) : (
         <Errorer message="Unable to display user profile" />
       )}

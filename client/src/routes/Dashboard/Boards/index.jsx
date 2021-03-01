@@ -1,45 +1,100 @@
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
 import { BACKEND } from 'support/Constants';
 
 import Breadcrumbs from 'components/Breadcrumbs';
+import { Button } from 'components/Button';
+import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
-import { BoardItem } from './BoardItem';
+import { BoardItem, NewBoardItem } from './BoardItem';
 import './style.css';
 
 const Boards = () => {
   document.title = 'Forum | Manage boards'
   const { token } = useContext(StoreContext)
-  // mock data
-  const [boards] = useState([
-    {
-      _id: 1,
-      title: 'Board 1',
-      position: 1,
-      threadsCount: 0,
-      answersCount: 0
-    }, {
-      _id: 2,
-      title: 'Board 2',
-      position: 2,
-      threadsCount: 0,
-      answersCount: 0
-    }, {
-      _id: 3,
-      title: 'Board 3',
-      position: 3,
-      threadsCount: 0,
-      answersCount: 0
-    }, {
-      _id: 4,
-      title: 'Board 4',
-      position: 4,
-      threadsCount: 0,
-      answersCount: 0
+
+  const [boards, setBoards] = useState([])
+  const [page, setPage] = useState(1)
+  const [nextPage, setNextPage] = useState(1)
+  const [hasNextPage, setHasNextPage] = useState(true)
+  const limit = 10
+  const [loading, setLoading] = useState(true)
+  const [moreLoading, setMoreLoading] = useState(false)
+  const [noData, setNoData] = useState(false)
+  const [moreTrigger, setMoreTrigger] = useState(true)
+  const [create, setCreate] = useState(false)
+
+  useEffect(() => {
+    const fetchBoards = async () => {
+      if (!hasNextPage) return
+      setMoreLoading(true)
+
+      try {
+        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}`, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+        const response = await data.json()
+
+        if (!response.error) {
+          setBoards(prev => [...prev, ...response.docs])
+          setNextPage(response.nextPage)
+          setHasNextPage(response.hasNextPage)
+          setLoading(false)
+          setMoreLoading(false)
+          setNoData(false)
+          setMoreTrigger(true)
+        } else throw Error(response.error.message)
+      } catch(err) {
+        setLoading(false)
+        setMoreLoading(false)
+        setNoData(true)
+      }
     }
-  ])
+
+    fetchBoards()
+  }, [page])
+
+  useEffect(() => {
+    document.addEventListener('scroll', handleScroll)
+    return () => {
+      document.removeEventListener('scroll', handleScroll)
+    }
+  })
+
+  const handleScroll = () => {
+    if (!moreTrigger) return
+
+    const scrollTop = window.innerHeight + document.documentElement.scrollTop
+    const scrollHeight = document.scrollingElement.scrollHeight
+    if (scrollTop >= scrollHeight - 150 ) {
+      setMoreTrigger(false)
+      setPage(nextPage)
+    }
+  }
+
+  const createBoard = (data) => {
+    fetch(BACKEND + '/api/board/create', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => response.json())
+      .then(data => {
+        setNoData(false)
+        setCreate(false)
+        setBoards(prev => [data, ...prev])
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
   const editBoard = (data) => {
     fetch(BACKEND + '/api/board/edit', {
@@ -52,7 +107,10 @@ const Boards = () => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data)
+        let newArray = [...boards]
+        newArray[newArray.findIndex(item => item._id === data._id)] = data
+
+        setBoards(newArray)
       })
       .catch(err => {
         console.error(err)
@@ -70,7 +128,11 @@ const Boards = () => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data)
+        setBoards(boards.filter(item => item._id !== boardId))
+        if (boards.filter(item => item._id !== boardId).length === 0) {
+          setBoards([])
+          setNoData(true)
+        }
       })
       .catch(err => {
         console.error(err)
@@ -84,11 +146,29 @@ const Boards = () => {
         { title: 'Dashboard', link: '/dashboard' }
       ]} />
 
-      {boards.length ? (
-        boards.map(item => (
-          <BoardItem key={item._id} data={item} editBoard={editBoard} deleteBoard={deleteBoard} />
-        ))
-      ) : <Errorer message="No boards yet" />}
+      <div className="card_item">
+        <Button className="main hollow" text="Create new board" onClick={() => setCreate(!create)} />
+      </div>
+
+      {create && <NewBoardItem createBoard={createBoard} setCreate={setCreate} />}
+
+      {!noData ? (
+        !loading ? (
+          boards.length ? (
+            <Fragment>
+              <div className="items_list">
+                {boards.map(item => (
+                  <BoardItem key={item._id} data={item} editBoard={editBoard} deleteBoard={deleteBoard} />
+                ))}
+              </div>
+
+              {moreLoading && <Loader className="more_loader" color="#64707d" />}
+            </Fragment>
+          ) : <Errorer message="No boards yet" />
+        ) : <Loader color="#64707d" />
+      ) : (
+        <Errorer message="Unable to display boards" />
+      )}
     </Fragment>
   )
 }
