@@ -2,7 +2,6 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
-
 import Boards from './Boards';
 import Threads from './Threads';
 import Uploads from './Uploads';

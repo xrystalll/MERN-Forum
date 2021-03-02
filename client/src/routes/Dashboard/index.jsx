@@ -7,7 +7,7 @@ import { BACKEND } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
-import { SlidesContainer, SlideItem } from 'components/PopularBoards';
+import { SlidesContainer, SlideItem } from 'components/Slider';
 
 import Boards from './Boards';
 import './style.css';

@@ -37,8 +37,8 @@ const Default = () => {
         } else throw Error(response.error.message)
       } catch(err) {
         setLoading(false)
-        setMoreLoading(false)
         setNoData(true)
+        setMoreLoading(false)
       }
     }
 

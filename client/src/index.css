@@ -152,10 +152,10 @@ ul {
   margin-top: 5rem;
 }
 .content > .content_loader, .main_section > .content_loader {
-  height: 55vh;
+  height: 50vh;
 }
 .more_loader {
-  height: 36px;
+  height: 36px !important;
   margin-top: 1.5rem;
 }
 
@@ -883,6 +883,7 @@ a.head_text:hover {
   font-family: monospace;
   background-color: var(--dark-bg) !important;
   border-radius: var(--border-radius-inner);
+  padding-right: .8rem;
 }
 .markdown pre {
   margin: .5rem 0;

@@ -38,8 +38,8 @@ const Profile = ({ userId }) => {
         } else throw Error(response.error.message)
       } catch(err) {
         setInit(false)
-        setLoading(false)
         setNoData(true)
+        setLoading(false)
       }
     }
 

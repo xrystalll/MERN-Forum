@@ -32,11 +32,7 @@ const Boards = () => {
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}`, {
-          headers: {
-            Authorization: 'Bearer ' + token
-          }
-        })
+        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}`)
         const response = await data.json()
 
         if (!response.error) {
@@ -50,8 +46,8 @@ const Boards = () => {
         } else throw Error(response.error.message)
       } catch(err) {
         setLoading(false)
-        setMoreLoading(false)
         setNoData(true)
+        setMoreLoading(false)
       }
     }
 

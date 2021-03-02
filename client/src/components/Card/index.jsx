@@ -3,21 +3,22 @@ import { Link, useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum, dateFormat } from 'support/Utils';
+import { BACKEND } from 'support/Constants';
 
 import Dropdown from './Dropdown';
 import Markdown from 'components/Markdown';
 
 const Card = ({ data, threadData, full = false, type }) => {
-  const { user, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
+  const { user, token, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
   const history = useHistory()
-  const [likes, setLikes] = useState(data.likeCount)
+  const [likes, setLikes] = useState(data.likes.length)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
 
   useEffect(() => { 
     if (type === 'thread' && data.closed) {
       setFabVisible(false)
     }
-  }, [type, data.closed, setFabVisible])
+  }, [])
 
   const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
 
@@ -79,7 +80,23 @@ const Card = ({ data, threadData, full = false, type }) => {
   }
 
   const deleteThread = () => {
-    console.log('delete thread')
+    fetch(BACKEND + '/api/thread/delete', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ threadId: data._id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          history.push('/')
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   const deleteAnswer = () => {
@@ -91,7 +108,6 @@ const Card = ({ data, threadData, full = false, type }) => {
       deleteAnswer()
     } else {
       deleteThread()
-      history.push('/')
     }
   }
 
@@ -100,18 +116,58 @@ const Card = ({ data, threadData, full = false, type }) => {
 
   const onPin = () => {
     if (type !== 'answer') {
-      setPined(!pined)
-
-      // pin function
+      fetch(BACKEND + '/api/thread/adminedit', {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          threadId: data._id,
+          title: data.title,
+          body: data.body,
+          pined: !pined
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.error) {
+            setPined(data.pined)
+          }
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 
   const onClose = () => {
     if (type !== 'answer') {
-      setClosed(!closed)
-      setFabVisible(closed)
+      const editApi = user.role === 'admin' ? 'adminedit' : 'edit'
 
-      // close function
+      fetch(BACKEND + '/api/thread/' + editApi, {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          threadId: data._id,
+          title: data.title,
+          body: data.body,
+          closed: !closed
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.error) {
+            setClosed(data.closed)
+            setFabVisible(!data.closed)
+          }
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 
@@ -124,15 +180,15 @@ const Card = ({ data, threadData, full = false, type }) => {
               {full ? (
                 data.title && (
                   <div className="card_title full">
-                    {data.pined && <i className="thread_pin bx bx-pin"></i>}
-                    {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                    {pined && <i className="thread_pin bx bx-pin"></i>}
+                    {closed && <i className="thread_lock bx bx-lock-alt"></i>}
                     {data.title}
                   </div>
                 )
               ) : (
                 <Link to={'/thread/' + data._id} className="card_title">
-                  {data.pined && <i className="thread_pin bx bx-pin"></i>}
-                  {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                  {pined && <i className="thread_pin bx bx-pin"></i>}
+                  {closed && <i className="thread_lock bx bx-lock-alt"></i>}
                   {data.title}
                 </Link>
               )}
@@ -175,6 +231,9 @@ const Card = ({ data, threadData, full = false, type }) => {
                   ? <div onClick={editClick} className="dropdown_item">Edit</div>
                   : null
                 }
+                {type !== 'answer' && user.id === data.author._id && user.role !== 'admin' && (
+                  <div onClick={onClose} className="dropdown_item">Close</div>
+                )}
               </Dropdown>
             )}
           </header>
@@ -246,7 +305,7 @@ const Card = ({ data, threadData, full = false, type }) => {
             )}
           </footer>
 
-          {full && (
+          {full && data.edited && (
             data.edited.createdAt && (
               <div className="act_btn foot_btn under_foot disable">
                 <i className="bx bx-pencil"></i>

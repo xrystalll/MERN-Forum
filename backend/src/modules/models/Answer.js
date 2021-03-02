@@ -7,12 +7,16 @@ const answerSchema = new Schema({
   answeredTo: String,
   body: String,
   createdAt: String,
-  author: Schema.Types.ObjectId,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   edited: {
     createdAt: String
   },
   likes: [{
-    userId: Schema.Types.ObjectId
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }],
   attach: [{
     file: String,

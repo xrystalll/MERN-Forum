@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-const TextareaForm = ({ name, value, placeholder = '', required = false, onChange }) => {
+const TextareaForm = ({ name, value, placeholder = '', required = false, onChange, className }) => {
   const textarea = useRef()
 
   const handleTag = (tag) => {
@@ -41,7 +41,7 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
   }
 
   return (
-    <div className="form_block">
+    <div className={className || 'form_block'}>
       <div className="form_foot">
         <div className="act_group">
           <div className="bb_btn" role="button" onClick={() => handleTag('italic')} title="Italic">

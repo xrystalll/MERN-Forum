@@ -23,7 +23,7 @@ const Popular = () => {
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}&sort=poular`)
+        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}&sort=popular`)
         const response = await data.json()
 
         if (!response.error) {
@@ -37,8 +37,8 @@ const Popular = () => {
         } else throw Error(response.error.message)
       } catch(err) {
         setLoading(false)
-        setMoreLoading(false)
         setNoData(true)
+        setMoreLoading(false)
       }
     }
 

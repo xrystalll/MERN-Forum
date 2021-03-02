@@ -19,7 +19,7 @@ const Boards = () => {
   document.title = 'Forum | Boards'
   const { setPostType, setFabVisible } = useContext(StoreContext)
   const [init, setInit] = useState(true)
-  const [sort, setSort] = useState('boards')
+  const [sort, setSort] = useState('default')
 
   useEffect(() => {
     if (init) {
@@ -39,18 +39,18 @@ const Boards = () => {
       ]} />
 
       <SortNav links={[
-        { title: 'Default', sort: 'boards' },
+        { title: 'Default', sort: 'default' },
         { title: 'Popular', sort: 'popular' },
-        { title: 'NewestAnswer', sort: 'newestanswer' },
-        { title: 'NewestThread', sort: 'newestthread' },
-        { title: 'Answers count', sort: 'answers' }
+        { title: 'Recently answered', sort: 'newestanswer' },
+        { title: 'By newest thread', sort: 'newestthread' },
+        { title: 'By answers count', sort: 'answers' }
       ]} setSort={setSort} state={sort} />
 
       {sort === 'popular' && <Popular />}
       {sort === 'newestanswer' && <NewestAnswer />}
       {sort === 'newestthread' && <NewestThread />}
       {sort === 'answers' && <Answers />}
-      {sort === 'boards' && <Default />}
+      {sort === 'default' && <Default />}
     </Section>
   )
 }

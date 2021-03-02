@@ -2,12 +2,12 @@ import { Fragment, useEffect, useState } from 'react';
 
 import { BACKEND } from 'support/Constants';
 
-import { BoardCard } from 'components/Card';
+import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const NewestAnswer = () => {
-  const [boards, setBoards] = useState([])
+const Default = ({ boardId }) => {
+  const [threads, setThreads] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -18,16 +18,16 @@ const NewestAnswer = () => {
   const [moreTrigger, setMoreTrigger] = useState(true)
 
   useEffect(() => {
-    const fetchBoards = async () => {
+    const fetchThreads = async () => {
       if (!hasNextPage) return
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}&sort=newestAnswer`)
+        const data = await fetch(`${BACKEND}/api/threads?boardId=${boardId}&limit=${limit}&page=${page}`)
         const response = await data.json()
 
         if (!response.error) {
-          setBoards(prev => [...prev, ...response.docs])
+          setThreads(prev => [...prev, ...response.docs])
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -42,7 +42,7 @@ const NewestAnswer = () => {
       }
     }
 
-    fetchBoards()
+    fetchThreads()
   }, [page])
 
   useEffect(() => {
@@ -65,19 +65,19 @@ const NewestAnswer = () => {
 
   return !noData ? (
     !loading ? (
-      boards.length ? (
+      threads.length ? (
         <Fragment>
           <div className="items_list">
-            {boards.map(item => (
-              <BoardCard key={item._id} data={item} />
+            {threads.map(item => (
+              <Card key={item._id} data={item} />
             ))}
           </div>
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message="No boards yet" />
+      ) : <Errorer message="No threads yet" />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message="Unable to display boards" />
+  ) : <Errorer message="Unable to display threads" />
 }
 
-export default NewestAnswer;
+export default Default;

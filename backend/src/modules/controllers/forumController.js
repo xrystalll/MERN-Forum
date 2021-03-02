@@ -25,19 +25,19 @@ const upload = multer({
 
 module.exports.getBoards = async (req, res, next) => { 
   try {
-    const { limit = 10, page = 1, sort } = req.query
+    const { limit = 10, page = 1, sort, pagination = true } = req.query
 
     let boards
     if (sort === 'popular') {
-      boards = await Board.paginate({}, { sort: { threadsCount: -1 }, page, limit })
+      boards = await Board.paginate({}, { sort: { threadsCount: -1 }, page, limit, pagination: !!pagination })
     } else if (sort === 'answersCount') {
-      boards = await Board.paginate({}, { sort: { answersCount: -1 }, page, limit })
+      boards = await Board.paginate({}, { sort: { answersCount: -1 }, page, limit, pagination: !!pagination })
     } else if (sort === 'newestThread') {
-      boards = await Board.paginate({}, { sort: { newestThread: -1 }, page, limit })
+      boards = await Board.paginate({}, { sort: { newestThread: -1 }, page, limit, pagination: !!pagination })
     } else if (sort === 'newestAnswer') {
-      boards = await Board.paginate({}, { sort: { newestAnswer: -1 }, page, limit })
+      boards = await Board.paginate({}, { sort: { newestAnswer: -1 }, page, limit, pagination: !!pagination })
     } else {
-      boards = await Board.paginate({}, { sort: { position: -1 }, page, limit })
+      boards = await Board.paginate({}, { sort: { position: -1 }, page, limit, pagination: !!pagination })
     }
 
     res.json(boards)
@@ -52,9 +52,9 @@ module.exports.getBoard = async (req, res, next) => {
 
     let board
     if (name) {
-      const board = await Board.findOne({ name })
+      board = await Board.findOne({ name })
     } else if (boardId) {
-      const board = await Board.findById(boardId)
+      board = await Board.findById(boardId)
     } else {
       return next(createError.BadRequest('Board name or boardId must not be empty'))
     }
@@ -133,18 +133,14 @@ module.exports.getRecentlyThreads = async (req, res, next) => {
   try {
     const { limit = 10, page = 1 } = req.query
 
-    const threads = await Thread.paginate({}, { sort: { pined: -1, createdAt: -1 }, page, limit })
-    threads.docs.map(async item => {
-      const user = await User.findById(item.author)
-      const author = {
-        _id: user._id,
-        name: user.name,
-        displayName: user.displayName,
-        picture: user.picture,
-        role: user.role
-      }
-      return item.author = author
-    })
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const threads = await Thread.paginate({}, { sort: { pined: -1, createdAt: -1 }, page, limit, populate })
 
     res.json(threads)
   } catch(err) {
@@ -158,27 +154,21 @@ module.exports.getThreads = async (req, res, next) => {
 
     if (!boardId) return next(createError.BadRequest('boardId must not be empty'))
 
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
     let threads
     if (sort === 'answersCount') {
-      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, answersCount: -1 }, page, limit })
-    } else if (sort === 'newestThread') {
-      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, createdAt: -1 }, page, limit })
+      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, answersCount: -1 }, page, limit, populate })
     } else if (sort === 'newestAnswer') {
-      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, newestAnswer: -1 }, page, limit })
+      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, newestAnswer: -1 }, page, limit, populate })
     } else {
-      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, createdAt: -1 }, page, limit })
+      threads = await Thread.paginate({ boardId }, { sort: { pined: -1, createdAt: -1 }, page, limit, populate })
     }
-    threads.docs.map(async item => {
-      const user = await User.findById(item.author)
-      const author = {
-        _id: user._id,
-        name: user.name,
-        displayName: user.displayName,
-        picture: user.picture,
-        role: user.role
-      }
-      return item.author = author
-    })
 
     res.json(threads)
   } catch(err) {
@@ -192,18 +182,17 @@ module.exports.getThread = async (req, res, next) => {
 
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
-    const thread = await Thread.findById(threadId)
-    const user = await User.findById(thread.author)
-    const author = {
-      _id: user._id,
-      name: user.name,
-      displayName: user.displayName,
-      picture: user.picture,
-      role: user.role
-    }
-    thread.author = author
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const thread = await Thread.findById(threadId).populate(populate)
+    const board = await Board.findById(thread.boardId).select('_id name title')
 
-    res.json(thread)
+    res.json({ board, thread })
   } catch(err) {
     next(createError.InternalServerError(err))
   }
@@ -217,18 +206,22 @@ module.exports.createThread = async (req, res, next) => {
     if (title.trim() === '') return next(createError.BadRequest('Thread title must not be empty'))
     if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
+    const now = new Date().toISOString()
+
     const newThread = new Thread({
       boardId,
       pined: false,
       closed: false,
       title: title.substring(0, 100),
       body: body.substring(0, 1000),
-      createdAt: new Date().toISOString(),
+      createdAt: now,
       author: req.payload.id,
-      newestAnswer: new Date().toISOString()
+      newestAnswer: now
     })
 
     const thread = await newThread.save()
+
+    await Board.updateOne({ _id: Mongoose.Types.ObjectId(boardId) }, { $inc: { threadsCount: 1 }, newestThread: now })
 
     res.json(thread)
   } catch(err) {
@@ -246,7 +239,9 @@ module.exports.deleteThread = async (req, res, next) => {
 
     const thread = await Thread.findById(threadId)
     await thread.delete()
+
     await Answer.deleteMany({ threadId })
+    await Board.updateOne({ _id: Mongoose.Types.ObjectId(thread.boardId) }, { $inc: { threadsCount: -1 } })
 
     res.json({ message: 'Thread successfully deleted' })
   } catch(err) {
@@ -256,23 +251,32 @@ module.exports.deleteThread = async (req, res, next) => {
 
 module.exports.editThread = async (req, res, next) => { 
   try {
-    const { threadId, title, body } = req.body
+    const { threadId, title, body, closed } = req.body
 
     if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
     if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
     const thread = await Thread.findById(threadId)
+
     if (req.payload.id !== thread.author.toString()) return next(createError.Unauthorized('Action not allowed'))
 
     await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, {
       title: title.substring(0, 100),
       body: body.substring(0, 1000),
+      closed: closed === undefined ? thread.closed : closed,
       edited: {
         createdAt: new Date().toISOString()
       }
     })
 
-    const editedThread = await Thread.findById(threadId)
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const editedThread = await Thread.findById(threadId).populate(populate)
 
     res.json(editedThread)
   } catch(err) {
@@ -294,14 +298,21 @@ module.exports.adminEditThread = async (req, res, next) => {
     await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, {
       title: title.substring(0, 100),
       body: body.substring(0, 1000),
-      pined: pined || thread.pined,
-      closed: closed || thread.closed,
+      pined: pined === undefined ? thread.pined : pined,
+      closed: closed === undefined ? thread.closed : closed,
       edited: {
         createdAt: new Date().toISOString()
       }
     })
 
-    const editedThread = await Thread.findById(threadId)
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const editedThread = await Thread.findById(threadId).populate(populate)
 
     res.json(editedThread)
   } catch(err) {
@@ -315,13 +326,17 @@ module.exports.likeThread = async (req, res, next) => {
 
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
-    const thread = await Thread.findById(threadId)
+    const populate = {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }
+    const thread = await Thread.findById(threadId).populate('likes')
 
-    if (thread.likes.find(like => like.username === user.username)) {
-      thread.likes = thread.likes.filter(like => like.userId !== req.payload.id)
+    if (thread.likes.find(like => like._id === req.payload.id)) {
+      thread.likes = thread.likes.filter(like => like._id !== req.payload.id)
     } else {
       thread.likes.push({
-        userId: req.payload.id
+        likes: [req.payload.id]
       })
     }
     await thread.save()
@@ -334,11 +349,11 @@ module.exports.likeThread = async (req, res, next) => {
 
 module.exports.getAnswers = async (req, res, next) => { 
   try {
-    const { threadId, limit = 10, page = 1 } = req.query
+    const { threadId, limit = 10, page = 1, pagination = true } = req.query
 
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
-    const answers = await Answer.paginate({ threadId }, { page, limit })
+    const answers = await Answer.paginate({ threadId }, { page, limit, pagination: !!pagination })
 
     res.json(answers)
   } catch(err) {

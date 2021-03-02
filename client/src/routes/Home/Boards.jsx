@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { BACKEND } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
-import { PopularBoardsContainer, PopularBoardsItem } from 'components/PopularBoards';
+import { PopularBoardsContainer, PopularBoardsItem } from 'components/Slider';
 
 const Boards = () => {
   const [init, setInit] = useState(true)
