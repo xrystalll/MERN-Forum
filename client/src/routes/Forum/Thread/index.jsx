@@ -30,7 +30,6 @@ const Thread = ({ match }) => {
   const [thread, setThread] = useState({})
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
-  const [answers, setAnswers] = useState([])
 
   useEffect(() => {
     const threadTitle = thread.title || 'Thread'
@@ -72,14 +71,7 @@ const Thread = ({ match }) => {
 
             <br />
 
-            {answers.length ? (
-              <Answers
-                answers={answers}
-                thread={thread}
-              />
-            ) : (
-              <Loader className="more_loader" color="#64707d" />
-            )}
+            <Answers thread={thread} />
           </Fragment>
         ) : <Loader color="#64707d" />
       ) : (

@@ -508,6 +508,7 @@ a.head_text:hover {
 }
 .foot_btn i {
   font-size: 17px;
+  line-height: 19px;
 }
 .under_foot {
   margin: .5rem .2rem 0;
@@ -556,6 +557,7 @@ a.head_text:hover {
 }
 .likes_list span {
   margin: 0 .5rem 0 .2rem;
+  color: var(--secondary-text-light);
 }
 
 .user_title {

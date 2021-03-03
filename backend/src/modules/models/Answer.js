@@ -1,6 +1,12 @@
 const { model, Schema } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
+const attachSchema = new Schema({
+  file: String,
+  type: String,
+  size: String
+})
+
 const answerSchema = new Schema({
   boardId: Schema.Types.ObjectId,
   threadId: Schema.Types.ObjectId,
@@ -18,10 +24,7 @@ const answerSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   }],
-  attach: [{
-    file: String,
-    type: String
-  }]
+  attach: [attachSchema]
 })
 answerSchema.plugin(mongoosePaginate)
 

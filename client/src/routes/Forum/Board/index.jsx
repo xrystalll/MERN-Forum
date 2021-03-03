@@ -24,8 +24,8 @@ const Board = ({ match }) => {
   const [sort, setSort] = useState('default')
 
   useEffect(() => {
-    const boardFullName = board.title || ''
-    document.title = 'Forum | Board ' + boardFullName
+    const boardFullName = board.title || 'Board'
+    document.title = 'Forum | ' + boardFullName
     const fetchBoard = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/board?name=${boardName}`)

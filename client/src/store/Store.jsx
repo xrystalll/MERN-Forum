@@ -10,8 +10,9 @@ if (localStorage.getItem('token')) {
 
   if (decodedToken.exp * 1000 < Date.now()) {
     localStorage.removeItem('token')
+    localStorage.removeItem('userPicture')
   } else {
-    user = { ...decodedToken, picture: localStorage.getItem('userPicture') + '' || null}
+    user = { ...decodedToken, picture: decodedToken.picture || null}
     token = localStorage.getItem('token')
   }
 }
@@ -35,6 +36,7 @@ const Store = ({ children }) => {
 
   const login = (payload) => {
     localStorage.setItem('token', payload.accessToken)
+    localStorage.setItem('userPicture', payload.user?.picture || '')
     dispatch({
       type: 'SET_TOKEN',
       payload: payload.accessToken
@@ -47,6 +49,7 @@ const Store = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('userPicture')
     dispatch({ type: 'LOGOUT' })
   }
 

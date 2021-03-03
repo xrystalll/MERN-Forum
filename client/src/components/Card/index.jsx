@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
@@ -11,7 +11,8 @@ import Markdown from 'components/Markdown';
 const Card = ({ data, threadData, full = false, type }) => {
   const { user, token, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
   const history = useHistory()
-  const [likes, setLikes] = useState(data.likes.length)
+  const likesList = useRef()
+  const [likes, setLikes] = useState(data.likes)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
 
   useEffect(() => { 
@@ -20,19 +21,53 @@ const Card = ({ data, threadData, full = false, type }) => {
     }
   }, [])
 
-  const imageTypes = ['jpg', 'jpeg', 'png', 'gif']
+  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
 
   const likeThread = () => {
-    console.log('like thread')
+    fetch(BACKEND + '/api/thread/like', {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ threadId: data._id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          setLikes(data.likes)
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   const likeAnswer = () => {
-    console.log('like answer')
+    fetch(BACKEND + '/api/answer/like', {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ answerId: data._id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          setLikes(data.likes)
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
-  const onLike = () => {
+  const onLike = ({ target }) => {
+    if (likesList.current?.contains(target)) return
+
     if (user) {
-      setLiked(!liked)
+      setLiked(prev => !prev)
       type === 'answer' ? likeAnswer() : likeThread()
     } else {
       history.push('/signup')
@@ -100,7 +135,23 @@ const Card = ({ data, threadData, full = false, type }) => {
   }
 
   const deleteAnswer = () => {
-    console.log('delete answer')
+    fetch(BACKEND + '/api/answer/delete', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ answerId: data._id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          console.log(data.message)
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   const onDelete = () => {
@@ -222,9 +273,10 @@ const Card = ({ data, threadData, full = false, type }) => {
               <Dropdown>
                 {user.role === 'admin' && (
                   <Fragment>
-                    {type !== 'answer' && <div onClick={onPin} className="dropdown_item">Pin</div>}
-                    {type !== 'answer' && <div onClick={onClose} className="dropdown_item">Close</div>}
+                    {type !== 'answer' && <div onClick={onPin} className="dropdown_item">{pined ? 'Unpin' : 'Pin'}</div>}
+                    {type !== 'answer' && <div onClick={onClose} className="dropdown_item">{closed ? 'Open' : 'Close'}</div>}
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
+                    <div className="dropdown_item">Ban user</div>
                   </Fragment>
                 )}
                 {user.id === data.author._id || user.role === 'admin'
@@ -232,7 +284,10 @@ const Card = ({ data, threadData, full = false, type }) => {
                   : null
                 }
                 {type !== 'answer' && user.id === data.author._id && user.role !== 'admin' && (
-                  <div onClick={onClose} className="dropdown_item">Close</div>
+                  <div onClick={onClose} className="dropdown_item">{closed ? 'Open' : 'Close'}</div>
+                )}
+                {user.id !== data.author._id && (
+                  <div className="dropdown_item">Report</div>
                 )}
               </Dropdown>
             )}
@@ -243,17 +298,19 @@ const Card = ({ data, threadData, full = false, type }) => {
               <Markdown source={data.body} />
 
               {data.attach && (
-                data.attach.map((item, index) => (
-                  <Fragment key={index}>
-                    {imageTypes.find(i => i === item.type) ? (
-                      <div className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
-                    ) : (
-                      <div className="attached_file card_left empty">
-                        <div className="attached_info">{item.type}</div>
-                      </div>
-                    )}
-                  </Fragment>
-                ))
+                <div className="attach_list">
+                  {data.attach.map((item, index) => (
+                    <Fragment key={index}>
+                      {imageTypes.find(i => i === item.type) ? (
+                        <div className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
+                      ) : (
+                        <div className="attached_file card_left empty">
+                          <div className="attached_info">{item.type}</div>
+                        </div>
+                      )}
+                    </Fragment>
+                  ))}
+                </div>
               )}
             </div>
           )}
@@ -270,22 +327,22 @@ const Card = ({ data, threadData, full = false, type }) => {
 
                 <div className="act_btn foot_btn likes" onClick={onLike}>
                   <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'}></i>
-                  {likes > 0 && (
+                  {likes.length ? (
                     <Fragment>
-                      <span className="card_count">{counter(likes)}</span>
-                      <span className="hidden">{declOfNum(likes, ['like', 'likes', 'likes'])}</span>
+                      <span className="card_count">{counter(likes.length)}</span>
+                      <span className="hidden">{declOfNum(likes.length, ['like', 'likes', 'likes'])}</span>
                       {user && (
-                        <div className="likes_list">
-                          {data.likes.slice(0, 4).map((item, index) => (
-                            <div key={index} className="head_profile" title={item.displayName} style={{ backgroundImage: `url(${item.picture})` }}>
+                        <div className="likes_list" ref={likesList}>
+                          {likes.slice(0, 4).map((item, index) => (
+                            <Link key={index} to={'/user/' + item._id} className="head_profile" title={item.displayName} style={{ backgroundImage: `url(${item.picture})` }}>
                               {!item.picture && item.displayName.charAt(0)}
-                            </div>
+                            </Link>
                           ))}
-                          {data.likes.length > 4 && <span>4 and others</span>}
+                          {likes.length > 4 && <span>and {likes.length - 4} more</span>}
                         </div>
                       )}
                     </Fragment>
-                  )}
+                  ) : null}
                 </div>
 
                 {data.answersCount > 0 && (

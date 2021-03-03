@@ -30,9 +30,9 @@ router.put('/thread/adminedit', verifyAccessToken, ForumController.adminEditThre
 router.put('/thread/like', verifyAccessToken, ForumController.likeThread)
 
 router.get('/answers', ForumController.getAnswers)
-// router.post('/answer/create', verifyAccessToken, ForumController.createAnswer)
-// router.delete('/answer/delete', verifyAccessToken, ForumController.deleteAnswer)
-// router.put('/answer/edit', verifyAccessToken, ForumController.editAnswer)
-// router.put('/answer/like', verifyAccessToken, ForumController.likeAnswer)
+router.post('/answer/create', verifyAccessToken, ForumController.createAnswer)
+router.delete('/answer/delete', verifyAccessToken, ForumController.deleteAnswer)
+router.put('/answer/edit', verifyAccessToken, ForumController.editAnswer)
+router.put('/answer/like', verifyAccessToken, ForumController.likeAnswer)
 
 module.exports = router

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
@@ -88,6 +88,21 @@ const Modal = ({ open, close }) => {
     body: postType?.someData?.body || ''
   })
 
+  const [files, setFiles] = useState([])
+  const [uploading, setUploading] = useState(false)
+  const [clearFiles, setClearFiles] = useState(false)
+
+  const getFile = (files) => {
+    setClearFiles(false)
+    setFiles(files)
+  }
+
+  useEffect(() => {
+    if (clearFiles) {
+      setFiles([])
+    }
+  }, [clearFiles])
+
   const [boards, setBoards] = useState([])
   const pagination = false
 
@@ -107,17 +122,20 @@ const Modal = ({ open, close }) => {
   }
 
   const createThread = () => {
+    const formData = new FormData()
+    files.map(item => formData.append('attach', item))
+    formData.append('postData', JSON.stringify({
+      boardId: values.boardId,
+      title: values.title.substring(0, 100),
+      body: values.body.substring(0, 1000)
+    }))
+
     fetch(BACKEND + '/api/thread/create', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({
-        boardId: values.boardId,
-        title: values.title.substring(0, 100),
-        body: values.body.substring(0, 1000)
-      })
+      body: formData
     })
       .then(response => {
         setLoading(false)
@@ -191,17 +209,20 @@ const Modal = ({ open, close }) => {
   }
 
   const createAnswer = () => {
+    const formData = new FormData()
+    files.map(item => formData.append('attach', item))
+    formData.append('postData', JSON.stringify({
+      threadId: postType.id,
+      body: values.body.substring(0, 1000),
+      answeredTo: postType?.someData?.toId || null
+    }))
+
     fetch(BACKEND + '/api/answer/create', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({
-        threadId: postType.id,
-        body: values.body.substring(0, 1000),
-        answeredTo: postType?.someData?.toId || null
-      })
+      body: formData
     })
       .then(response => {
         setLoading(false)
@@ -269,7 +290,10 @@ const Modal = ({ open, close }) => {
           />
         </FormCardItem>
 
-        <FileUploadForm />
+        <FileUploadForm
+          sendFiles={getFile}
+          clearFiles={clearFiles}
+        />
 
         <FormCardItem title="Choose board" error={errors.boardId}>
           <div className={errors.boardId ? 'form_block select error' : 'form_block select' }>
@@ -321,7 +345,10 @@ const Modal = ({ open, close }) => {
           />
         </FormCardItem>
 
-        <FileUploadForm />
+        <FileUploadForm
+          sendFiles={getFile}
+          clearFiles={clearFiles}
+        />
 
         <div className="card_item">
           {loading
@@ -352,7 +379,10 @@ const Modal = ({ open, close }) => {
           />
         </FormCardItem>
 
-        <FileUploadForm />
+        <FileUploadForm
+          sendFiles={getFile}
+          clearFiles={clearFiles}
+        />
 
         <div className="card_item">
           {loading
@@ -395,7 +425,10 @@ const Modal = ({ open, close }) => {
           />
         </FormCardItem>
 
-        <FileUploadForm />
+        <FileUploadForm
+          sendFiles={getFile}
+          clearFiles={clearFiles}
+        />
 
         <div className="card_item">
           {loading

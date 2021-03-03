@@ -7,7 +7,7 @@ const Thread = require('../models/Thread');
 const Answer = require('../models/Answer');
 const Ban = require('../models/Ban');
 
-const getStats = async (req, res, next) => { 
+const getStats = async (req, res, next) => {
   try {
     res.json([{
       _id: 1,
@@ -35,7 +35,7 @@ const getStats = async (req, res, next) => {
   }
 }
 
-const getUsers = async (req, res, next) => { 
+const getUsers = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort } = req.query
 
@@ -59,7 +59,7 @@ const getUsers = async (req, res, next) => {
   }
 }
 
-const getUser = async (req, res, next) => { 
+const getUser = async (req, res, next) => {
   try {
     const { userId } = req.query
 

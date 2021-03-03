@@ -23,7 +23,7 @@ const upload = multer({
   limits: { fileSize: 1048576 * 24 }, // 24Mb
 }).array('attach')
 
-module.exports.getBoards = async (req, res, next) => { 
+module.exports.getBoards = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort, pagination = true } = req.query
 
@@ -46,7 +46,7 @@ module.exports.getBoards = async (req, res, next) => {
   }
 }
 
-module.exports.getBoard = async (req, res, next) => { 
+module.exports.getBoard = async (req, res, next) => {
   try {
     const { name, boardId } = req.query
 
@@ -65,7 +65,7 @@ module.exports.getBoard = async (req, res, next) => {
   }
 }
 
-module.exports.createBoard = async (req, res, next) => { 
+module.exports.createBoard = async (req, res, next) => {
   try {
     const { name, title, body, position } = req.body
     const admin = req.payload.role === 'admin'
@@ -93,7 +93,7 @@ module.exports.createBoard = async (req, res, next) => {
   }
 }
 
-module.exports.deleteBoard = async (req, res, next) => { 
+module.exports.deleteBoard = async (req, res, next) => {
   try {
     const { boardId } = req.body
     const admin = req.payload.role === 'admin'
@@ -110,7 +110,7 @@ module.exports.deleteBoard = async (req, res, next) => {
   }
 }
 
-module.exports.editBoard = async (req, res, next) => { 
+module.exports.editBoard = async (req, res, next) => {
   try {
     const { boardId, name, title, body, position } = req.body
     const admin = req.payload.role === 'admin'
@@ -129,7 +129,7 @@ module.exports.editBoard = async (req, res, next) => {
   }
 }
 
-module.exports.getRecentlyThreads = async (req, res, next) => { 
+module.exports.getRecentlyThreads = async (req, res, next) => {
   try {
     const { limit = 10, page = 1 } = req.query
 
@@ -148,7 +148,7 @@ module.exports.getRecentlyThreads = async (req, res, next) => {
   }
 }
 
-module.exports.getThreads = async (req, res, next) => { 
+module.exports.getThreads = async (req, res, next) => {
   try {
     const { boardId, limit = 10, page = 1, sort } = req.query
 
@@ -176,7 +176,7 @@ module.exports.getThreads = async (req, res, next) => {
   }
 }
 
-module.exports.getThread = async (req, res, next) => { 
+module.exports.getThread = async (req, res, next) => {
   try {
     const { threadId } = req.query
 
@@ -198,38 +198,52 @@ module.exports.getThread = async (req, res, next) => {
   }
 }
 
-module.exports.createThread = async (req, res, next) => { 
+module.exports.createThread = async (req, res, next) => {
   try {
-    const { boardId, title, body } = req.body
+    upload(req, res, async (err) => {
+      if (err) return next(createError.BadRequest(err))
 
-    if (!boardId) return next(createError.BadRequest('boardId must not be empty'))
-    if (title.trim() === '') return next(createError.BadRequest('Thread title must not be empty'))
-    if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
+      const { boardId, title, body } = JSON.parse(req.body.postData)
 
-    const now = new Date().toISOString()
+      if (!boardId) return next(createError.BadRequest('boardId must not be empty'))
+      if (title.trim() === '') return next(createError.BadRequest('Thread title must not be empty'))
+      if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
-    const newThread = new Thread({
-      boardId,
-      pined: false,
-      closed: false,
-      title: title.substring(0, 100),
-      body: body.substring(0, 1000),
-      createdAt: now,
-      author: req.payload.id,
-      newestAnswer: now
+      const now = new Date().toISOString()
+
+      let files = null
+      if (req.files.length) {
+        files = req.files.reduce((array, item) => [...array, {
+          file: `${process.env.BACKEND}/forum/${item.filename}`,
+          type: item.mimetype,
+          size: item.size
+        }], [])
+      }
+
+      const newThread = new Thread({
+        boardId,
+        pined: false,
+        closed: false,
+        title: title.substring(0, 100),
+        body: body.substring(0, 1000),
+        createdAt: now,
+        author: req.payload.id,
+        newestAnswer: now,
+        attach: files
+      })
+
+      const thread = await newThread.save()
+
+      await Board.updateOne({ _id: Mongoose.Types.ObjectId(boardId) }, { $inc: { threadsCount: 1 }, newestThread: now })
+
+      res.json(thread)
     })
-
-    const thread = await newThread.save()
-
-    await Board.updateOne({ _id: Mongoose.Types.ObjectId(boardId) }, { $inc: { threadsCount: 1 }, newestThread: now })
-
-    res.json(thread)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
 }
 
-module.exports.deleteThread = async (req, res, next) => { 
+module.exports.deleteThread = async (req, res, next) => {
   try {
     const { threadId } = req.body
     const admin = req.payload.role === 'admin'
@@ -249,7 +263,7 @@ module.exports.deleteThread = async (req, res, next) => {
   }
 }
 
-module.exports.editThread = async (req, res, next) => { 
+module.exports.editThread = async (req, res, next) => {
   try {
     const { threadId, title, body, closed } = req.body
 
@@ -264,9 +278,9 @@ module.exports.editThread = async (req, res, next) => {
       title: title.substring(0, 100),
       body: body.substring(0, 1000),
       closed: closed === undefined ? thread.closed : closed,
-      edited: {
+      edited: closed === undefined ? ({
         createdAt: new Date().toISOString()
-      }
+      }) : null
     })
 
     const populate = [{
@@ -284,7 +298,7 @@ module.exports.editThread = async (req, res, next) => {
   }
 }
 
-module.exports.adminEditThread = async (req, res, next) => { 
+module.exports.adminEditThread = async (req, res, next) => {
   try {
     const { threadId, title, body, pined, closed } = req.body
     const admin = req.payload.role === 'admin'
@@ -300,9 +314,9 @@ module.exports.adminEditThread = async (req, res, next) => {
       body: body.substring(0, 1000),
       pined: pined === undefined ? thread.pined : pined,
       closed: closed === undefined ? thread.closed : closed,
-      edited: {
+      edited: pined === undefined && closed === undefined ? ({
         createdAt: new Date().toISOString()
-      }
+      }) : null
     })
 
     const populate = [{
@@ -320,42 +334,173 @@ module.exports.adminEditThread = async (req, res, next) => {
   }
 }
 
-module.exports.likeThread = async (req, res, next) => { 
+module.exports.likeThread = async (req, res, next) => {
   try {
     const { threadId } = req.body
 
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
+    const thread = await Thread.findById(threadId)
+
+    if (thread.likes.find(like => like.toString() === req.payload.id)) {
+      thread.likes = thread.likes.filter(like => like.toString() !== req.payload.id) // unlike
+    } else {
+      thread.likes.push(req.payload.id) // like
+    }
+    await thread.save()
+
     const populate = {
       path: 'likes',
       select: '_id name displayName picture'
     }
-    const thread = await Thread.findById(threadId).populate('likes')
+    const likedThread = await Thread.findById(threadId).populate(populate)
 
-    if (thread.likes.find(like => like._id === req.payload.id)) {
-      thread.likes = thread.likes.filter(like => like._id !== req.payload.id)
-    } else {
-      thread.likes.push({
-        likes: [req.payload.id]
-      })
-    }
-    await thread.save()
-
-    res.json(thread)
+    res.json(likedThread)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
 }
 
-module.exports.getAnswers = async (req, res, next) => { 
+module.exports.getAnswers = async (req, res, next) => {
   try {
     const { threadId, limit = 10, page = 1, pagination = true } = req.query
 
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
-    const answers = await Answer.paginate({ threadId }, { page, limit, pagination: !!pagination })
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const answers = await Answer.paginate({ threadId }, { page, limit, populate, pagination: !!pagination })
 
     res.json(answers)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.createAnswer = async (req, res, next) => {
+  try {
+    upload(req, res, async (err) => {
+      if (err) return next(createError.BadRequest(err))
+
+      const { threadId, answeredTo, body } = JSON.parse(req.body.postData)
+
+      if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
+      if (body.trim() === '') return next(createError.BadRequest('Answer body must not be empty'))
+
+      const now = new Date().toISOString()
+
+      const thread = await Thread.findById(threadId)
+
+      let files = null
+      if (req.files.length) {
+        files = req.files.reduce((array, item) => [...array, {
+          file: `${process.env.BACKEND}/forum/${item.filename}`,
+          type: item.mimetype,
+          size: item.size
+        }], [])
+      }
+
+      const newAnswer = new Answer({
+        boardId: thread.boardId,
+        threadId,
+        answeredTo,
+        body: body.substring(0, 1000),
+        createdAt: now,
+        author: req.payload.id,
+        newestAnswer: now,
+        attach: files
+      })
+
+      const answer = await newAnswer.save()
+
+      await Board.updateOne({ _id: Mongoose.Types.ObjectId(thread.boardId) }, { $inc: { answersCount: 1 }, newestAnswer: now })
+      await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, { $inc: { answersCount: 1 }, newestAnswer: now })
+
+      res.json(answer)
+    })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.deleteAnswer = async (req, res, next) => {
+  try {
+    const { answerId } = req.body
+    const admin = req.payload.role === 'admin'
+
+    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
+
+    const answer = await Answer.findById(answerId)
+    await answer.delete()
+
+    await Thread.updateOne({ _id: Mongoose.Types.ObjectId(answer.threadId) }, { $inc: { answersCount: -1 } })
+
+    res.json({ message: 'Answer successfully deleted' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.editAnswer = async (req, res, next) => {
+  try {
+    const { answerId, body } = req.body
+
+    if (body.trim() === '') return next(createError.BadRequest('Answer body must not be empty'))
+
+    const answer = await Answer.findById(answerId)
+
+    if (req.payload.id !== answer.author.toString()) return next(createError.Unauthorized('Action not allowed'))
+
+    await Answer.updateOne({ _id: Mongoose.Types.ObjectId(answerId) }, {
+      body: body.substring(0, 1000),
+      edited: {
+        createdAt: new Date().toISOString()
+      }
+    })
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const editedanswer = await Answer.findById(answerId).populate(populate)
+
+    res.json(editedanswer)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.likeAnswer = async (req, res, next) => {
+  try {
+    const { answerId } = req.body
+
+    if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
+
+    const answer = await Answer.findById(answerId)
+
+    if (answer.likes.find(like => like.toString() === req.payload.id)) {
+      answer.likes = answer.likes.filter(like => like.toString() !== req.payload.id) // unlike
+    } else {
+      answer.likes.push(req.payload.id) // like
+    }
+    await answer.save()
+
+    const populate = {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }
+    const likedAnswer = await Answer.findById(answerId).populate(populate)
+
+    res.json(likedAnswer)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
