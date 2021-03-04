@@ -3,6 +3,7 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 import { StoreContext } from 'store/Store';
 
 import { BACKEND } from 'support/Constants';
+import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -13,7 +14,7 @@ import Errorer from 'components/Errorer';
 import Answers from './Answers';
 
 const Thread = ({ match }) => {
-  const { setPostType } = useContext(StoreContext)
+  const { user, setPostType, setFabVisible } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const { threadId } = match.params
 
@@ -30,6 +31,7 @@ const Thread = ({ match }) => {
   const [thread, setThread] = useState({})
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
+  const [answersSubscribed, setAnswersSubscribed] = useState({})
 
   useEffect(() => {
     const threadTitle = thread.title || 'Thread'
@@ -56,6 +58,37 @@ const Thread = ({ match }) => {
     fetchInit && fetchThread()
   }, [fetchInit, thread])
 
+  useEffect(() => {
+    if (thread._id) joinToRoom('thread:' + thread._id)
+    return () => {
+      if (thread._id) leaveFromRoom('thread:' + thread._id)
+    }
+  }, [thread._id])
+
+  useEffect(() => {
+    Socket.on('threadDeleted', (data) => {
+      setFabVisible(false)
+    })
+    Socket.on('threadEdited', (data) => {
+      setThread(data)
+    })
+    Socket.on('threadLiked', (data) => {
+      setThread(data)
+    })
+    Socket.on('answerCreated', (data) => {
+      setAnswersSubscribed({ type: 'answerCreated', payload: data })
+    })
+    Socket.on('answerDeleted', (data) => {
+      setAnswersSubscribed({ type: 'answerDeleted', payload: data })
+    })
+    Socket.on('answerEdited', (data) => {
+      setAnswersSubscribed({ type: 'answerEdited', payload: data })
+    })
+    Socket.on('answerLiked', (data) => {
+      setAnswersSubscribed({ type: 'answerLiked', payload: data })
+    })
+  }, [])
+
   return (
     <Section>
       {!noData ? (
@@ -71,7 +104,7 @@ const Thread = ({ match }) => {
 
             <br />
 
-            <Answers thread={thread} />
+            <Answers user={user} thread={thread} subcribed={answersSubscribed} clearSubcribe={setAnswersSubscribed} />
           </Fragment>
         ) : <Loader color="#64707d" />
       ) : (

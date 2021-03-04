@@ -8,12 +8,13 @@ import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
 import { Button, InputButton } from 'components/Button';
 
-const BoardItem = ({ data, editBoard, deleteBoard }) => {
+const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros }) => {
   const [edit, setEdit] = useState(false)
   const [errors, setErrors] = useState({})
 
   const formCallback = () => {
     setErrors({})
+    setFetchErros({})
 
     if (!values.name) {
       return setErrors({ name: 'Enter short name' })
@@ -49,6 +50,11 @@ const BoardItem = ({ data, editBoard, deleteBoard }) => {
     deleteBoard(data._id)
   }
 
+  const close = () => {
+    setEdit(false)
+    setFetchErros({})
+  }
+
   return (
     <div className="card_item">
       <div className="card_body">
@@ -69,7 +75,7 @@ const BoardItem = ({ data, editBoard, deleteBoard }) => {
               </div>
             ) : (
               <div className="edit_action_menu">
-                <div className="action cancel" onClick={() => setEdit(false)}>
+                <div className="action cancel" onClick={close}>
                   <i className="bx bx-x"></i>
                 </div>
               </div>
@@ -141,6 +147,12 @@ const BoardItem = ({ data, editBoard, deleteBoard }) => {
                   </div>
                 </FormCardItem>
 
+                {fetchErrors[data._id] && (
+                  <div className="card_item">
+                    <span className="form_error">{fetchErrors[data._id]}</span>
+                  </div>
+                )}
+
                 <InputButton text="Save" />
               </form>
             )}
@@ -151,11 +163,12 @@ const BoardItem = ({ data, editBoard, deleteBoard }) => {
   )
 }
 
-const NewBoardItem = ({ createBoard, setCreate }) => {
+const NewBoardItem = ({ createBoard, setCreate, fetchErrors, setFetchErros }) => {
   const [errors, setErrors] = useState({})
 
   const formCallback = () => {
     setErrors({})
+    setFetchErros({})
 
     if (!values.name) {
       return setErrors({ name: 'Enter short name' })
@@ -182,63 +195,74 @@ const NewBoardItem = ({ createBoard, setCreate }) => {
     position: 1
   })
 
+  const close = () => {
+    setCreate(false)
+    setFetchErros({})
+  }
+
   return (
     <div className="card_item">
       <div className="card_body">
         <div className="card_block">
           <footer className="card_foot">
             <form className="form_inner edit_form" onSubmit={onSubmit}>
-                <FormCardItem title="Board short name*" error={errors.name}>
-                  <div className={errors.name ? 'form_block error' : 'form_block' }>
-                    <Input
-                      name="name"
-                      value={values.name}
-                      placeholder="Enter short name"
-                      maxLength="21"
-                      onChange={onChange}
-                    />
-                  </div>
-                </FormCardItem>
+              <FormCardItem title="Board short name*" error={errors.name}>
+                <div className={errors.name ? 'form_block error' : 'form_block' }>
+                  <Input
+                    name="name"
+                    value={values.name}
+                    placeholder="Enter short name"
+                    maxLength="21"
+                    onChange={onChange}
+                  />
+                </div>
+              </FormCardItem>
 
-                <FormCardItem title="Board title*" error={errors.title}>
-                  <div className={errors.title ? 'form_block error' : 'form_block' }>
-                    <Input
-                      name="title"
-                      value={values.title}
-                      placeholder="Enter title"
-                      maxLength="50"
-                      onChange={onChange}
-                    />
-                  </div>
-                </FormCardItem>
+              <FormCardItem title="Board title*" error={errors.title}>
+                <div className={errors.title ? 'form_block error' : 'form_block' }>
+                  <Input
+                    name="title"
+                    value={values.title}
+                    placeholder="Enter title"
+                    maxLength="50"
+                    onChange={onChange}
+                  />
+                </div>
+              </FormCardItem>
 
-                <FormCardItem title="Board description" error={errors.body}>
-                  <div className={errors.body ? 'form_block error' : 'form_block' }>
-                    <Input
-                      name="body"
-                      value={values.body}
-                      placeholder="Enter description"
-                      maxLength="100"
-                      onChange={onChange}
-                    />
-                  </div>
-                </FormCardItem>
+              <FormCardItem title="Board description" error={errors.body}>
+                <div className={errors.body ? 'form_block error' : 'form_block' }>
+                  <Input
+                    name="body"
+                    value={values.body}
+                    placeholder="Enter description"
+                    maxLength="100"
+                    onChange={onChange}
+                  />
+                </div>
+              </FormCardItem>
 
-                <FormCardItem title="Board position*" error={errors.position}>
-                  <div className={errors.position ? 'form_block error' : 'form_block' }>
-                    <Input
-                      type="number"
-                      name="position"
-                      value={values.position}
-                      placeholder="Enter position"
-                      onChange={onChange}
-                    />
-                  </div>
-                </FormCardItem>
+              <FormCardItem title="Board position*" error={errors.position}>
+                <div className={errors.position ? 'form_block error' : 'form_block' }>
+                  <Input
+                    type="number"
+                    name="position"
+                    value={values.position}
+                    placeholder="Enter position"
+                    onChange={onChange}
+                  />
+                </div>
+              </FormCardItem>
+
+              {fetchErrors.generalCreate && (
+                <div className="card_item">
+                  <span className="form_error">{fetchErrors.generalCreate}</span>
+                </div>
+              )}
 
               <div className="buttons_group">
                 <InputButton text="Create" />
-                <Button className="secondary" text="Cancel" onClick={() => setCreate(false)} />
+                <Button className="secondary" text="Cancel" onClick={close} />
               </div>
             </form>
           </footer>

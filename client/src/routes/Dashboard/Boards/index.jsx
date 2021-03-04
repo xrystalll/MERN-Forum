@@ -25,6 +25,7 @@ const Boards = () => {
   const [noData, setNoData] = useState(false)
   const [moreTrigger, setMoreTrigger] = useState(true)
   const [create, setCreate] = useState(false)
+  const [fetchErrors, setFetchErros] = useState({})
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -83,12 +84,14 @@ const Boards = () => {
     })
       .then(response => response.json())
       .then(data => {
-        setNoData(false)
-        setCreate(false)
-        setBoards(prev => [data, ...prev])
+        if (!data.error) {
+          setNoData(false)
+          setCreate(false)
+          setBoards(prev => [data, ...prev])
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setFetchErros({ generalCreate: err.message })
       })
   }
 
@@ -103,13 +106,15 @@ const Boards = () => {
     })
       .then(response => response.json())
       .then(data => {
-        let newArray = [...boards]
-        newArray[newArray.findIndex(item => item._id === data._id)] = data
+        if (!data.error) {
+          let newArray = [...boards]
+          newArray[newArray.findIndex(item => item._id === data._id)] = data
 
-        setBoards(newArray)
+          setBoards(newArray)
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setFetchErros({ [data.boardId]: err.message })
       })
   }
 
@@ -124,14 +129,16 @@ const Boards = () => {
     })
       .then(response => response.json())
       .then(data => {
-        setBoards(boards.filter(item => item._id !== boardId))
-        if (boards.filter(item => item._id !== boardId).length === 0) {
-          setBoards([])
-          setNoData(true)
-        }
+        if (!data.error) {
+          setBoards(boards.filter(item => item._id !== boardId))
+          if (boards.filter(item => item._id !== boardId).length === 0) {
+            setBoards([])
+            setNoData(true)
+          }
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setFetchErros({ general: err.message })
       })
   }
 
@@ -146,7 +153,14 @@ const Boards = () => {
         <Button className="main hollow" text="Create new board" onClick={() => setCreate(!create)} />
       </div>
 
-      {create && <NewBoardItem createBoard={createBoard} setCreate={setCreate} />}
+      {create && (
+        <NewBoardItem
+          createBoard={createBoard}
+          setCreate={setCreate}
+          fetchErrors={fetchErrors}
+          setFetchErros={setFetchErros}
+        />
+      )}
 
       {!noData ? (
         !loading ? (
@@ -154,7 +168,14 @@ const Boards = () => {
             <Fragment>
               <div className="items_list">
                 {boards.map(item => (
-                  <BoardItem key={item._id} data={item} editBoard={editBoard} deleteBoard={deleteBoard} />
+                  <BoardItem
+                    key={item._id}
+                    data={item}
+                    editBoard={editBoard}
+                    deleteBoard={deleteBoard}
+                    fetchErrors={fetchErrors}
+                    setFetchErros={setFetchErros}
+                  />
                 ))}
               </div>
 

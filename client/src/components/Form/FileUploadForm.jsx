@@ -87,7 +87,7 @@ const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, a
             {title || 'Attach file'}
             <div className="title_hint">
               <i className="bx bx-help-circle"></i>
-              <div className="hint_popover">{hint || 'Max files count: 4'}</div>
+              <div className="hint_popover">{hint || 'Max files count: 4; Max size: 12 Mb per file'}</div>
             </div>
           </div>
 

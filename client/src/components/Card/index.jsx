@@ -14,12 +14,16 @@ const Card = ({ data, threadData, full = false, type }) => {
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
+  const regexp = /(?:\.([^.]+))?$/
 
-  useEffect(() => { 
+  useEffect(() => {
     if (type === 'thread' && data.closed) {
       setFabVisible(false)
     }
-  }, [])
+    if (type === 'thread' && !data.closed) {
+      setFabVisible(true)
+    }
+  }, [data.closed])
 
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
 
@@ -38,9 +42,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           setLikes(data.likes)
         }
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error)
   }
 
   const likeAnswer = () => {
@@ -58,10 +60,12 @@ const Card = ({ data, threadData, full = false, type }) => {
           setLikes(data.likes)
         }
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error)
   }
+
+  useEffect(() => {
+    setLikes(data.likes)
+  }, [data.likes])
 
   const onLike = ({ target }) => {
     if (likesList.current?.contains(target)) return
@@ -129,9 +133,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           history.push('/')
         }
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error)
   }
 
   const deleteAnswer = () => {
@@ -144,14 +146,7 @@ const Card = ({ data, threadData, full = false, type }) => {
       body: JSON.stringify({ answerId: data._id })
     })
       .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          console.log(data.message)
-        }
-      })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error)
   }
 
   const onDelete = () => {
@@ -161,9 +156,6 @@ const Card = ({ data, threadData, full = false, type }) => {
       deleteThread()
     }
   }
-
-  const [pined, setPined] = useState(data.pined)
-  const [closed, setClosed] = useState(data.closed)
 
   const onPin = () => {
     if (type !== 'answer') {
@@ -177,18 +169,11 @@ const Card = ({ data, threadData, full = false, type }) => {
           threadId: data._id,
           title: data.title,
           body: data.body,
-          pined: !pined
+          pined: !data.pined
         })
       })
         .then(response => response.json())
-        .then(data => {
-          if (!data.error) {
-            setPined(data.pined)
-          }
-        })
-        .catch(err => {
-          console.error(err)
-        })
+        .catch(err => console.error)
     }
   }
 
@@ -206,19 +191,11 @@ const Card = ({ data, threadData, full = false, type }) => {
           threadId: data._id,
           title: data.title,
           body: data.body,
-          closed: !closed
+          closed: !data.closed
         })
       })
         .then(response => response.json())
-        .then(data => {
-          if (!data.error) {
-            setClosed(data.closed)
-            setFabVisible(!data.closed)
-          }
-        })
-        .catch(err => {
-          console.error(err)
-        })
+        .catch(err => console.error)
     }
   }
 
@@ -231,15 +208,15 @@ const Card = ({ data, threadData, full = false, type }) => {
               {full ? (
                 data.title && (
                   <div className="card_title full">
-                    {pined && <i className="thread_pin bx bx-pin"></i>}
-                    {closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                    {data.pined && <i className="thread_pin bx bx-pin"></i>}
+                    {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
                     {data.title}
                   </div>
                 )
               ) : (
                 <Link to={'/thread/' + data._id} className="card_title">
-                  {pined && <i className="thread_pin bx bx-pin"></i>}
-                  {closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                  {data.pined && <i className="thread_pin bx bx-pin"></i>}
+                  {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
                   {data.title}
                 </Link>
               )}
@@ -273,8 +250,8 @@ const Card = ({ data, threadData, full = false, type }) => {
               <Dropdown>
                 {user.role === 'admin' && (
                   <Fragment>
-                    {type !== 'answer' && <div onClick={onPin} className="dropdown_item">{pined ? 'Unpin' : 'Pin'}</div>}
-                    {type !== 'answer' && <div onClick={onClose} className="dropdown_item">{closed ? 'Open' : 'Close'}</div>}
+                    {type !== 'answer' && <div onClick={onPin} className="dropdown_item">{data.pined ? 'Unpin' : 'Pin'}</div>}
+                    {type !== 'answer' && <div onClick={onClose} className="dropdown_item">{data.closed ? 'Open' : 'Close'}</div>}
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
                     <div className="dropdown_item">Ban user</div>
                   </Fragment>
@@ -284,7 +261,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                   : null
                 }
                 {type !== 'answer' && user.id === data.author._id && user.role !== 'admin' && (
-                  <div onClick={onClose} className="dropdown_item">{closed ? 'Open' : 'Close'}</div>
+                  <div onClick={onClose} className="dropdown_item">{data.closed ? 'Open' : 'Close'}</div>
                 )}
                 {user.id !== data.author._id && (
                   <div className="dropdown_item">Report</div>
@@ -305,7 +282,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                         <div className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
                       ) : (
                         <div className="attached_file card_left empty">
-                          <div className="attached_info">{item.type}</div>
+                          <div className="attached_info">{{regexp.exec(item.file)[1]}}</div>
                         </div>
                       )}
                     </Fragment>

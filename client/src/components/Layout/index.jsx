@@ -36,9 +36,7 @@ const Layout = ({ children }) => {
       }
     })
       .then(response => response.json())
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error)
   }
 
   const fabClick = () => {

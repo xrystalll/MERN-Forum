@@ -55,9 +55,7 @@ const Settings = () => {
           setUserPicture(data.picture)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error)
   }
 
   return (

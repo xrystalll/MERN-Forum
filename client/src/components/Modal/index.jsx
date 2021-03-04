@@ -114,10 +114,10 @@ const Modal = ({ open, close }) => {
       .then(data => {
         if (data.docs?.length) {
           setBoards(data.docs)
-        }
+        } else throw Error('Boards not loaded')
       })
       .catch(err => {
-        console.error(err)
+        setErrors({ general: err.message })
       })
   }
 
@@ -142,13 +142,13 @@ const Modal = ({ open, close }) => {
         return response.json()
       })
       .then(data => {
-        if (data._id) {
+        if (!data.error) {
           close()
           history.push('/thread/' + data._id)
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setErrors({ general: err.message })
       })
   }
 
@@ -173,10 +173,10 @@ const Modal = ({ open, close }) => {
             type: 'answer',
             id: postType.id
           })
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setErrors({ general: err.message })
       })
   }
 
@@ -201,10 +201,10 @@ const Modal = ({ open, close }) => {
             type: 'answer',
             id: postType.id
           })
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setErrors({ general: err.message })
       })
   }
 
@@ -229,12 +229,12 @@ const Modal = ({ open, close }) => {
         return response.json()
       })
       .then(data => {
-        if (data._id) {
+        if (!data.error) {
           close()
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setErrors({ general: err.message })
       })
   }
 
@@ -258,10 +258,10 @@ const Modal = ({ open, close }) => {
             type: 'answer',
             id: postType.id
           })
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        console.error(err)
+        setErrors({ general: err.message })
       })
   }
 

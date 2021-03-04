@@ -12,6 +12,13 @@ const DB = require('./modules/DB');
 
 const app = express()
 
+const httpServer = http.createServer(app)
+const io = require('socket.io')(httpServer, {
+  cors: {
+    origin: 'http://localhost:3000',
+  }
+})
+
 app.use(express.static(path.join(__dirname, '..', '/public')))
 app.use(cors())
 app.use(express.json())
@@ -31,6 +38,22 @@ app.use('/api', limiter)
 
 app.use('/', require('./routes'))
 app.use('/auth', require('./routes/auth'))
+
+io.on('connection', (socket) => {
+  socket.on('join', (data) => {
+    socket.join(data.room)
+  })
+
+  socket.on('leave', (data) => {
+    socket.leave(data.room)
+  })
+})
+
+app.use((req,res,next) => {
+  req.io = io
+  next()
+})
+
 app.use('/api', require('./routes/api'))
 
 app.use((req, res, next) => {
@@ -47,8 +70,7 @@ app.use((err, req, res, next) => {
   })
 })
 
-const httpServer = http.createServer(app)
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8000
 
 DB().then(() => {
   httpServer.listen({ port }, () => {

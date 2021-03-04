@@ -45,7 +45,7 @@ const getProfile = async (req, res, next) => {
 const uploadUserPicture = (req, res, next) => {
   try {
     upload(req, res, (err) => {
-      if (err) return next(createError.BadRequest(err))
+      if (err) return next(createError.BadRequest(err.message))
 
       if (req.file) {
         sharp(req.file.path)

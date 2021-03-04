@@ -33,7 +33,9 @@ const register = async (req, res, next) => {
       password: result.password,
       createdAt: new Date().toISOString(),
       onlineAt: new Date().toISOString(),
-      role: 'user'
+      role: 'user',
+      ip: JSON.stringify(req.ip),
+      ua: req.headers['user-agent']
     })
     const savedUser = await user.save()
     const accessToken = await signAccessToken(savedUser)
@@ -70,6 +72,11 @@ const login = async (req, res, next) => {
     if (!isMatch) throw createError.Unauthorized('Username or password not valid')
 
     const accessToken = await signAccessToken(user)
+
+    await User.updateOne({ _id: user._id }, {
+      ip: JSON.stringify(req.ip),
+      ua: req.headers['user-agent']
+    })
 
     res.json({
       user: {

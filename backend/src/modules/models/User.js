@@ -24,7 +24,9 @@ const userSchema = new Schema({
   createdAt: String,
   onlineAt: String,
   picture: String,
-  role: String
+  role: String,
+  ip: String,
+  ua: String
 })
 userSchema.plugin(mongoosePaginate)
 
