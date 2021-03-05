@@ -3,8 +3,14 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const notificationSchema = new Schema({
   type: String,
-  to: Schema.Types.ObjectId,
-  from: Schema.Types.ObjectId,
+  to: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  from: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   threadId: Schema.Types.ObjectId,
   title: String,
   body: String,

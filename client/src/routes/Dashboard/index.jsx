@@ -30,7 +30,7 @@ const Dashboard = () => {
 
         if (!response.error) {
           setStats(response)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
       }
     }

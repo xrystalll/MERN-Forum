@@ -7,7 +7,7 @@ import Notifications from './Notifications';
 import './style.css';
 
 const Header = ({ setMenuState }) => {
-  const { user } = useContext(StoreContext)
+  const { user, token } = useContext(StoreContext)
   const searchField = useRef()
   const [searchActive, setSearchActive] = useState(false)
 
@@ -45,7 +45,7 @@ const Header = ({ setMenuState }) => {
 
           {user ? (
             <Fragment>
-              <Notifications user={user} />
+              <Notifications user={user} token={token} />
 
               <Dropdown />
             </Fragment>

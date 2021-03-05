@@ -19,7 +19,7 @@ const Boards = () => {
         if (!response.error) {
           setInit(false)
           setBoards(response.docs)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         console.error(err)
       }

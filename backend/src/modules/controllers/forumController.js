@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Board = require('../models/Board');
 const Thread = require('../models/Thread');
 const Answer = require('../models/Answer');
+const Notification = require('../models/Notification');
 
 const deleteFiles = require('../utils//deleteFiles');
 
@@ -31,15 +32,15 @@ module.exports.getBoards = async (req, res, next) => {
 
     let boards
     if (sort === 'popular') {
-      boards = await Board.paginate({}, { sort: { threadsCount: -1 }, page, limit, pagination: !!pagination })
+      boards = await Board.paginate({}, { sort: { threadsCount: -1 }, page, limit, pagination: JSON.parse(pagination) })
     } else if (sort === 'answersCount') {
-      boards = await Board.paginate({}, { sort: { answersCount: -1 }, page, limit, pagination: !!pagination })
+      boards = await Board.paginate({}, { sort: { answersCount: -1 }, page, limit, pagination: JSON.parse(pagination) })
     } else if (sort === 'newestThread') {
-      boards = await Board.paginate({}, { sort: { newestThread: -1 }, page, limit, pagination: !!pagination })
+      boards = await Board.paginate({}, { sort: { newestThread: -1 }, page, limit, pagination: JSON.parse(pagination) })
     } else if (sort === 'newestAnswer') {
-      boards = await Board.paginate({}, { sort: { newestAnswer: -1 }, page, limit, pagination: !!pagination })
+      boards = await Board.paginate({}, { sort: { newestAnswer: -1 }, page, limit, pagination: JSON.parse(pagination) })
     } else {
-      boards = await Board.paginate({}, { sort: { position: -1 }, page, limit, pagination: !!pagination })
+      boards = await Board.paginate({}, { sort: { position: -1 }, page, limit, pagination: JSON.parse(pagination) })
     }
 
     res.json(boards)
@@ -153,7 +154,7 @@ module.exports.getRecentlyThreads = async (req, res, next) => {
       path: 'likes',
       select: '_id name displayName picture'
     }]
-    const threads = await Thread.paginate({}, { sort: { pined: -1, createdAt: -1 }, page, limit, populate })
+    const threads = await Thread.paginate({}, { sort: { pined: -1, newestAnswer: -1, createdAt: -1 }, page, limit, populate })
 
     res.json(threads)
   } catch(err) {
@@ -279,8 +280,13 @@ module.exports.deleteThread = async (req, res, next) => {
 
     await thread.delete()
 
-    await Answer.deleteMany({ threadId })
-    await Board.updateOne({ _id: Mongoose.Types.ObjectId(thread.boardId) }, { $inc: { threadsCount: -1 } })
+    const deletedAnswers = await Answer.deleteMany({ threadId })
+    await Board.updateOne({ _id: Mongoose.Types.ObjectId(thread.boardId) }, {
+      $inc: {
+        threadsCount: -1,
+        answersCount: -deletedAnswers.deletedCount
+      }
+    })
 
     res.json({ message: 'Thread successfully deleted' })
 
@@ -301,14 +307,21 @@ module.exports.editThread = async (req, res, next) => {
 
     if (req.payload.id !== thread.author.toString()) return next(createError.Unauthorized('Action not allowed'))
 
-    await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, {
+    const obj = {
       title: title.trim().substring(0, 100),
       body: body.substring(0, 1000),
       closed: closed === undefined ? thread.closed : closed,
-      edited: closed === undefined ? ({
+      edited: {
         createdAt: new Date().toISOString()
-      }) : null
-    })
+      }
+    }
+    if (closed === undefined) {
+      obj.edited = {
+        createdAt: new Date().toISOString()
+      }
+    }
+
+    await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, obj)
 
     const populate = [{
       path: 'author',
@@ -338,15 +351,19 @@ module.exports.adminEditThread = async (req, res, next) => {
 
     const thread = await Thread.findById(threadId)
 
-    await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, {
+    const obj = {
       title: title.trim().substring(0, 100),
       body: body.substring(0, 1000),
       pined: pined === undefined ? thread.pined : pined,
       closed: closed === undefined ? thread.closed : closed,
-      edited: {
+    }
+    if (pined === undefined || closed === undefined) {
+      obj.edited = {
         createdAt: new Date().toISOString()
       }
-    })
+    }
+
+    await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, obj)
 
     const populate = [{
       path: 'author',
@@ -410,7 +427,7 @@ module.exports.getAnswers = async (req, res, next) => {
       path: 'likes',
       select: '_id name displayName picture'
     }]
-    const answers = await Answer.paginate({ threadId }, { page, limit, populate, pagination: !!pagination })
+    const answers = await Answer.paginate({ threadId }, { page, limit, populate, pagination: JSON.parse(pagination) })
 
     res.json(answers)
   } catch(err) {
@@ -468,6 +485,42 @@ module.exports.createAnswer = async (req, res, next) => {
       res.json(populatedAnswer)
 
       req.io.to('thread:' + threadId).emit('answerCreated', populatedAnswer)
+
+      let type = 'answerToThread'
+      let to = null
+      if (answeredTo === threadId || !answeredTo) {
+        type = 'answerToThread'
+        to = thread.author
+      } else {
+        const answerTo = await Answer.findById(answeredTo)
+        type = 'answerToAnswer'
+        to = answerTo.author
+      }
+
+      if (req.payload.id !== thread.author.toString()) {
+        const newNotification = new Notification({
+          type,
+          to,
+          from: req.payload.id,
+          threadId,
+          title: thread.title,
+          body: body.substring(0, 1000),
+          createdAt: new Date().toISOString(),
+          read: false
+        })
+        const notification = await newNotification.save()
+
+        const populate = [{
+          path: 'to',
+          select: '_id name displayName onlineAt picture role'
+        }, {
+          path: 'from',
+          select: '_id name displayName onlineAt picture role'
+        }]
+        const populatedNotification = await Notification.findById(notification._id).populate(populate)
+
+        req.io.to('notification:' + to).emit('newNotification', populatedNotification)
+      }
     })
   } catch(err) {
     next(createError.InternalServerError(err))
@@ -497,6 +550,7 @@ module.exports.deleteAnswer = async (req, res, next) => {
 
     await answer.delete()
 
+    await Board.updateOne({ _id: Mongoose.Types.ObjectId(answer.boardId) }, { $inc: { answersCount: -1 } })
     await Thread.updateOne({ _id: Mongoose.Types.ObjectId(answer.threadId) }, { $inc: { answersCount: -1 } })
 
     res.json({ message: 'Answer successfully deleted' })

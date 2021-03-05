@@ -15,12 +15,14 @@ const app = express()
 const httpServer = http.createServer(app)
 const io = require('socket.io')(httpServer, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.CLIENT,
   }
 })
 
 app.use(express.static(path.join(__dirname, '..', '/public')))
-app.use(cors())
+app.use(cors({
+  origin: process.env.CLIENT
+}))
 app.use(express.json())
 
 const limiter = new RateLimit({
@@ -49,7 +51,7 @@ io.on('connection', (socket) => {
   })
 })
 
-app.use((req,res,next) => {
+app.use((req, res, next) => {
   req.io = io
   next()
 })

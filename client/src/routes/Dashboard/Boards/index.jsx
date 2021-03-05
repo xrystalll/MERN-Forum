@@ -44,7 +44,7 @@ const Boards = () => {
           setMoreLoading(false)
           setNoData(false)
           setMoreTrigger(true)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         setLoading(false)
         setNoData(true)

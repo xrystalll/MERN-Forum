@@ -167,12 +167,12 @@ ul {
   justify-content: center;
   margin: 0 auto;
   margin-top: 40px;
-  max-width: 210px;
+  max-width: 250px;
   min-height: 110px;
   user-select: none;
 }
 .empty_words {
-  max-width: 210px;
+  max-width: 250px;
   text-align: center;
   position: relative;
   font-size: 15px;
@@ -259,6 +259,9 @@ ul {
   transition-property: border-color, background-color;
   overflow-wrap: anywhere;
 }
+.card_block.noread {
+  background-color: var(--secondary-bg-tint-focus);
+}
 .with_left {
   display: flex;
 }
@@ -337,9 +340,17 @@ a.card_title:hover {
 }
 .head_text {
   display: flex;
+  align-items: center;
   color: var(--actions-color);
   overflow-wrap: break-word;
   font-size: .85rem;
+}
+.head_text .online {
+  background-color: var(--main-success-color);
+  width: 6px;
+  height: 6px;
+  margin-left: .3rem;
+  border-radius: 50%;
 }
 a.head_text:hover {
   text-decoration: underline var(--accent-color);
@@ -435,6 +446,12 @@ a.head_text:hover {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
+.card_content .attach_list {
+  margin-top: .5rem;
+}
+.card_content .attached_file {
+  cursor: pointer;
+}
 .attached_file {
   display: table;
   border-radius: var(--border-radius);
@@ -451,8 +468,13 @@ a.head_text:hover {
   border-radius: var(--border-radius);
   padding: 0 .3rem;
   margin: .3rem;
+  max-width: 64px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   user-select: none;
 }
+
 .remove_file {
   display: flex;
   position: absolute;

@@ -36,7 +36,7 @@ const Board = ({ match }) => {
           setBoard(response)
           setLoading(false)
           setNoData(false)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         setInit(false)
         setNoData(true)

@@ -10,7 +10,7 @@ const attachSchema = new Schema({
 const answerSchema = new Schema({
   boardId: Schema.Types.ObjectId,
   threadId: Schema.Types.ObjectId,
-  answeredTo: String,
+  answeredTo: Schema.Types.ObjectId,
   body: String,
   createdAt: String,
   author: {

@@ -14,6 +14,9 @@ router.get('/profile', verifyAccessToken, ProfileController.getProfile)
 router.put('/profile/upload/picture', verifyAccessToken, ProfileController.uploadUserPicture)
 router.put('/profile/setOnline', verifyAccessToken, ProfileController.setOnline)
 
+router.get('/notifications', verifyAccessToken, ProfileController.getNotifications)
+router.delete('/notifications/delete', verifyAccessToken, ProfileController.deleteNotifications)
+
 router.get('/boards', ForumController.getBoards)
 router.get('/board', ForumController.getBoard)
 router.post('/board/create', verifyAccessToken, ForumController.createBoard)

@@ -199,6 +199,11 @@ const Card = ({ data, threadData, full = false, type }) => {
     }
   }
 
+  const imageView = (url) => {
+    // Todo: Create image viewer
+    window.open(url)
+  }
+
   return (
     <div className="card_item">
       <div className="card_body">
@@ -225,21 +230,24 @@ const Card = ({ data, threadData, full = false, type }) => {
                 <Link to={'/user/' + data.author._id} className="head_text bold">
                   {data.author.displayName}
                   {full && (
-                    data.author.role === 'admin' ? (
-                      <span className="user_status">admin</span>
-                    ) : (
-                      <Fragment>
-                        {type === 'thread' && <span className="user_status">owner</span>}
-                        {type === 'answer' && (
-                          data.author._id === threadData.author._id && (
-                            <span className="user_status">owner</span>
-                          )
-                        )}
-                      </Fragment>
-                    )
+                    <Fragment>
+                      {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online"></span>}
+                      {data.author.role === 'admin' ? (
+                        <span className="user_status">admin</span>
+                      ) : (
+                        <Fragment>
+                          {type === 'thread' && <span className="user_status">owner</span>}
+                          {type === 'answer' && (
+                            data.author._id === threadData.author._id && (
+                              <span className="user_status">owner</span>
+                            )
+                          )}
+                        </Fragment>
+                      )}
+                    </Fragment>
                   )}
                 </Link>
-                <span className="bullet">•</span>
+                <span className="bullet"></span>
                 <span className="head_text">
                   <time>{dateFormat(data.createdAt)}</time>
                 </span>
@@ -279,11 +287,11 @@ const Card = ({ data, threadData, full = false, type }) => {
                   {data.attach.map((item, index) => (
                     <Fragment key={index}>
                       {imageTypes.find(i => i === item.type) ? (
-                        <div className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
+                        <div onClick={() => imageView(item.file)} className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
                       ) : (
-                        <div className="attached_file card_left empty">
-                          <div className="attached_info">{{regexp.exec(item.file)[1]}}</div>
-                        </div>
+                        <a href={item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
+                          <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                        </a>
                       )}
                     </Fragment>
                   ))}
@@ -416,7 +424,7 @@ const NotificationCard = ({ data }) => {
   return (
     <div className="card_item">
       <div className="card_body">
-        <div className="card_block">
+        <div className={data.read ? 'card_block' : 'card_block noread'}>
           <header className="card_head">
             <div className="card_head_inner">
               <Link to={'/thread/' + data.threadId} className="card_title">
@@ -424,8 +432,8 @@ const NotificationCard = ({ data }) => {
               </Link>
 
               <div className="card_info">
-                <Link to={'/user/' + data.from.id} className="head_text bold">
-                  {data.from.username}
+                <Link to={'/user/' + data.from._id} className="head_text bold">
+                  {data.from.displayName}
                   {data.from.role === 'admin' && (
                     <span className="user_status">admin</span>
                   )}

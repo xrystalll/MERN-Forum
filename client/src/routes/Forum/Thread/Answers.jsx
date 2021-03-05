@@ -23,7 +23,7 @@ const Answers = ({ user, thread, subcribed, clearSubcribe }) => {
           setInit(false)
           setAnswers(response.docs)
           setLoading(false)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         setInit(false)
         setLoading(false)

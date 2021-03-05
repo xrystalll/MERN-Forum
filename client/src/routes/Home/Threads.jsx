@@ -23,7 +23,7 @@ const Threads = () => {
           setInit(false)
           setThreads(response.docs)
           setNoData(false)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         console.error(err)
         setNoData(true)

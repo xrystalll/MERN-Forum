@@ -47,7 +47,7 @@ const Thread = ({ match }) => {
           setThread(response.thread)
           setLoading(false)
           setNoData(false)
-        } else throw Error(response.error.message)
+        } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         setFetchInit(false)
         setNoData(true)

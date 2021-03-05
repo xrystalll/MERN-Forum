@@ -6,6 +6,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 const checkFileType = (file, callback) => {
   const filetypes = /jpeg|jpg|png|gif/
@@ -80,4 +81,44 @@ const setOnline = async (req, res, next) => {
   }
 }
 
-module.exports = { getProfile, uploadUserPicture, setOnline }
+const getNotifications = async (req, res, next) => {
+  try {
+    const { limit = 10, page = 1, sort } = req.query
+
+    let sortCreatedAt
+    if (sort === 'old') {
+      sortCreatedAt = 1
+    } else {
+      sortCreatedAt = -1
+    }
+
+    const populate = [{
+      path: 'to',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'from',
+      select: '_id name displayName onlineAt picture role'
+    }]
+    const notifications = await Notification.paginate({ to: req.payload.id }, { sort: { createdAt: sortCreatedAt }, page, limit, populate })
+
+    if (notifications.totalDocs) {
+      await Notification.updateMany({ to: req.payload.id, read: false }, { read: true })
+    }
+
+    res.json(notifications)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+const deleteNotifications = async (req, res, next) => {
+  try {
+    await Notification.deleteMany({ to: req.payload.id })
+
+    res.json({ message: 'Notifications successfully deleted' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports = { getProfile, uploadUserPicture, setOnline, getNotifications, deleteNotifications }
