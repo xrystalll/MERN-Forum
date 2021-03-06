@@ -1,5 +1,6 @@
 import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import Lightbox from 'react-image-lightbox';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum, dateFormat } from 'support/Utils';
@@ -14,6 +15,8 @@ const Card = ({ data, threadData, full = false, type }) => {
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
+  const [image, setImage] = useState('')
+  const [imageOpen, setImageOpen] = useState(false)
   const regexp = /(?:\.([^.]+))?$/
 
   useEffect(() => {
@@ -200,9 +203,17 @@ const Card = ({ data, threadData, full = false, type }) => {
   }
 
   const imageView = (url) => {
-    // Todo: Create image viewer
-    window.open(url)
+    setImage(url)
+    setImageOpen(true)
   }
+
+  useEffect(() => {
+    if (imageOpen) {
+      document.body.classList.add('noscroll')
+    } else {
+      document.body.classList.remove('noscroll')
+    }
+  }, [imageOpen])
 
   return (
     <div className="card_item">
@@ -227,7 +238,7 @@ const Card = ({ data, threadData, full = false, type }) => {
               )}
 
               <div className="card_info">
-                <Link to={'/user/' + data.author._id} className="head_text bold">
+                <Link to={'/user/' + data.author.name} className="head_text bold">
                   {data.author.displayName}
                   {full && (
                     <Fragment>
@@ -247,7 +258,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                     </Fragment>
                   )}
                 </Link>
-                <span className="bullet"></span>
+                <span className="bullet">{full ? '-' : '•'}</span>
                 <span className="head_text">
                   <time>{dateFormat(data.createdAt)}</time>
                 </span>
@@ -280,7 +291,7 @@ const Card = ({ data, threadData, full = false, type }) => {
 
           {full && (
             <div className="card_content markdown">
-              <Markdown source={data.body} />
+              <Markdown source={data.body} onImageClick={imageView} />
 
               {data.attach && (
                 <div className="attach_list">
@@ -296,6 +307,13 @@ const Card = ({ data, threadData, full = false, type }) => {
                     </Fragment>
                   ))}
                 </div>
+              )}
+
+              {imageOpen && (
+                <Lightbox
+                  mainSrc={image}
+                  onCloseRequest={() => setImageOpen(false)}
+                />
               )}
             </div>
           )}
@@ -319,7 +337,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                       {user && (
                         <div className="likes_list" ref={likesList}>
                           {likes.slice(0, 4).map((item, index) => (
-                            <Link key={index} to={'/user/' + item._id} className="head_profile" title={item.displayName} style={{ backgroundImage: `url(${item.picture})` }}>
+                            <Link key={index} to={'/user/' + item.name} className="head_profile" title={item.displayName} style={{ backgroundImage: `url(${item.picture})` }}>
                               {!item.picture && item.displayName.charAt(0)}
                             </Link>
                           ))}
@@ -398,7 +416,7 @@ const UserCard = ({ data }) => {
     <div className="card_item">
       <div className="card_body">
         <div className="card_block">
-          <Link to={'/user/' + data._id} className="card_head user_head">
+          <Link to={'/user/' + data.name} className="card_head user_head">
             <div className="card_head_inner">
               <div className="card_title user_title">
                 <div className="head_profile" style={{ backgroundImage: `url(${data.picture})` }}>
@@ -432,11 +450,9 @@ const NotificationCard = ({ data }) => {
               </Link>
 
               <div className="card_info">
-                <Link to={'/user/' + data.from._id} className="head_text bold">
+                <Link to={'/user/' + data.from.name} className="head_text bold">
                   {data.from.displayName}
-                  {data.from.role === 'admin' && (
-                    <span className="user_status">admin</span>
-                  )}
+                  {data.from.role === 'admin' && <span className="user_status">admin</span>}
                 </Link>
                 <span className="bullet">•</span>
                 <span className="head_text">

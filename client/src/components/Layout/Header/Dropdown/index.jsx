@@ -103,7 +103,7 @@ const DropdownMenu = ({ user, logout, setDropdownOpen }) => {
             <DropdownItem
               leftIcon="user"
               onClick={goTo}
-              data={{ url: '/user/' + user.id }}
+              data={{ url: '/user/' + user.name }}
             >
               <div className="menu-item-title">Open profile</div>
             </DropdownItem>
@@ -124,7 +124,7 @@ const DropdownMenu = ({ user, logout, setDropdownOpen }) => {
             <DropdownItem
               leftIcon="cog"
               onClick={goTo}
-              data={{ url: '/user/' + user.id + '/settings' }}
+              data={{ url: '/user/' + user.name + '/settings' }}
             >
               <div className="menu-item-title">Settings</div>
             </DropdownItem>

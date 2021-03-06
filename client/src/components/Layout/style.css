@@ -10,7 +10,7 @@
 .left_bar {
   width: 252px;
   position: sticky;
-  top: 1rem;
+  top: 4.5rem;
   height: max-content;
   max-height: 100vh;
   overflow-y: auto;
@@ -57,7 +57,7 @@
   align-items: center;
   justify-content: center;
   position: sticky;
-  top: 1.7rem;
+  top: 5.2rem;
   margin: .7rem .6rem;
   background-color: var(--accent-color);
   color: var(--main-text-light);
@@ -87,7 +87,7 @@
     width: 57%;
   }
   .fab {
-    top: 1.5rem;
+    top: 4.9rem;
     margin: .4rem .6rem;
     padding: 0;
     width: 56px;

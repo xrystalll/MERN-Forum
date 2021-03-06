@@ -67,6 +67,7 @@
 .btn.secondary {
   border: 2px solid var(--secondary-bg-tint);
   background-color: transparent;
+  color: var(--actions-color);
 }
 
 .secondary_btn {

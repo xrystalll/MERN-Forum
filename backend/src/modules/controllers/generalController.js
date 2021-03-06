@@ -61,10 +61,10 @@ const getUsers = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   try {
-    const { userId } = req.query
+    const { userName } = req.query
 
     const select = '_id name displayName createdAt onlineAt picture role'
-    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(userId) }, select)
+    const user = await User.findOne({ name: userName }, select)
 
     res.json(user)
   } catch(err) {

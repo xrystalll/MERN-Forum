@@ -4,8 +4,15 @@
   align-items: center;
   width: 100%;
   max-width: 1200px;
+  background-color: var(--main-bg);
+  transition: var(--transition-background);
   height: 72px;
   margin: 0 auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 8;
 }
 .head_inner {
   width: 100%;

@@ -17,10 +17,8 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside)
-    document.addEventListener('scroll', handleScroll)
     return () => {
       document.removeEventListener('click', handleClickOutside)
-      document.removeEventListener('scroll', handleScroll)
     }
   })
 
@@ -50,10 +48,10 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
 
   useEffect(() => {
     if (!loading) {
-      if (notifications.length) {
-        setMenuHeight(dropdown.current?.querySelector('.notif_list').offsetHeight + 16)
-      } else if (noData) {
+      if (noData) {
         setMenuHeight(260)
+      } else if (notifications.length) {
+        setMenuHeight(dropdown.current?.querySelector('.notif_list').offsetHeight + 16)
       } else {
         setMenuHeight(350)
       }
@@ -95,15 +93,15 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
   }, [page])
 
   const handleScroll = () => {
-    return
-    // if (!moreTrigger) return
+    if (!moreTrigger) return
 
-    // const scrollTop = window.innerHeight + document.documentElement.scrollTop
-    // const scrollHeight = document.scrollingElement.scrollHeight
-    // if (scrollTop >= scrollHeight - 150 ) {
-    //   setMoreTrigger(false)
-    //   setPage(nextPage)
-    // }
+    const scrollTop = document.querySelector('.head_dropdown.with_notifications').scrollHeight +
+      document.querySelector('.navigation__menu').scrollTop
+    const scrollHeight = document.querySelector('.notif_list').scrollHeight
+    if (scrollTop >= scrollHeight - 150) {
+      setMoreTrigger(false)
+      setPage(nextPage)
+    }
   }
 
   useEffect(() => {
@@ -133,13 +131,15 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
     <div className="head_dropdown with_notifications" style={{ height: menuHeight }} ref={dropdown}>
       {!noData ? (
         !loading ? (
-          <CustomScrollbar className="navigation__menu">
+          <CustomScrollbar className="navigation__menu" onScroll={handleScroll}>
             <div className="notif_list">
               <div className="card_item">
                 <Button text="Delete all notifications" onClick={deleteNotifications} className="main hollow" />
               </div>
 
               <NotificationsList notifications={notifications} />
+
+              {moreLoading && <Loader className="more_loader" color="#64707d" />}
             </div>
           </CustomScrollbar>
         ) : <Loader color="#64707d" />

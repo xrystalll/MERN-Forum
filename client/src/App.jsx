@@ -36,7 +36,7 @@ const App = () => {
             <Route path="/boards/:boardName" component={Board} />
             <Route path="/thread/:threadId" component={Thread} />
             <Route path="/users" component={Users} />
-            <UsersOnlyRoute path="/user/:userId" component={User} />
+            <UsersOnlyRoute path="/user/:userName" component={User} />
             <AdminsOnlyRoute path="/dashboard" component={Dashboard} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>

@@ -66,7 +66,7 @@ const SignUp = ({ history }) => {
       .then(data => {
         if (data.accessToken) {
           context.login(data)
-          history.push('/user/' + data.user.id)
+          history.push('/user/' + data.user.name)
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {

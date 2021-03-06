@@ -1,6 +1,6 @@
 import { Scrollbars } from 'react-custom-scrollbars';
 
-const CustomScrollbar = ({ className, children }) => {
+const CustomScrollbar = ({ className, children, onScroll }) => {
   return (
     <Scrollbars
       autoHide
@@ -9,6 +9,7 @@ const CustomScrollbar = ({ className, children }) => {
       renderThumbHorizontal={props => <div {...props} className="thumb-horizontal" />}
       renderThumbVertical={props => <div {...props} className="thumb-vertical" />}
       renderView={props => <div {...props} className={className} />}
+      onScroll={onScroll}
     >
       {children}
     </Scrollbars>

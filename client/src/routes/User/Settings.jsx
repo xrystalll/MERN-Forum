@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
@@ -10,9 +11,17 @@ import FileUploadForm from 'components/Form/FileUploadForm';
 import { Button } from 'components/Button';
 import Loader from 'components/Loader';
 
-const Settings = () => {
+const Settings = ({ match }) => {
   document.title = 'Forum | Profile settings'
   const { user, setUserPicture, token } = useContext(StoreContext)
+  const { userName } = match.params
+  const history = useHistory()
+
+  useEffect(() => {
+    if (user.name !== userName) {
+      history.push('/user/' + user.name + '/settings')
+    }
+  }, [])
 
   const [file, setFile] = useState([])
   const [uploading, setUploading] = useState(false)
@@ -63,7 +72,7 @@ const Settings = () => {
       <Breadcrumbs current="Settings" links={[
         { title: 'Home', link: '/' },
         { title: 'Users', link: '/users' },
-        { title: user.displayName, link: '/user/' + user.id }
+        { title: user.displayName, link: '/user/' + user.name }
       ]} />
 
       <SectionHeader title="Profile settings" />

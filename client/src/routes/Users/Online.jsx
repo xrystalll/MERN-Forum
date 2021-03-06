@@ -57,7 +57,7 @@ const Online = () => {
 
     const scrollTop = window.innerHeight + document.documentElement.scrollTop
     const scrollHeight = document.scrollingElement.scrollHeight
-    if (scrollTop >= scrollHeight - 150 ) {
+    if (scrollTop >= scrollHeight - 150) {
       setMoreTrigger(false)
       setPage(nextPage)
     }

@@ -7,9 +7,10 @@ import { Section } from 'components/Section';
 
 import Profile from './Profile';
 import Settings from './Settings';
+import './style.css';
 
 const User = ({ match }) => {
-  const { userId } = match.params
+  const { userName } = match.params
   const { setFabVisible } = useContext(StoreContext)
   const { path } = useRouteMatch()
 
@@ -22,7 +23,7 @@ const User = ({ match }) => {
       <Switch>
         <Route path={path + '/settings'} exact component={Settings} />
         <Route path={path} exact>
-          <Profile userId={userId} />
+          <Profile userName={userName} />
         </Route>
       </Switch>
     </Section>
