@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
 import { StoreContext } from 'store/Store';
+import { BACKEND } from 'support/Constants';
 
 import CustomScrollbar from 'components/CustomScrollbar';
 import './style.css';
@@ -186,7 +187,7 @@ const Dropdown = () => {
     <li className="head_act_item">
       <div
         className="head_profile"
-        style={user.picture && { backgroundImage: `url(${user.picture})` }}
+        style={user.picture && { backgroundImage: `url(${BACKEND + user.picture})` }}
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
         {!user.picture && user.displayName.charAt(0)}

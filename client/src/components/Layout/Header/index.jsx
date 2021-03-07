@@ -45,7 +45,7 @@ const Header = ({ setMenuState }) => {
 
           {user ? (
             <Fragment>
-              <Notifications user={user} token={token} />
+              <Notifications />
 
               <Dropdown />
             </Fragment>

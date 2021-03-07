@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
@@ -137,9 +138,7 @@ const Boards = () => {
           }
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => {
-        setFetchErros({ general: err.message })
-      })
+      .catch(err => toast.error(err))
   }
 
   return (

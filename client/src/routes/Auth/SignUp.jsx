@@ -35,16 +35,16 @@ const SignUp = ({ history }) => {
 
     setErrors({})
 
-    if (!values.username) {
+    if (!values.username.trim()) {
       return setErrors({ username: 'Enter your name' })
     }
-    if (!values.email) {
+    if (!values.email.trim()) {
       return setErrors({ email: 'Enter email' })
     }
-    if (!values.password) {
+    if (!values.password.trim()) {
       return setErrors({ password: 'Enter password' })
     }
-    if (values.password !== values.confirmPassword) {
+    if (values.password.trim() !== values.confirmPassword) {
       return setErrors({ confirmPassword: 'Passwords not match' })
     }
 

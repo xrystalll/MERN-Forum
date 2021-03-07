@@ -61,7 +61,7 @@ const Profile = ({ userName }) => {
           <Fragment>
             <div className="profile_head">
               {userData.picture ? (
-                <div className="profile_picture" style={{ backgroundImage: `url(${userData.picture})` }} />
+                <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
               ) : (
                 <div className="profile_picture">{userData.displayName.charAt(0)}</div>
               )}

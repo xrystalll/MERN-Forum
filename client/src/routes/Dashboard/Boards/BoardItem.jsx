@@ -16,10 +16,10 @@ const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros })
     setErrors({})
     setFetchErros({})
 
-    if (!values.name) {
+    if (!values.name.trim()) {
       return setErrors({ name: 'Enter short name' })
     }
-    if (!values.title) {
+    if (!values.title.trim()) {
       return setErrors({ title: 'Enter title' })
     }
     if (!values.position || values.position <= 0) {
@@ -170,10 +170,10 @@ const NewBoardItem = ({ createBoard, setCreate, fetchErrors, setFetchErros }) =>
     setErrors({})
     setFetchErros({})
 
-    if (!values.name) {
+    if (!values.name.trim()) {
       return setErrors({ name: 'Enter short name' })
     }
-    if (!values.title) {
+    if (!values.title.trim()) {
       return setErrors({ title: 'Enter title' })
     }
     if (!values.position || values.position <= 0) {

@@ -13,8 +13,10 @@ import Board from 'routes/Forum/Board';
 import Thread from 'routes/Forum/Thread';
 import Users from 'routes/Users';
 import User from 'routes/User';
+import Banned from 'routes/Banned';
 import Dashboard from 'routes/Dashboard';
 import { NotFound } from 'routes/Error';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   useEffect(() => {
@@ -37,9 +39,12 @@ const App = () => {
             <Route path="/thread/:threadId" component={Thread} />
             <Route path="/users" component={Users} />
             <UsersOnlyRoute path="/user/:userName" component={User} />
+            <Route path="/banned" component={Banned} />
             <AdminsOnlyRoute path="/dashboard" component={Dashboard} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>
+
+          <ToastContainer position="bottom-right" autoClose={2000} pauseOnFocusLoss={false} />
         </Layout>
       </Router>
     </Store>

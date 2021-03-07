@@ -25,10 +25,10 @@ const Modal = ({ open, close }) => {
     setErrors({})
 
     if (postType.type === 'thread') {
-      if (!values.title) {
+      if (!values.title.trim()) {
         return setErrors({ title: 'Enter thread title' })
       }
-      if (!values.body) {
+      if (!values.body.trim()) {
         return setErrors({ body: 'Enter content' })
       }
       if (!values.boardId) {
@@ -40,31 +40,31 @@ const Modal = ({ open, close }) => {
     }
 
     if (postType.type === 'userThreadEdit') {
-      if (!values.title) {
+      if (!values.title.trim()) {
         return setErrors({ title: 'Enter thread title' })
       }
-      if (!values.body) {
+      if (!values.body.trim()) {
         return setErrors({ body: 'Enter content' })
       }
 
       setLoading(true)
-      editThread()
+      editThread('edit')
     }
 
     if (postType.type === 'adminThreadEdit') {
-      if (!values.title) {
+      if (!values.title.trim()) {
         return setErrors({ title: 'Enter thread title' })
       }
-      if (!values.body) {
+      if (!values.body.trim()) {
         return setErrors({ body: 'Enter content' })
       }
 
       setLoading(true)
-      adminEditThread()
+      editThread('adminedit')
     }
 
     if (postType.type === 'answer') {
-      if (!values.body) {
+      if (!values.body.trim()) {
         return setErrors({ body: 'Enter content' })
       }
 
@@ -73,7 +73,7 @@ const Modal = ({ open, close }) => {
     }
 
     if (postType.type === 'answerEdit') {
-      if (!values.body) {
+      if (!values.body.trim()) {
         return setErrors({ body: 'Enter content' })
       }
 
@@ -83,7 +83,7 @@ const Modal = ({ open, close }) => {
   }
 
   const { onChange, onSubmit, values } = useForm(formCallback, {
-    boardId: postType.id || '',
+    boardId: postType.id,
     title: postType?.someData?.title || '',
     body: postType?.someData?.body || ''
   })
@@ -152,46 +152,21 @@ const Modal = ({ open, close }) => {
       })
   }
 
-  const editThread = () => {
-    fetch(BACKEND + '/api/thread/edit', {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        threadId: postType.id,
-        title: values.title.substring(0, 100),
-        body: values.body.substring(0, 1000)
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.error) {
-          close()
-          setPostType({
-            type: 'answer',
-            id: postType.id
-          })
-        } else throw Error(data.error?.message || 'Error')
-      })
-      .catch(err => {
-        setErrors({ general: err.message })
-      })
-  }
+  const editThread = (method) => {
+    const formData = new FormData()
+    files.map(item => formData.append('attach', item))
+    formData.append('postData', JSON.stringify({
+      threadId: postType.id,
+      title: values.title.substring(0, 100),
+      body: values.body.substring(0, 1000)
+    }))
 
-  const adminEditThread = () => {
-    fetch(BACKEND + '/api/thread/adminedit', {
+    fetch(BACKEND + '/api/thread/' + method, {
       method: 'PUT',
       headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
+        Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({
-        threadId: postType.id,
-        title: values.title.substring(0, 100),
-        body: values.body.substring(0, 1000)
-      })
+      body: formData
     })
       .then(response => response.json())
       .then(data => {
@@ -239,16 +214,66 @@ const Modal = ({ open, close }) => {
   }
 
   const editAnswer = () => {
+    const formData = new FormData()
+    files.map(item => formData.append('attach', item))
+    formData.append('postData', JSON.stringify({
+      answerId: postType?.someData?.id || '',
+      body: values.body.substring(0, 1000)
+    }))
+
     fetch(BACKEND + '/api/answer/edit', {
       method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          close()
+          setPostType({
+            type: 'answer',
+            id: postType.id
+          })
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        setErrors({ general: err.message })
+      })
+  }
+
+  const banCallback = () => {
+    setErrors({})
+
+    if (postType.type === 'ban') {
+      if (!banValues.body.trim()) {
+        return setErrors({ reason: 'Enter reason' })
+      }
+      if (!banValues.expiresAt.trim()) {
+        return setErrors({ expiresAt: 'Enter time' })
+      }
+
+      setLoading(true)
+      ban()
+    }
+  }
+
+  const { onChange: banChange, onSubmit: banSubmit, values: banValues } = useForm(banCallback, {
+    userId: postType.id,
+    reason: '',
+    body: postType?.someData?.body || '',
+    expiresAt: ''
+  })
+
+  const ban = () => {
+    fetch(`${BACKEND}/api/ban/create`, {
+      method: 'POST',
       headers: {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        answerId: postType?.someData?.id || '',
-        body: values.body.substring(0, 1000)
-      })
+      body: JSON.stringify(banValues)
     })
       .then(response => response.json())
       .then(data => {
@@ -316,18 +341,18 @@ const Modal = ({ open, close }) => {
           </div>
         </FormCardItem>
 
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
             : <InputButton text="Create thread" />
           }
         </div>
-
-        {errors.general && (
-          <div className="card_item">
-            <span className="form_error">{errors.general}</span>
-          </div>
-        )}
       </form>
     </ModalBody>
   )
@@ -350,18 +375,18 @@ const Modal = ({ open, close }) => {
           clearFiles={clearFiles}
         />
 
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
             : <InputButton text="Answer" />
           }
         </div>
-
-        {errors.general && (
-          <div className="card_item">
-            <span className="form_error">{errors.general}</span>
-          </div>
-        )}
       </form>
     </ModalBody>
   )
@@ -384,18 +409,18 @@ const Modal = ({ open, close }) => {
           clearFiles={clearFiles}
         />
 
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
             : <InputButton text="Edit" />
           }
         </div>
-
-        {errors.general && (
-          <div className="card_item">
-            <span className="form_error">{errors.general}</span>
-          </div>
-        )}
       </form>
     </ModalBody>
   )
@@ -430,18 +455,70 @@ const Modal = ({ open, close }) => {
           clearFiles={clearFiles}
         />
 
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
             : <InputButton text="Edit" />
           }
         </div>
+      </form>
+    </ModalBody>
+  )
+
+  const banContent = (
+    <ModalBody title="Ban user" onClick={close}>
+      <form className="form_inner" onSubmit={banSubmit}>
+        <FormCardItem title="Reason" error={errors.reason}>
+          <div className={errors.reason ? 'form_block error' : 'form_block' }>
+            <Input
+              name="reason"
+              value={banValues.reason}
+              placeholder="Enter reason"
+              maxLength="100"
+              onChange={banChange}
+            />
+          </div>
+        </FormCardItem>
+
+        <FormCardItem title="Content" error={errors.body}>
+          <TextareaForm
+            className={errors.body ? 'form_block error' : 'form_block' }
+            name="body"
+            value={banValues.body}
+            placeholder="Enter your message"
+            onChange={banChange}
+          />
+        </FormCardItem>
+
+        <FormCardItem title="Duration" error={errors.expiresAt}>
+          <div className={errors.expiresAt ? 'form_block error' : 'form_block' }>
+            <Input
+              name="expiresAt"
+              value={banValues.expiresAt}
+              placeholder="Enter duration (iso date)"
+              onChange={banChange}
+            />
+          </div>
+        </FormCardItem>
 
         {errors.general && (
           <div className="card_item">
             <span className="form_error">{errors.general}</span>
           </div>
         )}
+
+        <div className="card_item">
+          {loading
+            ? <Loader className="btn" />
+            : <InputButton text="Ban" />
+          }
+        </div>
       </form>
     </ModalBody>
   )
@@ -458,6 +535,9 @@ const Modal = ({ open, close }) => {
   }
   if (postType.type === 'answerEdit') {
     modalContent = editAnswerContent
+  }
+  if (postType.type === 'ban') {
+    modalContent = banContent
   }
 
   return (

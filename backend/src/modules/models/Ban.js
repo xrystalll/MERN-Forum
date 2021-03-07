@@ -2,7 +2,14 @@ const { model, Schema } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const banSchema = new Schema({
-  userId: Schema.Types.ObjectId,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  admin: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   reason: String,
   body: String,
   createdAt: String,

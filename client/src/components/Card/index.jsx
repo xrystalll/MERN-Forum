@@ -1,6 +1,7 @@
 import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Lightbox from 'react-image-lightbox';
+import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 import { counter, declOfNum, dateFormat } from 'support/Utils';
@@ -45,7 +46,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           setLikes(data.likes)
         }
       })
-      .catch(err => console.error)
+      .catch(err => toast.error(err))
   }
 
   const likeAnswer = () => {
@@ -63,7 +64,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           setLikes(data.likes)
         }
       })
-      .catch(err => console.error)
+      .catch(err => toast.error(err))
   }
 
   useEffect(() => {
@@ -136,7 +137,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           history.push('/')
         }
       })
-      .catch(err => console.error)
+      .catch(err => toast.error(err))
   }
 
   const deleteAnswer = () => {
@@ -149,7 +150,7 @@ const Card = ({ data, threadData, full = false, type }) => {
       body: JSON.stringify({ answerId: data._id })
     })
       .then(response => response.json())
-      .catch(err => console.error)
+      .catch(err => toast.error(err))
   }
 
   const onDelete = () => {
@@ -162,21 +163,23 @@ const Card = ({ data, threadData, full = false, type }) => {
 
   const onPin = () => {
     if (type !== 'answer') {
+      const formData = new FormData()
+      formData.append('postData', JSON.stringify({
+        threadId: data._id,
+        title: data.title,
+        body: data.body,
+        pined: !data.pined
+      }))
+
       fetch(BACKEND + '/api/thread/adminedit', {
         method: 'PUT',
         headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json'
+          Authorization: 'Bearer ' + token
         },
-        body: JSON.stringify({
-          threadId: data._id,
-          title: data.title,
-          body: data.body,
-          pined: !data.pined
-        })
+        body: formData
       })
         .then(response => response.json())
-        .catch(err => console.error)
+        .catch(err => toast.error(err))
     }
   }
 
@@ -184,21 +187,40 @@ const Card = ({ data, threadData, full = false, type }) => {
     if (type !== 'answer') {
       const editApi = user.role === 'admin' ? 'adminedit' : 'edit'
 
+      const formData = new FormData()
+      formData.append('postData', JSON.stringify({
+        threadId: data._id,
+        title: data.title,
+        body: data.body,
+        closed: !data.closed
+      }))
+
       fetch(BACKEND + '/api/thread/' + editApi, {
         method: 'PUT',
         headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json'
+          Authorization: 'Bearer ' + token
         },
-        body: JSON.stringify({
-          threadId: data._id,
-          title: data.title,
-          body: data.body,
-          closed: !data.closed
-        })
+        body: formData
       })
         .then(response => response.json())
-        .catch(err => console.error)
+        .catch(err => toast.error(err))
+    }
+  }
+
+  const [banned, setBanned] = useState(data.author?.ban)
+
+  const onBan = () => {
+    if (banned) {
+      console.log('unban')
+    } else {
+      setPostType({
+        type: 'ban',
+        id: data.author._id,
+        someData: {
+          body: data.body
+        }
+      })
+      setModalOpen(true)
     }
   }
 
@@ -272,7 +294,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                     {type !== 'answer' && <div onClick={onPin} className="dropdown_item">{data.pined ? 'Unpin' : 'Pin'}</div>}
                     {type !== 'answer' && <div onClick={onClose} className="dropdown_item">{data.closed ? 'Open' : 'Close'}</div>}
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
-                    <div className="dropdown_item">Ban user</div>
+                    <div onClick={onBan} className="dropdown_item">{banned ? 'Unban user' : 'Ban user'}</div>
                   </Fragment>
                 )}
                 {user.id === data.author._id || user.role === 'admin'
@@ -298,7 +320,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                   {data.attach.map((item, index) => (
                     <Fragment key={index}>
                       {imageTypes.find(i => i === item.type) ? (
-                        <div onClick={() => imageView(item.file)} className="attached_file card_left" style={{ backgroundImage: `url(${item.file})` }}></div>
+                        <div onClick={() => imageView(BACKEND + item.file)} className="attached_file card_left" style={{ backgroundImage: `url(${BACKEND + item.file})` }}></div>
                       ) : (
                         <a href={item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
                           <div className="attached_info">{regexp.exec(item.file)[1]}</div>
@@ -337,7 +359,13 @@ const Card = ({ data, threadData, full = false, type }) => {
                       {user && (
                         <div className="likes_list" ref={likesList}>
                           {likes.slice(0, 4).map((item, index) => (
-                            <Link key={index} to={'/user/' + item.name} className="head_profile" title={item.displayName} style={{ backgroundImage: `url(${item.picture})` }}>
+                            <Link
+                              key={index}
+                              to={'/user/' + item.name}
+                              className="head_profile"
+                              title={item.displayName}
+                              style={{ backgroundImage: `url(${item.picture ? BACKEND + item.picture : ''})` }}
+                            >
                               {!item.picture && item.displayName.charAt(0)}
                             </Link>
                           ))}
@@ -419,15 +447,49 @@ const UserCard = ({ data }) => {
           <Link to={'/user/' + data.name} className="card_head user_head">
             <div className="card_head_inner">
               <div className="card_title user_title">
-                <div className="head_profile" style={{ backgroundImage: `url(${data.picture})` }}>
-                  {!data.picture && data.displayName.charAt(0)}
-                </div>
+                {data.picture ? (
+                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.picture})` }} />
+                ) : (
+                  <div className="head_profile">
+                    {data.displayName.charAt(0)}
+                  </div>
+                )}
                 <div className="user_info">
                   <div className="user_info_top">
                     {data.displayName}
                     {data.role === 'admin' && <span className="user_status">admin</span>}
                   </div>
                   <div className="head_text">{dateFormat(data.onlineAt)}</div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const BannedCard = ({ data }) => {
+  return (
+    <div className="card_item">
+      <div className="card_body">
+        <div className="card_block">
+          <Link to={'/user/' + data.user.name} className="card_head user_head">
+            <div className="card_head_inner">
+              <div className="card_title user_title">
+                {data.user.picture ? (
+                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.user.picture})` }} />
+                ) : (
+                  <div className="head_profile">
+                    {data.user.displayName.charAt(0)}
+                  </div>
+                )}
+                <div className="user_info">
+                  <div className="user_info_top">
+                    {data.user.displayName}
+                  </div>
+                  <div className="head_text">{dateFormat(data.createdAt)}</div>
                 </div>
               </div>
             </div>
@@ -471,4 +533,4 @@ const NotificationCard = ({ data }) => {
   )
 }
 
-export { Card, BoardCard, UserCard, NotificationCard };
+export { Card, BoardCard, UserCard, BannedCard, NotificationCard };

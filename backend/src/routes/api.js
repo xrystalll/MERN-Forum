@@ -9,6 +9,9 @@ const ForumController = require('../modules/controllers/forumController');
 router.get('/stats', GeneralController.getStats)
 router.get('/users', GeneralController.getUsers)
 router.get('/user', verifyAccessToken, GeneralController.getUser)
+router.get('/bans', GeneralController.getBans)
+router.post('/ban/create', verifyAccessToken, GeneralController.createBan)
+router.delete('/ban/delete', verifyAccessToken, GeneralController.unBan)
 
 router.get('/profile', verifyAccessToken, ProfileController.getProfile)
 router.put('/profile/upload/picture', verifyAccessToken, ProfileController.uploadUserPicture)

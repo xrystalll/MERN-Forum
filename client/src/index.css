@@ -152,7 +152,7 @@ ul {
   margin-top: 5rem;
 }
 .content > .content_loader, .main_section > .content_loader {
-  height: 50vh;
+  height: 40vh;
 }
 .more_loader {
   height: 36px !important;

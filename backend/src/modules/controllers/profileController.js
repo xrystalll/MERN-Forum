@@ -34,7 +34,7 @@ const upload = multer({
 
 const getProfile = async (req, res, next) => {
   try {
-    const select = '_id name displayName email createdAt onlineAt picture role'
+    const select = '_id name displayName email createdAt onlineAt picture role ban'
     const user = await User.findOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, select)
 
     res.json(user)
@@ -54,7 +54,7 @@ const uploadUserPicture = (req, res, next) => {
           .toBuffer()
           .then(async data => {
             fs.writeFileSync(req.file.path, data)
-            const picture = { picture: `${process.env.BACKEND}/users/${req.file.filename}` }
+            const picture = { picture: `/users/${req.file.filename}` }
 
             await User.updateOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, picture)
 

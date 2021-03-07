@@ -25,6 +25,10 @@ const userSchema = new Schema({
   onlineAt: String,
   picture: String,
   role: String,
+  ban: {
+    type: Schema.Types.ObjectId,
+    ref: 'Ban'
+  },
   ip: String,
   ua: String
 })

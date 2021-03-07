@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { NavLink, Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
@@ -10,6 +11,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import { SlidesContainer, SlideItem } from 'components/Slider';
 
 import Boards from './Boards';
+import Bans from './Bans';
 import './style.css';
 
 const Dashboard = () => {
@@ -32,6 +34,7 @@ const Dashboard = () => {
           setStats(response)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
+        toast.error(err)
       }
     }
 
@@ -42,6 +45,7 @@ const Dashboard = () => {
     <Section>
       <Switch>
         <Route path={path + '/boards'} exact component={Boards} />
+        <Route path={path + '/bans'} component={Bans} />
         <Route path={path} exact>
           <Breadcrumbs current="Dashboard" links={[
             { title: 'Home', link: '/' }

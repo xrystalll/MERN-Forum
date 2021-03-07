@@ -1,5 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
@@ -64,7 +65,7 @@ const Settings = ({ match }) => {
           setUserPicture(data.picture)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => console.error)
+      .catch(err => toast.error(err))
   }
 
   return (

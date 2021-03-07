@@ -33,10 +33,10 @@ const SignIn = ({ history }) => {
 
     setErrors({})
 
-    if (!values.username) {
+    if (!values.username.trim()) {
       return setErrors({ username: 'Enter your name' })
     }
-    if (!values.password) {
+    if (!values.password.trim()) {
       return setErrors({ password: 'Enter password' })
     }
 

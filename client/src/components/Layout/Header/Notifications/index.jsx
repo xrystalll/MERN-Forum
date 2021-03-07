@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
+import { StoreContext } from 'store/Store';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import Dropdown from './Dropdown';
 
-const Notifications = ({ user, token }) => {
+const Notifications = () => {
+  const { user, token, logout } = useContext(StoreContext)
+  const history = useHistory()
   const [notification, setNotification] = useState(JSON.parse(localStorage.getItem('notifications')))
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
@@ -19,6 +23,13 @@ const Notifications = ({ user, token }) => {
     Socket.on('newNotification', (data) => {
       localStorage.setItem('notifications', true)
       setNotification(true)
+    })
+    Socket.on('ban', (data) => {
+      if (data.user === user.id) {
+        localStorage.setItem('ban', user.id)
+        history.push('/banned')
+        logout()
+      }
     })
   }, [])
 

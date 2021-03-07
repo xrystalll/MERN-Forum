@@ -63,7 +63,7 @@ const getUser = async (req, res, next) => {
   try {
     const { userName } = req.query
 
-    const select = '_id name displayName createdAt onlineAt picture role'
+    const select = '_id name displayName createdAt onlineAt picture role ban'
     const user = await User.findOne({ name: userName }, select)
 
     res.json(user)
@@ -72,4 +72,79 @@ const getUser = async (req, res, next) => {
   }
 }
 
-module.exports = { getStats, getUsers, getUser }
+const getBans = async (req, res, next) => {
+  try {
+    const { limit = 10, page = 1, sort } = req.query
+
+    const populate = [{
+      path: 'user',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'admin',
+      select: '_id name displayName onlineAt picture role'
+    }]
+    let bans
+    if (sort === 'old') {
+      bans = await Ban.paginate({ expiresAt: { $gt: new Date().toISOString() } }, { sort: { createdAt: 1 }, page, limit, populate })
+    } else if (sort === 'duration') {
+      bans = await Ban.paginate({ expiresAt: { $gt: new Date().toISOString() } }, { sort: { expiresAt: -1 }, page, limit, populate })
+    } else {
+      bans = await Ban.paginate({ expiresAt: { $gt: new Date().toISOString() } }, { sort: { createdAt: -1 }, page, limit, populate })
+    }
+
+    res.json(bans)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+const createBan = async (req, res, next) => {
+  try {
+    const { userId, reason, body = '', expiresAt } = req.body
+    const admin = req.payload.role === 'admin'
+
+    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+    if (reason.trim() === '') return next(createError.BadRequest('Reason must not be empty'))
+    if (!expiresAt) return next(createError.BadRequest('expiresAt must not be empty'))
+
+    const newBan = new Ban({
+      user: userId,
+      admin: req.payload.id,
+      reason,
+      body: body.substring(0, 100),
+      createdAt: new Date().toISOString(),
+      expiresAt
+    })
+
+    const ban = await newBan.save()
+
+    await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { ban: ban._id })
+
+    res.json(ban)
+
+    req.io.to('notification:' + userId).emit('ban', ban)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+const unBan = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+    const admin = req.payload.role === 'admin'
+
+    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { ban: null })
+
+    res.json('User unbanned')
+
+    req.io.to('banned:' + userId).emit('unban', { message: 'Unbanned' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports = { getStats, getUsers, getUser, getBans, createBan, unBan }

@@ -48,12 +48,10 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
 
   useEffect(() => {
     if (!loading) {
-      if (noData) {
-        setMenuHeight(260)
-      } else if (notifications.length) {
+      if (notifications.length) {
         setMenuHeight(dropdown.current?.querySelector('.notif_list').offsetHeight + 16)
       } else {
-        setMenuHeight(350)
+        setMenuHeight(260)
       }
     } else {
       setMenuHeight(190)
@@ -111,6 +109,8 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
   }, [])
 
   const deleteNotifications = () => {
+    if (!notifications.length) return
+
     fetch(BACKEND + '/api/notifications/delete', {
       method: 'DELETE',
       headers: {
@@ -124,7 +124,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
           setNotifications([])
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => console.error)
+      .catch(console.error)
   }
 
   return (
@@ -133,9 +133,11 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
         !loading ? (
           <CustomScrollbar className="navigation__menu" onScroll={handleScroll}>
             <div className="notif_list">
-              <div className="card_item">
-                <Button text="Delete all notifications" onClick={deleteNotifications} className="main hollow" />
-              </div>
+              {notifications.length ? (
+                <div className="card_item">
+                  <Button text="Delete all notifications" onClick={deleteNotifications} className="main hollow" />
+                </div>
+              ) : null}
 
               <NotificationsList notifications={notifications} />
 
