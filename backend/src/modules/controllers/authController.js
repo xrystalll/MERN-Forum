@@ -71,6 +71,14 @@ const login = async (req, res, next) => {
     const isMatch = await user.isValidPassword(result.password)
     if (!isMatch) throw createError.Unauthorized('Username or password not valid')
 
+    if (user.ban) {
+      return res.json({
+        ban: {
+          userId: user._id,
+        }
+      })
+    }
+
     const accessToken = await signAccessToken(user)
 
     await User.updateOne({ _id: user._id }, {

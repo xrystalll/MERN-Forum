@@ -64,7 +64,15 @@ const getUser = async (req, res, next) => {
     const { userName } = req.query
 
     const select = '_id name displayName createdAt onlineAt picture role ban'
-    const user = await User.findOne({ name: userName }, select)
+    const populate = {
+      path: 'ban',
+      select: '_id admin reason body createdAt expiresAt',
+      populate: {
+        path: 'admin',
+        select: '_id name displayName onlineAt picture role'
+      }
+    }
+    const user = await User.findOne({ name: userName }, select).populate(populate)
 
     res.json(user)
   } catch(err) {
@@ -93,6 +101,27 @@ const getBans = async (req, res, next) => {
     }
 
     res.json(bans)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+const getBan = async (req, res, next) => {
+  try {
+    const { userId } = req.query
+
+    const select = '_id name displayName createdAt onlineAt picture role ban'
+    const populate = {
+      path: 'ban',
+      select: '_id admin reason body createdAt expiresAt',
+      populate: {
+        path: 'admin',
+        select: '_id name displayName onlineAt picture role'
+      }
+    }
+    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(userId) }, select).populate(populate)
+
+    res.json(user)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
@@ -147,4 +176,4 @@ const unBan = async (req, res, next) => {
   }
 }
 
-module.exports = { getStats, getUsers, getUser, getBans, createBan, unBan }
+module.exports = { getStats, getUsers, getUser, getBans, getBan, createBan, unBan }

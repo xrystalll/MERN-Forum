@@ -6,6 +6,7 @@ import { BACKEND } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Breadcrumbs from 'components/Breadcrumbs';
+import { BanInfoCard } from 'components/Card';
 import { LinkButton } from 'components/Button';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
@@ -59,25 +60,35 @@ const Profile = ({ userName }) => {
       {!noData ? (
         !loading ? (
           <Fragment>
-            <div className="profile_head">
-              {userData.picture ? (
-                <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
-              ) : (
-                <div className="profile_picture">{userData.displayName.charAt(0)}</div>
-              )}
+            {userData.ban && (
+              <BanInfoCard data={userData.ban} />
+            )}
 
-              <div className="profile_head_right">
-                <div className="profile_username">
-                  {userData.displayName}
-                  {userData.role === 'admin' && <span className="user_status">admin</span>}
-                </div>
-                <div>{new Date() - new Date(userData.onlineAt) < 5 * 60000 ? 'online' : 'Last seen ' + dateFormat(userData.onlineAt)}</div>
+            <div className="card_item">
+              <div className="card_body">
+                <div className="card_block">
+                  <div className="profile_head">
+                    {userData.picture ? (
+                      <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
+                    ) : (
+                      <div className="profile_picture">{userData.displayName.charAt(0)}</div>
+                    )}
 
-                {user.id === userData._id && (
-                  <div className="profile_head_actions">
-                    <LinkButton link={'/user/' + userData.name + '/settings'} className="hollow" text="Settings" />
+                    <div className="profile_head_right">
+                      <div className="profile_username">
+                        {userData.displayName}
+                        {userData.role === 'admin' && <span className="user_status">admin</span>}
+                      </div>
+                      <div>{new Date() - new Date(userData.onlineAt) < 5 * 60000 ? 'online' : 'Last seen ' + dateFormat(userData.onlineAt)}</div>
+
+                      {user.id === userData._id && (
+                        <div className="profile_head_actions">
+                          <LinkButton link={'/user/' + userData.name + '/settings'} className="hollow" text="Settings" />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </Fragment>

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Store from 'store/Store';
 
 import Layout from 'components/Layout';
-import { AuthRoute, UsersOnlyRoute, AdminsOnlyRoute } from 'components/ProtectedRoute';
+import { GeneralRoute, AuthRoute, UsersOnlyRoute, AdminsOnlyRoute } from 'components/ProtectedRoute';
 
 import Home from 'routes/Home';
 import SignUp from 'routes/Auth/SignUp';
@@ -31,16 +31,16 @@ const App = () => {
       <Router>
         <Layout>
           <Switch>
-            <Route exact path="/" component={Home} />
+            <GeneralRoute exact path="/" component={Home} />
             <AuthRoute path="/signup" component={SignUp} />
             <AuthRoute path="/signin" component={SignIn} />
-            <Route exact path="/boards" component={Boards} />
-            <Route path="/boards/:boardName" component={Board} />
-            <Route path="/thread/:threadId" component={Thread} />
-            <Route path="/users" component={Users} />
+            <GeneralRoute exact path="/boards" component={Boards} />
+            <GeneralRoute path="/boards/:boardName" component={Board} />
+            <GeneralRoute path="/thread/:threadId" component={Thread} />
+            <GeneralRoute path="/users" component={Users} />
             <UsersOnlyRoute path="/user/:userName" component={User} />
-            <Route path="/banned" component={Banned} />
             <AdminsOnlyRoute path="/dashboard" component={Dashboard} />
+            <Route path="/banned" component={Banned} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>
 

@@ -1,10 +1,24 @@
-import { useContext } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import { Route, Redirect, useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
+export const GeneralRoute = ({ component: Component, ...rest }) => {
+  return (
+    <Route
+      {...rest}
+      render={(props) => (localStorage.getItem('ban') ? <Redirect to="/banned" /> : <Component {...props} />)}
+    />
+  )
+}
+
 export const AuthRoute = ({ component: Component, ...rest }) => {
   const { user } = useContext(StoreContext)
+  const history = useHistory()
+
+  useEffect(() => {
+    if (localStorage.getItem('ban')) return history.push('/banned')
+  })
 
   return (
     <Route
@@ -16,6 +30,11 @@ export const AuthRoute = ({ component: Component, ...rest }) => {
 
 export const UsersOnlyRoute = ({ component: Component, ...rest }) => {
   const { user } = useContext(StoreContext)
+  const history = useHistory()
+
+  useEffect(() => {
+    if (localStorage.getItem('ban')) return history.push('/banned')
+  })
 
   return (
     <Route
@@ -27,6 +46,11 @@ export const UsersOnlyRoute = ({ component: Component, ...rest }) => {
 
 export const AdminsOnlyRoute = ({ component: Component, ...rest }) => {
   const { user } = useContext(StoreContext)
+  const history = useHistory()
+
+  useEffect(() => {
+    if (localStorage.getItem('ban')) return history.push('/banned')
+  })
 
   return (
     <Route

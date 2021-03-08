@@ -263,7 +263,7 @@ const Modal = ({ open, close }) => {
     userId: postType.id,
     reason: '',
     body: postType?.someData?.body || '',
-    expiresAt: ''
+    expiresAt: new Date().toISOString()
   })
 
   const ban = () => {
@@ -493,6 +493,7 @@ const Modal = ({ open, close }) => {
             value={banValues.body}
             placeholder="Enter your message"
             onChange={banChange}
+            panel={false}
           />
         </FormCardItem>
 
@@ -501,7 +502,7 @@ const Modal = ({ open, close }) => {
             <Input
               name="expiresAt"
               value={banValues.expiresAt}
-              placeholder="Enter duration (iso date)"
+              placeholder="Enter date"
               onChange={banChange}
             />
           </div>

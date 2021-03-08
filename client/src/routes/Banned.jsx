@@ -1,27 +1,68 @@
-import { Section, SectionHeader } from 'components/Section';
+import { Fragment, useEffect, useState } from 'react';
+import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
-const Banned = () => {
-  document.title = 'Forum | Banned'
+import { BACKEND } from 'support/Constants';
+import { dateFormat } from 'support/Utils';
+
+import { Section, SectionHeader } from 'components/Section';
+import { BanInfoCard } from 'components/Card';
+import Loader from 'components/Loader';
+
+const Banned = ({ history }) => {
+  const [userId] = useState(localStorage.getItem('ban'))
+  const [banInfo, setBanInfo] = useState({})
+
+  useEffect(() => {
+    if (!userId) return history.push('/')
+
+    document.title = 'Forum | Banned'
+
+    const fetchBan = async () => {
+      try {
+        const data = await fetch(`${BACKEND}/api/ban?userId=${userId}`)
+        const response = await data.json()
+
+        if (!response.error) {
+          if (!response.ban) {
+            localStorage.removeItem('ban')
+            history.push('/signin')
+          }
+          setBanInfo(response.ban)
+        } else throw Error(response.error?.message || 'Error')
+      } catch(err) {
+        console.error(err)
+      }
+    }
+
+    fetchBan()
+  }, [userId])
+
+  useEffect(() => {
+    if (banInfo.expiresAt < new Date().toISOString()) {
+      localStorage.removeItem('ban')
+      history.push('/signin')
+    }
+  }, [banInfo, new Date()])
+
+  useEffect(() => {
+    if (userId) joinToRoom('banned:' + userId)
+    return () => {
+      if (userId) leaveFromRoom('banned:' + userId)
+    }
+  }, [userId])
+
+  useEffect(() => {
+    Socket.on('unban', (data) => {
+      localStorage.removeItem('ban')
+      history.push('/signin')
+    })
+  }, [])
 
   return (
     <Section>
       <SectionHeader title="Banned" />
 
-      <div className="card_item">
-        <div className="card_body">
-          <div className="card_block">
-            <div className="card_head user_head">
-              <div className="card_head_inner">
-                <div className="card_title user_title">
-                  <div className="user_info">
-                    You are banned
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+       {banInfo.createdAt ? <BanInfoCard data={banInfo} owner /> : <Loader className="more_loader" color="#64707d" />}
     </Section>
   )
 }

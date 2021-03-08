@@ -211,7 +211,21 @@ const Card = ({ data, threadData, full = false, type }) => {
 
   const onBan = () => {
     if (banned) {
-      console.log('unban')
+      fetch(BACKEND + '/api/ban/delete', {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: data.author._id })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.error) {
+            setBanned(false)
+          }
+        })
+        .catch(err => toast.error(err))
     } else {
       setPostType({
         type: 'ban',
@@ -220,6 +234,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           body: data.body
         }
       })
+      setBanned(true)
       setModalOpen(true)
     }
   }
@@ -500,6 +515,34 @@ const BannedCard = ({ data }) => {
   )
 }
 
+const BanInfoCard = ({ data, owner }) => {
+  return (
+    <div className="card_item">
+      <div className="card_body">
+        <div className="card_block">
+          <div className="card_head">
+            <div className="card_head_inner">
+              <div className="card_title full">{owner ? 'You are banned' : 'User banned'}</div>
+              <div className="card_info">
+                <div className="head_text bold">Admin: {data.admin?.displayName}</div>
+                <span className="bullet">•</span>
+                <span className="head_text">
+                  <time>{dateFormat(data.createdAt)}</time>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="card_content">
+            <p>Reason: {data.reason}</p>
+            <p>Ban expires: {dateFormat(data.expiresAt)}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const NotificationCard = ({ data }) => {
   return (
     <div className="card_item">
@@ -533,4 +576,4 @@ const NotificationCard = ({ data }) => {
   )
 }
 
-export { Card, BoardCard, UserCard, BannedCard, NotificationCard };
+export { Card, BoardCard, UserCard, BannedCard, BanInfoCard, NotificationCard };

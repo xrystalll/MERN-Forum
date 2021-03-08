@@ -13,6 +13,6 @@ export const declOfNum = (number, titles) => {
 }
 
 export const dateFormat = (date) => {
-  return moment(date).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YY, hh:mm' })
+  return moment(date).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YYYY, hh:mm' })
 }
 

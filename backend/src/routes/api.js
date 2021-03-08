@@ -10,6 +10,7 @@ router.get('/stats', GeneralController.getStats)
 router.get('/users', GeneralController.getUsers)
 router.get('/user', verifyAccessToken, GeneralController.getUser)
 router.get('/bans', GeneralController.getBans)
+router.get('/ban', GeneralController.getBan)
 router.post('/ban/create', verifyAccessToken, GeneralController.createBan)
 router.delete('/ban/delete', verifyAccessToken, GeneralController.unBan)
 

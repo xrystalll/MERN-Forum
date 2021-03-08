@@ -15,6 +15,7 @@
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-custom-scrollbars": "^4.2.1",
+    "react-datetime": "^3.0.4",
     "react-dom": "^17.0.1",
     "react-image-lightbox": "^5.1.1",
     "react-markdown": "^5.0.3",

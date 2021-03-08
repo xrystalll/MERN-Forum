@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-const TextareaForm = ({ name, value, placeholder = '', required = false, onChange, className }) => {
+const TextareaForm = ({ name, value, placeholder = '', required = false, onChange, className, panel = true }) => {
   const textarea = useRef()
 
   const handleTag = (tag) => {
@@ -42,31 +42,33 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
 
   return (
     <div className={className || 'form_block'}>
-      <div className="form_foot">
-        <div className="act_group">
-          <div className="bb_btn" role="button" onClick={() => handleTag('italic')} title="Italic">
-            <i className="bx bx-italic"></i>
-          </div>
-          <div className="bb_btn" role="button" onClick={() => handleTag('bold')} title="Bold">
-            <i className="bx bx-bold"></i>
-          </div>
-          <div className="bb_btn" role="button" onClick={() => handleTag('link')} title="Link">
-            <i className="bx bx-link"></i>
-          </div>
-          <div className="bb_btn" role="button" onClick={() => handleTag('spoiler')} title="Spoiler">
-            <i className="bx bx-hide"></i>
-          </div>
-          <div className="bb_btn" role="button" onClick={() => handleTag('image')} title="Image">
-            <i className="bx bx-image-alt"></i>
-          </div>
-          <div className="bb_btn" role="button" onClick={() => handleTag('code')} title="Code">
-            <i className="bx bx-code-alt"></i>
-          </div>
-          <div className="bb_btn md" title="Textarea supports markdown">
-            <i className="bx bxl-markdown"></i>
+      {panel && (
+        <div className="form_foot">
+          <div className="act_group">
+            <div className="bb_btn" role="button" onClick={() => handleTag('italic')} title="Italic">
+              <i className="bx bx-italic"></i>
+            </div>
+            <div className="bb_btn" role="button" onClick={() => handleTag('bold')} title="Bold">
+              <i className="bx bx-bold"></i>
+            </div>
+            <div className="bb_btn" role="button" onClick={() => handleTag('link')} title="Link">
+              <i className="bx bx-link"></i>
+            </div>
+            <div className="bb_btn" role="button" onClick={() => handleTag('spoiler')} title="Spoiler">
+              <i className="bx bx-hide"></i>
+            </div>
+            <div className="bb_btn" role="button" onClick={() => handleTag('image')} title="Image">
+              <i className="bx bx-image-alt"></i>
+            </div>
+            <div className="bb_btn" role="button" onClick={() => handleTag('code')} title="Code">
+              <i className="bx bx-code-alt"></i>
+            </div>
+            <div className="bb_btn md" title="Textarea supports markdown">
+              <i className="bx bxl-markdown"></i>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="text_area">
         <textarea

@@ -54,6 +54,11 @@ const SignIn = ({ history }) => {
         return response.json()
       })
       .then(data => {
+        if (data.ban) {
+          localStorage.setItem('ban', data.ban.userId)
+          history.push('/banned')
+          return
+        }
         if (data.accessToken) {
           context.login(data)
           history.push('/user/' + data.user.name)
