@@ -38,11 +38,20 @@ const Banned = ({ history }) => {
   }, [userId])
 
   useEffect(() => {
-    if (banInfo.expiresAt < new Date().toISOString()) {
-      localStorage.removeItem('ban')
-      history.push('/signin')
+    let timer
+    if (banInfo.expiresAt) {
+      timer = setInterval(() => {
+        console.log([banInfo.expiresAt, new Date().toISOString()], banInfo.expiresAt < new Date().toISOString())
+        if (banInfo.expiresAt < new Date().toISOString()) {
+          localStorage.removeItem('ban')
+          history.push('/signin')
+        }
+      }, 1000)
     }
-  }, [banInfo, new Date()])
+    return () => {
+      timer && clearTimeout(timer)
+    }
+  }, [banInfo])
 
   useEffect(() => {
     if (userId) joinToRoom('banned:' + userId)

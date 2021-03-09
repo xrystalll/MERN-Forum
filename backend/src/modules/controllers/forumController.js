@@ -4,8 +4,6 @@ const Mongoose = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 
-const User = require('../models/User');
-const Ban = require('../models/Ban');
 const Board = require('../models/Board');
 const Thread = require('../models/Thread');
 const Answer = require('../models/Answer');
@@ -45,11 +43,6 @@ module.exports.getBoards = async (req, res, next) => {
     }
 
     res.json(boards)
-
-    // const bans = await Ban.find({ expiresAt: { $lt: new Date().toISOString() } })
-    // bans.map(async item => {
-    //   await User.updateOne({ _id: Mongoose.Types.ObjectId(item.user) }, { ban: null })
-    // })
   } catch(err) {
     next(createError.InternalServerError(err))
   }

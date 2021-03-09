@@ -1,5 +1,7 @@
 import { useEffect, useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import './datePicker.css';
 
 import { StoreContext } from 'store/Store';
 import { useForm } from 'hooks/useForm';
@@ -259,6 +261,8 @@ const Modal = ({ open, close }) => {
     }
   }
 
+  const [date, setDate] = useState(new Date())
+
   const { onChange: banChange, onSubmit: banSubmit, values: banValues } = useForm(banCallback, {
     userId: postType.id,
     reason: '',
@@ -499,11 +503,12 @@ const Modal = ({ open, close }) => {
 
         <FormCardItem title="Duration" error={errors.expiresAt}>
           <div className={errors.expiresAt ? 'form_block error' : 'form_block' }>
-            <Input
-              name="expiresAt"
-              value={banValues.expiresAt}
-              placeholder="Enter date"
-              onChange={banChange}
+            <DatePicker
+              className="input_area"
+              selected={date}
+              showTimeSelect
+              dateFormat="MMM d, yyyy h:mm aa"
+              onChange={date => setDate(date)}
             />
           </div>
         </FormCardItem>

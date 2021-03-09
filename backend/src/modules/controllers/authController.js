@@ -1,3 +1,4 @@
+const Mongoose = require('mongoose');
 const createError = require('http-errors');
 const { isJapanese, toRomaji } = require('wanakana');
 
@@ -65,18 +66,26 @@ const login = async (req, res, next) => {
       name = toRomaji(name)
     }
 
-    const user = await User.findOne({ name })
+    const populate = {
+      path: 'ban',
+      select: '_id expiresAt',
+    }
+    const user = await User.findOne({ name }).populate(populate)
     if (!user) throw createError.NotFound('User not registered')
 
     const isMatch = await user.isValidPassword(result.password)
     if (!isMatch) throw createError.Unauthorized('Username or password not valid')
 
     if (user.ban) {
-      return res.json({
-        ban: {
-          userId: user._id,
-        }
-      })
+      if (user.ban.expiresAt < new Date().toISOString()) {
+        await User.updateOne({ _id: Mongoose.Types.ObjectId(user._id) }, { ban: null })
+      } else {
+        return res.json({
+          ban: {
+            userId: user._id,
+          }
+        })
+      }
     }
 
     const accessToken = await signAccessToken(user)
