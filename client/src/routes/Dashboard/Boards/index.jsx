@@ -138,7 +138,7 @@ const Boards = () => {
           }
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err))
+      .catch(err => toast.error(err.message))
   }
 
   return (

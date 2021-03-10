@@ -9,7 +9,6 @@ import SortNav from 'components/SortNav';
 
 import Newest from './Newest';
 import Old from './Old';
-import Duration from './Duration';
 
 const Bans = ({ history, location: { pathname } }) => {
   document.title = 'Forum | Bans'
@@ -21,8 +20,6 @@ const Bans = ({ history, location: { pathname } }) => {
     let route
     if (sort === 'oldest') {
       route = path + '/oldest'
-    } else if (sort === 'duration') {
-      route = path + '/duration'
     } else {
       route = path
     }
@@ -39,13 +36,11 @@ const Bans = ({ history, location: { pathname } }) => {
 
       <SortNav links={[
         { title: 'Newest', sort: 'bans' },
-        { title: 'Oldest', sort: 'oldest' },
-        { title: 'Duration', sort: 'duration' }
+        { title: 'Oldest', sort: 'oldest' }
       ]} setSort={setSort} state={sort} />
 
       <Switch>
         <Route path={path + '/oldest'} component={Old} />
-        <Route path={path + '/duration'} component={Duration} />
         <Route path={path} exact component={Newest} />
         <Route>
           <Redirect to={path} />

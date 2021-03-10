@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  pointer-events: initial !important;
+  user-select: none;
 }
 .profile_head_right {
   margin: .5rem .5rem 1rem 1.5rem;

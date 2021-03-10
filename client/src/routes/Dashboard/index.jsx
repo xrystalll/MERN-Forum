@@ -34,7 +34,7 @@ const Dashboard = () => {
           setStats(response)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        toast.error(err)
+        toast.error(err.message)
       }
     }
 

@@ -74,6 +74,12 @@ const getUser = async (req, res, next) => {
     }
     const user = await User.findOne({ name: userName }, select).populate(populate)
 
+    if (user.ban) {
+      if (user.ban.expiresAt < new Date().toISOString()) {
+        await User.updateOne({ _id: Mongoose.Types.ObjectId(user._id) }, { ban: null })
+      }
+    }
+
     res.json(user)
   } catch(err) {
     next(createError.InternalServerError(err))
@@ -82,23 +88,18 @@ const getUser = async (req, res, next) => {
 
 const getBans = async (req, res, next) => {
   try {
-    const { limit = 10, page = 1, sort } = req.query
+    const { limit = 10, page = 1 } = req.query
 
-    const populate = [{
-      path: 'user',
-      select: '_id name displayName onlineAt picture role ban'
-    }, {
-      path: 'admin',
-      select: '_id name displayName onlineAt picture role'
-    }]
-    let bans
-    if (sort === 'old') {
-      bans = await Ban.paginate({ expiresAt: { $gt: new Date().toISOString() } }, { sort: { createdAt: 1 }, page, limit, populate })
-    } else if (sort === 'duration') {
-      bans = await Ban.paginate({ expiresAt: { $gt: new Date().toISOString() } }, { sort: { expiresAt: -1 }, page, limit, populate })
-    } else {
-      bans = await Ban.paginate({ expiresAt: { $gt: new Date().toISOString() } }, { sort: { createdAt: -1 }, page, limit, populate })
+    const select = '_id name displayName createdAt onlineAt picture role ban'
+    const populate = {
+      path: 'ban',
+      select: '_id admin reason body createdAt expiresAt',
+      populate: {
+        path: 'admin',
+        select: '_id name displayName onlineAt picture role'
+      }
     }
+    const bans = await User.paginate({ ban: { $ne: null } }, { page, limit, select, populate })
 
     res.json(bans)
   } catch(err) {

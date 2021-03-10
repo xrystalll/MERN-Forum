@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+
 import Store from 'store/Store';
 
 import Layout from 'components/Layout';
@@ -16,7 +18,6 @@ import User from 'routes/User';
 import Banned from 'routes/Banned';
 import Dashboard from 'routes/Dashboard';
 import { NotFound } from 'routes/Error';
-import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   useEffect(() => {
@@ -43,10 +44,10 @@ const App = () => {
             <Route path="/banned" component={Banned} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>
-
-          <ToastContainer position="bottom-right" autoClose={2000} pauseOnFocusLoss={false} />
         </Layout>
       </Router>
+
+      <ToastContainer position="bottom-right" autoClose={2000} pauseOnFocusLoss={false} />
     </Store>
   )
 }

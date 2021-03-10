@@ -65,7 +65,7 @@ const Settings = ({ match }) => {
           setUserPicture(data.picture)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err))
+      .catch(err => toast.error(err.message))
   }
 
   return (

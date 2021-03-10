@@ -44,9 +44,9 @@ const Card = ({ data, threadData, full = false, type }) => {
       .then(data => {
         if (!data.error) {
           setLikes(data.likes)
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err))
+      .catch(err => toast.error(err.message))
   }
 
   const likeAnswer = () => {
@@ -62,9 +62,9 @@ const Card = ({ data, threadData, full = false, type }) => {
       .then(data => {
         if (!data.error) {
           setLikes(data.likes)
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err))
+      .catch(err => toast.error(err.message))
   }
 
   useEffect(() => {
@@ -135,9 +135,9 @@ const Card = ({ data, threadData, full = false, type }) => {
       .then(data => {
         if (data.message) {
           history.push('/')
-        }
+        } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err))
+      .catch(err => toast.error(err.message))
   }
 
   const deleteAnswer = () => {
@@ -150,7 +150,10 @@ const Card = ({ data, threadData, full = false, type }) => {
       body: JSON.stringify({ answerId: data._id })
     })
       .then(response => response.json())
-      .catch(err => toast.error(err))
+      .then(data => {
+         if (data.error) throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
   }
 
   const onDelete = () => {
@@ -179,7 +182,10 @@ const Card = ({ data, threadData, full = false, type }) => {
         body: formData
       })
         .then(response => response.json())
-        .catch(err => toast.error(err))
+        .then(data => {
+           if (data.error) throw Error(data.error?.message || 'Error')
+        })
+        .catch(err => toast.error(err.message))
     }
   }
 
@@ -203,7 +209,10 @@ const Card = ({ data, threadData, full = false, type }) => {
         body: formData
       })
         .then(response => response.json())
-        .catch(err => toast.error(err))
+        .then(data => {
+           if (data.error) throw Error(data.error?.message || 'Error')
+        })
+        .catch(err => toast.error(err.message))
     }
   }
 
@@ -223,9 +232,9 @@ const Card = ({ data, threadData, full = false, type }) => {
         .then(data => {
           if (!data.error) {
             setBanned(false)
-          }
+          } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(err))
+        .catch(err => toast.error(err.message))
     } else {
       setPostType({
         type: 'ban',
@@ -309,7 +318,9 @@ const Card = ({ data, threadData, full = false, type }) => {
                     {type !== 'answer' && <div onClick={onPin} className="dropdown_item">{data.pined ? 'Unpin' : 'Pin'}</div>}
                     {type !== 'answer' && <div onClick={onClose} className="dropdown_item">{data.closed ? 'Open' : 'Close'}</div>}
                     <div onClick={onDelete} className="dropdown_item">Delete</div>
-                    <div onClick={onBan} className="dropdown_item">{banned ? 'Unban user' : 'Ban user'}</div>
+                    {user.id !== data.author._id && data.author.role !== 'admin' && (
+                      <div onClick={onBan} className="dropdown_item">{banned ? 'Unban user' : 'Ban user'}</div>
+                    )}
                   </Fragment>
                 )}
                 {user.id === data.author._id || user.role === 'admin'
@@ -485,30 +496,47 @@ const UserCard = ({ data }) => {
   )
 }
 
-const BannedCard = ({ data }) => {
+const BannedCard = ({ data, unBan }) => {
   return (
     <div className="card_item">
       <div className="card_body">
         <div className="card_block">
-          <Link to={'/user/' + data.user.name} className="card_head user_head">
-            <div className="card_head_inner">
-              <div className="card_title user_title">
-                {data.user.picture ? (
-                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.user.picture})` }} />
+          <div className="card_head user_head">
+            <div className="card_head_inner row">
+              <Link to={'/user/' + data.name} className="card_title user_title">
+                {data.picture ? (
+                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.picture})` }} />
                 ) : (
                   <div className="head_profile">
-                    {data.user.displayName.charAt(0)}
+                    {data.displayName.charAt(0)}
                   </div>
                 )}
                 <div className="user_info">
                   <div className="user_info_top">
-                    {data.user.displayName}
+                    {data.displayName}
                   </div>
-                  <div className="head_text">{dateFormat(data.createdAt)}</div>
+                  <div className="head_text">{dateFormat(data.ban.createdAt)}</div>
+                </div>
+              </Link>
+
+              <div className="edit_action_menu">
+                <div className="action delete" onClick={() => unBan(data._id)}>
+                  <i className="bx bx-trash-alt"></i>
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
+
+          <div className="card_content">
+            <p>Reason: {data.ban.reason}</p>
+            <p>Ban expires: {dateFormat(data.ban.expiresAt)}</p>
+          </div>
+
+          <footer className="card_foot">
+            <div className="act_btn foot_btn disable">
+              <span className="card_count">Admin: {data.ban.admin.displayName}</span>
+            </div>
+          </footer>
         </div>
       </div>
     </div>

@@ -139,17 +139,16 @@ const Modal = ({ open, close }) => {
       },
       body: formData
     })
-      .then(response => {
-        setLoading(false)
-        return response.json()
-      })
+      .then(response => response.json())
       .then(data => {
+        setLoading(false)
         if (!data.error) {
           close()
           history.push('/thread/' + data._id)
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
+        setLoading(false)
         setErrors({ general: err.message })
       })
   }
@@ -172,6 +171,7 @@ const Modal = ({ open, close }) => {
     })
       .then(response => response.json())
       .then(data => {
+        setLoading(false)
         if (!data.error) {
           close()
           setPostType({
@@ -181,6 +181,7 @@ const Modal = ({ open, close }) => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
+        setLoading(false)
         setErrors({ general: err.message })
       })
   }
@@ -201,16 +202,15 @@ const Modal = ({ open, close }) => {
       },
       body: formData
     })
-      .then(response => {
-        setLoading(false)
-        return response.json()
-      })
+      .then(response => response.json())
       .then(data => {
+        setLoading(false)
         if (!data.error) {
           close()
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
+        setLoading(false)
         setErrors({ general: err.message })
       })
   }
@@ -232,6 +232,7 @@ const Modal = ({ open, close }) => {
     })
       .then(response => response.json())
       .then(data => {
+        setLoading(false)
         if (!data.error) {
           close()
           setPostType({
@@ -241,19 +242,22 @@ const Modal = ({ open, close }) => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
+        setLoading(false)
         setErrors({ general: err.message })
       })
   }
+
+  const [date, setDate] = useState(new Date())
 
   const banCallback = () => {
     setErrors({})
 
     if (postType.type === 'ban') {
-      if (!banValues.body.trim()) {
+      if (!banValues.reason.trim()) {
         return setErrors({ reason: 'Enter reason' })
       }
-      if (!banValues.expiresAt.trim()) {
-        return setErrors({ expiresAt: 'Enter time' })
+      if (!date) {
+        return setErrors({ expiresAt: 'Enter date' })
       }
 
       setLoading(true)
@@ -261,13 +265,10 @@ const Modal = ({ open, close }) => {
     }
   }
 
-  const [date, setDate] = useState(new Date())
-
   const { onChange: banChange, onSubmit: banSubmit, values: banValues } = useForm(banCallback, {
     userId: postType.id,
     reason: '',
-    body: postType?.someData?.body || '',
-    expiresAt: new Date().toISOString()
+    body: postType?.someData?.body || ''
   })
 
   const ban = () => {
@@ -277,10 +278,11 @@ const Modal = ({ open, close }) => {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(banValues)
+      body: JSON.stringify({ ...banValues, expiresAt: date.toISOString() })
     })
       .then(response => response.json())
       .then(data => {
+        setLoading(false)
         if (!data.error) {
           close()
           setPostType({
@@ -290,6 +292,7 @@ const Modal = ({ open, close }) => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
+        setLoading(false)
         setErrors({ general: err.message })
       })
   }

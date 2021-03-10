@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
+import { StoreContext } from 'store/Store';
 import { BACKEND } from 'support/Constants';
 
 import { BannedCard } from 'components/Card';
@@ -7,7 +9,8 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Newest = () => {
-  const [bans, setbans] = useState([])
+  const { token } = useContext(StoreContext)
+  const [bans, setBans] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -27,7 +30,7 @@ const Newest = () => {
         const response = await data.json()
 
         if (!response.error) {
-          setbans(prev => [...prev, ...response.docs])
+          setBans(prev => [...prev, ...response.docs])
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -63,13 +66,35 @@ const Newest = () => {
     }
   }
 
+  const unBan = (userId) => {
+    fetch(BACKEND + '/api/ban/delete', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          setBans(bans.filter(item => item._id !== userId))
+          if (bans.filter(item => item._id !== userId).length === 0) {
+            setBans([])
+            setNoData(true)
+          }
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
+  }
+
   return !noData ? (
     !loading ? (
       bans.length ? (
         <Fragment>
           <div className="items_list">
             {bans.map(item => (
-              <BannedCard key={item._id} data={item} />
+              <BannedCard key={item._id} data={item} unBan={unBan} />
             ))}
           </div>
 

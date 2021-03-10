@@ -310,6 +310,9 @@ ul {
   width: 100%;
   line-height: 1.2;
 }
+.card_head_inner.row {
+  flex-direction: row;
+}
 .card_title {
   font-size: 1.15rem;
   width: calc(100% - 2rem);
@@ -1002,13 +1005,13 @@ a.head_text:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1000;
   width: 100%;
   height: 100%;
   -ms-content-zooming: none;
   -ms-user-select: none;
   -ms-touch-select: none;
   touch-action: none;
+  z-index: 1000;
 }
 
 .ril__outerClosing {
@@ -1054,8 +1057,8 @@ a.head_text:hover {
   height: 35px;
   padding: 30px 25px;
   margin: auto;
-  cursor: pointer;
   opacity: .7;
+  cursor: pointer;
 }
 .ril__navButtons:hover {
   opacity: 1;
@@ -1128,9 +1131,9 @@ a.head_text:hover {
 .ril__builtinButton {
   width: 40px;
   height: 40px;
-  cursor: pointer;
   border: none;
   opacity: 0.7;
+  cursor: pointer;
 }
 .ril__builtinButton:hover {
   opacity: 1;
@@ -1140,8 +1143,8 @@ a.head_text:hover {
 }
 
 .ril__builtinButtonDisabled {
-  cursor: default;
   opacity: 0.5;
+  cursor: default;
 }
 .ril__builtinButtonDisabled:hover {
   opacity: 0.5;
@@ -1346,138 +1349,141 @@ a.head_text:hover {
 
 /* Toast */
 .Toastify__toast-container {
-  -webkit-transform: translateZ(9999px);
+  -webkit-transform: translate3d(0, 0, 9999px);
   position: fixed;
-  padding: 4px;
   width: 320px;
-  box-sizing: border-box;
   color: var(--main-text-light);
-  user-select: none;
   z-index: 9999;
 }
 .Toastify__toast-container--top-left {
-  top: 1em;
-  left: 1em;
+  top: 1rem;
+  left: 1rem;
 }
 .Toastify__toast-container--top-center {
-  top: 1em;
+  top: 1rem;
   left: 50%;
-  margin-left: -160px;
+  transform: translateX(-50%);
 }
 .Toastify__toast-container--top-right {
-  top: 1em;
-  right: 1em;
+  top: 1rem;
+  right: 1rem;
 }
 .Toastify__toast-container--bottom-left {
-  bottom: 1em;
-  left: 1em;
+  bottom: 1rem;
+  left: 1rem;
 }
 .Toastify__toast-container--bottom-center {
-  bottom: 1em;
+  bottom: 1rem;
   left: 50%;
-  margin-left: -160px;
+  transform: translateX(-50%);
 }
 .Toastify__toast-container--bottom-right {
-  bottom: 1em;
-  right: 1em;
+  bottom: 1rem;
+  right: 1rem;
 }
+
 @media only screen and (max-width: 480px) {
   .Toastify__toast-container {
-    width:100vw;
+    width: 100vw;
     padding: 0;
     left: 0;
     margin: 0;
   }
-  .Toastify__toast-container--top-center, .Toastify__toast-container--top-left ,.Toastify__toast-container--top-right {
-    top: 0
+  .Toastify__toast-container--top-left, .Toastify__toast-container--top-center, .Toastify__toast-container--top-right {
+    top: 0;
+    transform: translateX(0);
   }
-  .Toastify__toast-container--bottom-center, .Toastify__toast-container--bottom-left, .Toastify__toast-container--bottom-right {
-    bottom: 0
+  .Toastify__toast-container--bottom-left, .Toastify__toast-container--bottom-center, .Toastify__toast-container--bottom-right {
+    bottom: 0;
+    transform: translateX(0);
   }
   .Toastify__toast-container--rtl {
     right: 0;
-    left: auto
+    left: initial;
   }
 }
 .Toastify__toast {
-  border-radius: 6px;
-  background: var(--main-info-color);
-  padding: 8px 16px;
-  min-height: 56px;
-  margin-bottom: 16px;
   position: relative;
-  box-sizing: border-box;
-  box-shadow: 0 1px 10px 0 rgba(0,0,0,.1),0 2px 15px 0 rgba(0,0,0,.05);
+  min-height: 56px;
+  padding: 8px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 10px 0 rgb(0 0 0 / 10%), 0 2px 15px 0 rgb(0 0 0 / 5%);
   display: flex;
   justify-content: space-between;
   max-height: 800px;
   overflow: hidden;
   direction: ltr;
   cursor: pointer;
-  z-index: 99;
 }
 .Toastify__toast--rtl {
-  direction: rtl
+  direction: rtl;
+}
+.Toastify__toast--dark {
+  background: var(--dark-bg);
+  color: var(--main-text-light);
 }
 .Toastify__toast--default {
   background: var(--main-info-color);
-  color: var(--main-text-light)
+  color: var(--main-text);
 }
 .Toastify__toast--info {
-  background: #3498db
+  background: var(--main-info-color);
 }
 .Toastify__toast--success {
-  background: var(--main-success-color)
+  background: var(--main-success-color);
 }
 .Toastify__toast--warning {
-  background: var(--main-info-color)
+  background: var(--main-info-color);
 }
 .Toastify__toast--error {
-  background: var(--main-danger-color)
+  background: var(--main-danger-color);
 }
 .Toastify__toast-body {
   margin: auto 0;
-  flex: 1 1
+  padding: 6px;
 }
+
+.Toastify--animate {
+  animation-fill-mode: both;
+  animation-duration: .7s;
+}
+
 @media only screen and (max-width: 480px) {
   .Toastify__toast {
-    margin-bottom:0
+    margin-bottom: 0;
   }
 }
 .Toastify__close-button {
   color: var(--main-text-light);
-  font-weight: 700;
-  font-size: 14px;
   background: transparent;
   outline: none;
   border: none;
   padding: 0;
-  transition: .3s ease;
-  align-self: flex-start;
   opacity: .7;
+  transition: .3s ease;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
   cursor: pointer;
 }
 .Toastify__close-button--default {
-  color: #000;
-  opacity: .3
+  color: var(--dark-bg);
+  opacity: .3;
 }
-.Toastify__close-button:focus, .Toastify__close-button:hover {
-  opacity: 1
+.Toastify__close-button > svg {
+  fill: currentColor;
+  height: 16px;
+  width: 14px;
 }
-@-webkit-keyframes Toastify__trackProgress {
-  0% {
-    transform: scaleX(1)
-  }
-  to {
-    transform: scaleX(0)
-  }
+.Toastify__close-button:hover, .Toastify__close-button:focus {
+  opacity: 1;
 }
+
 @keyframes Toastify__trackProgress {
   0% {
-    transform: scaleX(1)
+    transform: scaleX(1);
   }
-  to {
-    transform: scaleX(0)
+  100% {
+    transform: scaleX(0);
   }
 }
 .Toastify__progress-bar {
@@ -1485,638 +1491,354 @@ a.head_text:hover {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5px;
-  background-color: hsla(0,0%,100%,.7);
-  transform-origin: left;
+  height: 4px;
   opacity: .7;
+  background-color: rgba(255, 255, 255, .7);
+  transform-origin: left;
   z-index: 9999;
 }
 .Toastify__progress-bar--animated {
-  -webkit-animation: Toastify__trackProgress linear 1 forwards;
-  animation: Toastify__trackProgress linear 1 forwards
+  animation: Toastify__trackProgress linear 1 forwards;
 }
 .Toastify__progress-bar--controlled {
-  transition: transform .2s
+  transition: transform .2s;
 }
 .Toastify__progress-bar--rtl {
   right: 0;
-  left: auto;
-  transform-origin: right
+  left: initial;
+  transform-origin: right;
 }
 .Toastify__progress-bar--default {
-  background: linear-gradient(90deg,#4cd964,#5ac8fa,#007aff,#34aadc,#5856d6,#ff2d55)
+  background: var(--dark-bg);
 }
-@-webkit-keyframes Toastify__bounceInRight {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
-  }
-  0% {
-    opacity: 0;
-    transform: translate3d(3000px,0,0)
-  }
-  60% {
-    opacity: 1;
-    transform: translate3d(-25px,0,0)
-  }
-  75% {
-    transform: translate3d(10px,0,0)
-  }
-  90% {
-    transform: translate3d(-5px,0,0)
-  }
-  to {
-    transform: none
-  }
+.Toastify__progress-bar--dark {
+  background: var(--dark-bg);
 }
 @keyframes Toastify__bounceInRight {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(.215, .61, .355, 1);
   }
-  0% {
+  from {
     opacity: 0;
-    transform: translate3d(3000px,0,0)
+    transform: translate3d(3000px, 0, 0);
   }
   60% {
     opacity: 1;
-    transform: translate3d(-25px,0,0)
+    transform: translate3d(-25px, 0, 0);
   }
   75% {
-    transform: translate3d(10px,0,0)
+    transform: translate3d(10px, 0, 0);
   }
   90% {
-    transform: translate3d(-5px,0,0)
+    transform: translate3d(-5px, 0, 0);
   }
   to {
-    transform: none
-  }
-}
-@-webkit-keyframes Toastify__bounceOutRight {
-  20% {
-    opacity: 1;
-    transform: translate3d(-20px,0,0)
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(2000px,0,0)
+    transform: none;
   }
 }
 @keyframes Toastify__bounceOutRight {
   20% {
     opacity: 1;
-    transform: translate3d(-20px,0,0)
+    transform: translate3d(-20px, 0, 0);
   }
   to {
     opacity: 0;
-    transform: translate3d(2000px,0,0)
-  }
-}
-@-webkit-keyframes Toastify__bounceInLeft {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
-  }
-  0% {
-    opacity: 0;
-    transform: translate3d(-3000px,0,0)
-  }
-  60% {
-    opacity: 1;
-    transform: translate3d(25px,0,0)
-  }
-  75% {
-    transform: translate3d(-10px,0,0)
-  }
-  90% {
-    transform: translate3d(5px,0,0)
-  }
-  to {
-    transform: none
+    transform: translate3d(2000px, 0, 0);
   }
 }
 @keyframes Toastify__bounceInLeft {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(.215, .61, .355, 1);
   }
   0% {
     opacity: 0;
-    transform: translate3d(-3000px,0,0)
+    transform: translate3d(-3000px, 0, 0);
   }
   60% {
     opacity: 1;
-    transform: translate3d(25px,0,0)
+    transform: translate3d(25px, 0, 0);
   }
   75% {
-    transform: translate3d(-10px,0,0)
+    transform: translate3d(-10px, 0, 0);
   }
   90% {
-    transform: translate3d(5px,0,0)
+    transform: translate3d(5px, 0, 0);
   }
   to {
-    transform: none
-  }
-}
-@-webkit-keyframes Toastify__bounceOutLeft {
-  20% {
-    opacity: 1;
-    transform: translate3d(20px,0,0)
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(-2000px,0,0)
+    transform: none;
   }
 }
 @keyframes Toastify__bounceOutLeft {
   20% {
     opacity: 1;
-    transform: translate3d(20px,0,0)
+    transform: translate3d(20px, 0, 0);
   }
   to {
     opacity: 0;
-    transform: translate3d(-2000px,0,0)
-  }
-}
-@-webkit-keyframes Toastify__bounceInUp {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
-  }
-  0% {
-    opacity: 0;
-    transform: translate3d(0,3000px,0)
-  }
-  60% {
-    opacity: 1;
-    transform: translate3d(0,-20px,0)
-  }
-  75% {
-    transform: translate3d(0,10px,0)
-  }
-  90% {
-    transform: translate3d(0,-5px,0)
-  }
-  to {
-    transform: translateZ(0)
+    transform: translate3d(-2000px, 0, 0);
   }
 }
 @keyframes Toastify__bounceInUp {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(.215, .61, .355, 1);
   }
-  0% {
+  from {
     opacity: 0;
-    transform: translate3d(0,3000px,0)
+    transform: translate3d(0, 3000px, 0);
   }
   60% {
     opacity: 1;
-    transform: translate3d(0,-20px,0)
+    transform: translate3d(0, -20px, 0);
   }
   75% {
-    transform: translate3d(0,10px,0)
+    transform: translate3d(0, 10px, 0);
   }
   90% {
-    transform: translate3d(0,-5px,0)
+    transform: translate3d(0, -5px, 0);
   }
   to {
-    transform: translateZ(0)
-  }
-}
-@-webkit-keyframes Toastify__bounceOutUp {
-  20% {
-    transform: translate3d(0,-10px,0)
-  }
-  40%, 45% {
-    opacity: 1;
-    transform: translate3d(0,20px,0)
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(0,-2000px,0)
+    transform: translate3d(0, 0, 0);
   }
 }
 @keyframes Toastify__bounceOutUp {
   20% {
-    transform: translate3d(0,-10px,0)
+    transform: translate3d(0, -10px, 0);
   }
   40%, 45% {
     opacity: 1;
-    transform: translate3d(0,20px,0)
+    transform: translate3d(0, 20px, 0);
   }
   to {
     opacity: 0;
-    transform: translate3d(0,-2000px,0)
-  }
-}
-@-webkit-keyframes Toastify__bounceInDown {
-  0% ,60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
-  }
-  0% {
-    opacity: 0;
-    transform: translate3d(0,-3000px,0)
-  }
-  60% {
-    opacity: 1;
-    transform: translate3d(0,25px,0)
-  }
-  75% {
-    transform: translate3d(0,-10px,0)
-  }
-  90% {
-    transform: translate3d(0,5px,0)
-  }
-  to {
-    transform: none
+    transform: translate3d(0, -2000px, 0);
   }
 }
 @keyframes Toastify__bounceInDown {
-  0%, 60%, 75%, 90%, to {
-    -webkit-animation-timing-function: cubic-bezier(.215,.61,.355,1);
-    animation-timing-function: cubic-bezier(.215,.61,.355,1)
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(.215, .61, .355, 1);
   }
   0% {
     opacity: 0;
-    transform: translate3d(0,-3000px,0)
+    transform: translate3d(0, -3000px, 0);
   }
   60% {
     opacity: 1;
-    transform: translate3d(0,25px,0)
+    transform: translate3d(0, 25px, 0);
   }
   75% {
-    transform: translate3d(0,-10px,0)
+    transform: translate3d(0, -10px, 0);
   }
   90% {
-    transform: translate3d(0,5px,0)
+    transform: translate3d(0, 5px, 0);
   }
   to {
-    transform: none
-  }
-}
-@-webkit-keyframes Toastify__bounceOutDown {
-  20% {
-    transform: translate3d(0,10px,0)
-  }
-  40%, 45% {
-    opacity: 1;
-    transform: translate3d(0,-20px,0)
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(0,2000px,0)
+    transform: none;
   }
 }
 @keyframes Toastify__bounceOutDown {
   20% {
-    transform: translate3d(0,10px,0)
+    transform: translate3d(0, 10px, 0);
   }
   40%, 45% {
     opacity: 1;
-    transform: translate3d(0,-20px,0)
+    transform: translate3d(0, -20px, 0);
   }
   to {
     opacity: 0;
-    transform: translate3d(0,2000px,0)
+    transform: translate3d(0, 2000px, 0);
   }
 }
-.Toastify__bounce-enter--bottom-left,.Toastify__bounce-enter--top-left {
-  -webkit-animation-name: Toastify__bounceInLeft;
-  animation-name: Toastify__bounceInLeft
+.Toastify__bounce-enter--top-left, .Toastify__bounce-enter--bottom-left {
+  animation-name: Toastify__bounceInLeft;
 }
-.Toastify__bounce-enter--bottom-right,.Toastify__bounce-enter--top-right {
-  -webkit-animation-name: Toastify__bounceInRight;
-  animation-name: Toastify__bounceInRight
+.Toastify__bounce-enter--top-right, .Toastify__bounce-enter--bottom-right {
+  animation-name: Toastify__bounceInRight;
 }
 .Toastify__bounce-enter--top-center {
-  -webkit-animation-name: Toastify__bounceInDown;
-  animation-name: Toastify__bounceInDown
+  animation-name: Toastify__bounceInDown;
 }
 .Toastify__bounce-enter--bottom-center {
-  -webkit-animation-name: Toastify__bounceInUp;
-  animation-name: Toastify__bounceInUp
+  animation-name: Toastify__bounceInUp;
 }
-.Toastify__bounce-exit--bottom-left,.Toastify__bounce-exit--top-left {
-  -webkit-animation-name: Toastify__bounceOutLeft;
-  animation-name: Toastify__bounceOutLeft
+
+.Toastify__bounce-exit--top-left, .Toastify__bounce-exit--bottom-left {
+  animation-name: Toastify__bounceOutLeft;
 }
-.Toastify__bounce-exit--bottom-right,.Toastify__bounce-exit--top-right {
-  -webkit-animation-name: Toastify__bounceOutRight;
-  animation-name: Toastify__bounceOutRight
+.Toastify__bounce-exit--top-right, .Toastify__bounce-exit--bottom-right {
+  animation-name: Toastify__bounceOutRight;
 }
 .Toastify__bounce-exit--top-center {
-  -webkit-animation-name: Toastify__bounceOutUp;
-  animation-name: Toastify__bounceOutUp
+  animation-name: Toastify__bounceOutUp;
 }
 .Toastify__bounce-exit--bottom-center {
-  -webkit-animation-name: Toastify__bounceOutDown;
-  animation-name: Toastify__bounceOutDown
+  animation-name: Toastify__bounceOutDown;
 }
-@-webkit-keyframes Toastify__zoomIn {
-  0% {
-    opacity: 0;
-    transform: scale3d(.3,.3,.3)
-  }
-  50% {
-    opacity: 1
-  }
-}
+
 @keyframes Toastify__zoomIn {
-  0% {
+  from {
     opacity: 0;
-    transform: scale3d(.3,.3,.3)
+    transform: scale3d(.3, .3, .3);
   }
   50% {
-    opacity: 1
-  }
-}
-@-webkit-keyframes Toastify__zoomOut {
-  0% {
-    opacity: 1
-  }
-  50% {
-    opacity: 0;
-    transform: scale3d(.3,.3,.3)
-  }
-  to {
-    opacity: 0
+    opacity: 1;
   }
 }
 @keyframes Toastify__zoomOut {
-  0% {
-    opacity: 1
+  from {
+    opacity: 1;
   }
   50% {
     opacity: 0;
-    transform: scale3d(.3,.3,.3)
+    transform: scale3d(.3, .3, .3);
   }
   to {
-    opacity: 0
+    opacity: 0;
   }
 }
 .Toastify__zoom-enter {
-  -webkit-animation-name: Toastify__zoomIn;
-  animation-name: Toastify__zoomIn
+  animation-name: Toastify__zoomIn;
 }
+
 .Toastify__zoom-exit {
-  -webkit-animation-name: Toastify__zoomOut;
-  animation-name: Toastify__zoomOut
+  animation-name: Toastify__zoomOut;
 }
-@-webkit-keyframes Toastify__flipIn {
-  0% {
-    transform: perspective(400px) rotateX(90deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in;
-    opacity: 0
-  }
-  40% {
-    transform: perspective(400px) rotateX(-20deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in
-  }
-  60% {
-    transform: perspective(400px) rotateX(10deg);
-    opacity: 1
-  }
-  80% {
-    transform: perspective(400px) rotateX(-5deg)
-  }
-  to {
-    transform: perspective(400px)
-  }
-}
+
 @keyframes Toastify__flipIn {
-  0% {
-    transform: perspective(400px) rotateX(90deg);
-    -webkit-animation-timing-function: ease-in;
+  from {
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
     animation-timing-function: ease-in;
-    opacity: 0
+    opacity: 0;
   }
   40% {
-    transform: perspective(400px) rotateX(-20deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    animation-timing-function: ease-in;
   }
   60% {
-    transform: perspective(400px) rotateX(10deg);
-    opacity: 1
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
   }
   80% {
-    transform: perspective(400px) rotateX(-5deg)
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
   }
   to {
-    transform: perspective(400px)
-  }
-}
-@-webkit-keyframes Toastify__flipOut {
-  0% {
-    transform: perspective(400px)
-  }
-  30% {
-    transform: perspective(400px) rotateX(-20deg);
-    opacity: 1
-  }
-  to {
-    transform: perspective(400px) rotateX(90deg);
-    opacity: 0
+    transform: perspective(400px);
   }
 }
 @keyframes Toastify__flipOut {
-  0% {
-    transform: perspective(400px)
+  from {
+    transform: perspective(400px);
   }
   30% {
-    transform: perspective(400px) rotateX(-20deg);
-    opacity: 1
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    opacity: 1;
   }
   to {
-    transform: perspective(400px) rotateX(90deg);
-    opacity: 0
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    opacity: 0;
   }
 }
 .Toastify__flip-enter {
-  -webkit-animation-name: Toastify__flipIn;
-  animation-name: Toastify__flipIn
+  animation-name: Toastify__flipIn;
 }
+
 .Toastify__flip-exit {
-  -webkit-animation-name: Toastify__flipOut;
-  animation-name: Toastify__flipOut
+  animation-name: Toastify__flipOut;
 }
-@-webkit-keyframes Toastify__slideInRight {
-  0% {
-    transform: translate3d(110%,0,0);
-    visibility: visible
-  }
-  to {
-    transform: translateZ(0)
-  }
-}
+
 @keyframes Toastify__slideInRight {
-  0% {
-    transform: translate3d(110%,0,0);
-    visibility: visible
+  from {
+    transform: translate3d(110%, 0, 0);
+    visibility: visible;
   }
   to {
-    transform: translateZ(0)
-  }
-}
-@-webkit-keyframes Toastify__slideInLeft {
-  0% {
-    transform: translate3d(-110%,0,0);
-    visibility: visible
-  }
-  to {
-    transform: translateZ(0)
+    transform: translate3d(0, 0, 0);
   }
 }
 @keyframes Toastify__slideInLeft {
-  0% {
-    transform: translate3d(-110%,0,0);
-    visibility: visible
+  from {
+    transform: translate3d(-110%, 0, 0);
+    visibility: visible;
   }
   to {
-    transform: translateZ(0)
-  }
-}
-@-webkit-keyframes Toastify__slideInUp {
-  0% {
-    transform: translate3d(0,110%,0);
-    visibility: visible
-  }
-  to {
-    transform: translateZ(0)
+    transform: translate3d(0, 0, 0);
   }
 }
 @keyframes Toastify__slideInUp {
-  0% {
-    transform: translate3d(0,110%,0);
-    visibility: visible
+  from {
+    transform: translate3d(0, 110%, 0);
+    visibility: visible;
   }
   to {
-    transform: translateZ(0)
-  }
-}
-@-webkit-keyframes Toastify__slideInDown {
-  0% {
-    transform: translate3d(0,-110%,0);
-    visibility: visible
-  }
-  to {
-    transform: translateZ(0)
+    transform: translate3d(0, 0, 0);
   }
 }
 @keyframes Toastify__slideInDown {
-  0% {
-    transform: translate3d(0,-110%,0);
-    visibility: visible
+  from {
+    transform: translate3d(0, -110%, 0);
+    visibility: visible;
   }
   to {
-    transform: translateZ(0)
-  }
-}
-@-webkit-keyframes Toastify__slideOutRight {
-  0% {
-    transform: translateZ(0)
-  }
-  to {
-    visibility: hidden;
-    transform: translate3d(110%,0,0)
+    transform: translate3d(0, 0, 0);
   }
 }
 @keyframes Toastify__slideOutRight {
-  0% {
-    transform: translateZ(0)
+  from {
+    transform: translate3d(0, 0, 0);
   }
   to {
     visibility: hidden;
-    transform: translate3d(110%,0,0)
-  }
-}
-@-webkit-keyframes Toastify__slideOutLeft {
-  0% {
-    transform: translateZ(0)
-  }
-  to {
-    visibility: hidden;
-    transform: translate3d(-110%,0,0)
+    transform: translate3d(110%, 0, 0);
   }
 }
 @keyframes Toastify__slideOutLeft {
-  0% {
-    transform: translateZ(0)
+  from {
+    transform: translate3d(0, 0, 0);
   }
   to {
     visibility: hidden;
-    transform: translate3d(-110%,0,0)
-  }
-}
-@-webkit-keyframes Toastify__slideOutDown {
-  0% {
-    transform: translateZ(0)
-  }
-  to {
-    visibility: hidden;
-    transform: translate3d(0,500px,0)
+    transform: translate3d(-110%, 0, 0);
   }
 }
 @keyframes Toastify__slideOutDown {
-  0% {
-    transform: translateZ(0)
+  from {
+    transform: translate3d(0, 0, 0);
   }
   to {
     visibility: hidden;
-    transform: translate3d(0,500px,0)
-  }
-}
-@-webkit-keyframes Toastify__slideOutUp {
-  0% {
-    transform: translateZ(0)
-  }
-  to {
-    visibility: hidden;
-    transform: translate3d(0,-500px,0)
+    transform: translate3d(0, 500px, 0);
   }
 }
 @keyframes Toastify__slideOutUp {
-  0% {
-    transform: translateZ(0)
+  from {
+    transform: translate3d(0, 0, 0);
   }
   to {
     visibility: hidden;
-    transform: translate3d(0,-500px,0)
+    transform: translate3d(0, -500px, 0);
   }
 }
-.Toastify__slide-enter--bottom-left,.Toastify__slide-enter--top-left {
-  -webkit-animation-name: Toastify__slideInLeft;
-  animation-name: Toastify__slideInLeft
+.Toastify__slide-enter--top-left, .Toastify__slide-enter--bottom-left {
+  animation-name: Toastify__slideInLeft;
 }
-.Toastify__slide-enter--bottom-right,.Toastify__slide-enter--top-right {
-  -webkit-animation-name: Toastify__slideInRight;
-  animation-name: Toastify__slideInRight
+.Toastify__slide-enter--top-right, .Toastify__slide-enter--bottom-right {
+  animation-name: Toastify__slideInRight;
 }
 .Toastify__slide-enter--top-center {
-  -webkit-animation-name: Toastify__slideInDown;
-  animation-name: Toastify__slideInDown
+  animation-name: Toastify__slideInDown;
 }
 .Toastify__slide-enter--bottom-center {
-  -webkit-animation-name: Toastify__slideInUp;
-  animation-name: Toastify__slideInUp
+  animation-name: Toastify__slideInUp;
 }
-.Toastify__slide-exit--bottom-left,.Toastify__slide-exit--top-left {
-  -webkit-animation-name: Toastify__slideOutLeft;
-  animation-name: Toastify__slideOutLeft
+
+.Toastify__slide-exit--top-left, .Toastify__slide-exit--bottom-left {
+  animation-name: Toastify__slideOutLeft;
 }
-.Toastify__slide-exit--bottom-right,.Toastify__slide-exit--top-right {
-  -webkit-animation-name: Toastify__slideOutRight;
-  animation-name: Toastify__slideOutRight
+.Toastify__slide-exit--top-right, .Toastify__slide-exit--bottom-right {
+  animation-name: Toastify__slideOutRight;
 }
 .Toastify__slide-exit--top-center {
-  -webkit-animation-name: Toastify__slideOutUp;
-  animation-name: Toastify__slideOutUp
+  animation-name: Toastify__slideOutUp;
 }
 .Toastify__slide-exit--bottom-center {
-  -webkit-animation-name: Toastify__slideOutDown;
-  animation-name: Toastify__slideOutDown
+  animation-name: Toastify__slideOutDown;
 }
