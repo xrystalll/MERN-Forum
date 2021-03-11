@@ -5,6 +5,7 @@ const { isJapanese, toRomaji } = require('wanakana');
 const User = require('../models/User');
 const { registerSchema, loginSchema } = require('../utils/validationSchema');
 const { signAccessToken } = require('../utils/jwt');
+const toLatin = require('../utils/transliterate');
 
 const register = async (req, res, next) => {
   try {
@@ -16,6 +17,9 @@ const register = async (req, res, next) => {
     }
 
     let name = result.username.toLowerCase().replace(/\s/g, '')
+    if (/[а-яА-ЯЁё]/.test(name)) {
+      name = toLatin(name)
+    }
     if (isJapanese(name)) {
       name = toRomaji(name)
     }
@@ -62,6 +66,9 @@ const login = async (req, res, next) => {
     const result = await loginSchema.validateAsync(req.body)
 
     let name = result.username.toLowerCase().replace(/\s/g, '')
+    if (/[а-яА-ЯЁё]/.test(name)) {
+      name = toLatin(name)
+    }
     if (isJapanese(name)) {
       name = toRomaji(name)
     }

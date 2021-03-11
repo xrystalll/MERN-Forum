@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import Header from './Header';
 import LeftMenu from './LeftMenu';
@@ -11,7 +11,7 @@ import Modal from 'components/Modal';
 import './style.css';
 
 const Layout = ({ children }) => {
-  const { user, token, modalOpen, setModalOpen, postType, setPostType, fab } = useContext(StoreContext)
+  const { user, token, modalOpen, setModalOpen, postType, setPostType, fab, lang } = useContext(StoreContext)
   const [menuOpen, setMenuOpen] = useState(false)
   const coverOpen = menuOpen || modalOpen  ? 'cover open' : 'cover'
 
@@ -88,13 +88,13 @@ const Layout = ({ children }) => {
           <div className="fab" onClick={fabClick}>
             {postType.type === 'answer' ? (
               <Fragment>
-                <span>Answer</span>
-                <i className="bx bx-pencil"></i>
+                <span>{Strings.answer[lang]}</span>
+                <i className="bx bx-pencil" />
               </Fragment>
             ) : (
               <Fragment>
-                <span>Create new</span>
-                <i className="bx bx-pencil"></i>
+                <span>{Strings.createNew[lang]}</span>
+                <i className="bx bx-pencil" />
               </Fragment>
             )}
           </div>
@@ -103,7 +103,7 @@ const Layout = ({ children }) => {
 
       {user && modalOpen && <Modal open={modalOpen} close={modalClose} />}
 
-      <div className={coverOpen} onClick={coverClick}></div>
+      <div className={coverOpen} onClick={coverClick} />
     </Fragment>
   )
 }

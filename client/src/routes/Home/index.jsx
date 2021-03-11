@@ -8,7 +8,7 @@ import Uploads from './Uploads';
 
 const Home = () => {
   document.title = 'Forum'
-  const { setPostType, setFabVisible } = useContext(StoreContext)
+  const { setPostType, setFabVisible, lang } = useContext(StoreContext)
   const [init, setInit] = useState(true)
 
   useEffect(() => {
@@ -20,13 +20,13 @@ const Home = () => {
       })
     }
     setInit(false)
-  }, [setInit, init, setPostType, setFabVisible])
+  }, [init])
 
   return (
     <Fragment>
-      <Boards />
-      <Threads />
-      <Uploads />
+      <Boards lang={lang} />
+      <Threads lang={lang} />
+      <Uploads lang={lang} />
     </Fragment>
   )
 }

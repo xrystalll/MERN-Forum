@@ -5,7 +5,7 @@ const ModalBody = ({ children, title, onClick }) => {
         <div className="section_header with_link">
           <h2>{title}</h2>
           <div className="modal_close more_link" onClick={onClick}>
-            <i className="bx bx-x"></i>
+            <i className="bx bx-x" />
           </div>
         </div>
       </div>

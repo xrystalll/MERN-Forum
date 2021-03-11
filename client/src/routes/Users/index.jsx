@@ -3,6 +3,8 @@ import { Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
+import { Strings } from 'support/Constants';
+
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
@@ -12,8 +14,8 @@ import Old from './Old';
 import Online from './Online';
 
 const Users = ({ history, location: { pathname } }) => {
-  document.title = 'Forum | Users'
-  const { setPostType, setFabVisible } = useContext(StoreContext)
+  const { setPostType, setFabVisible, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.users[lang]
   const { path } = useRouteMatch()
   const [init, setInit] = useState(true)
   const [sort, setSort] = useState(pathname.substr(pathname.lastIndexOf('/') + 1) || 'users')
@@ -27,7 +29,7 @@ const Users = ({ history, location: { pathname } }) => {
       })
     }
     setInit(false)
-  }, [setInit, init, setPostType, setFabVisible])
+  }, [init])
 
   useEffect(() => {
     let route
@@ -44,20 +46,29 @@ const Users = ({ history, location: { pathname } }) => {
 
   return (
     <Section>
-      <Breadcrumbs current="Users" links={[
-        { title: 'Home', link: '/' }
+      <Breadcrumbs current={Strings.users[lang]} links={[
+        { title: Strings.home[lang], link: '/' }
       ]} />
 
       <SortNav links={[
-        { title: 'Newest', sort: 'users' },
-        { title: 'Oldest', sort: 'oldest' },
-        { title: 'Online', sort: 'online' }
+        { title: Strings.newest[lang], sort: 'users' },
+        { title: Strings.oldest[lang], sort: 'oldest' },
+        { title: Strings.online[lang], sort: 'online' }
       ]} setSort={setSort} state={sort} />
 
       <Switch>
-        <Route path={path + '/oldest'} exact component={Old} />
-        <Route path={path + '/online'} exact component={Online} />
-        <Route path={path} exact component={Newest} />
+        <Route path={path + '/oldest'} exact>
+          <Old lang={lang} />
+        </Route>
+
+        <Route path={path + '/online'} exact>
+          <Online lang={lang} />
+        </Route>
+
+        <Route path={path} exact>
+          <Newest lang={lang} />
+        </Route>
+
         <Route>
           <Redirect to={path} />
         </Route>

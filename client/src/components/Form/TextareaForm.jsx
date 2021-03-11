@@ -46,25 +46,25 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
         <div className="form_foot">
           <div className="act_group">
             <div className="bb_btn" role="button" onClick={() => handleTag('italic')} title="Italic">
-              <i className="bx bx-italic"></i>
+              <i className="bx bx-italic" />
             </div>
             <div className="bb_btn" role="button" onClick={() => handleTag('bold')} title="Bold">
-              <i className="bx bx-bold"></i>
+              <i className="bx bx-bold" />
             </div>
             <div className="bb_btn" role="button" onClick={() => handleTag('link')} title="Link">
-              <i className="bx bx-link"></i>
+              <i className="bx bx-link" />
             </div>
             <div className="bb_btn" role="button" onClick={() => handleTag('spoiler')} title="Spoiler">
-              <i className="bx bx-hide"></i>
+              <i className="bx bx-hide" />
             </div>
             <div className="bb_btn" role="button" onClick={() => handleTag('image')} title="Image">
-              <i className="bx bx-image-alt"></i>
+              <i className="bx bx-image-alt" />
             </div>
             <div className="bb_btn" role="button" onClick={() => handleTag('code')} title="Code">
-              <i className="bx bx-code-alt"></i>
+              <i className="bx bx-code-alt" />
             </div>
             <div className="bb_btn md" title="Textarea supports markdown">
-              <i className="bx bxl-markdown"></i>
+              <i className="bx bxl-markdown" />
             </div>
           </div>
         </div>

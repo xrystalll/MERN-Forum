@@ -1,20 +1,26 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+
+import { StoreContext } from 'store/Store';
+
+import { Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 
 const NotFound = () => {
-  document.title = 'Forum | 404 Not Found'
+  const { lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.error404PageNotFound[lang]
 
   return (
     <Section>
-      <Breadcrumbs current="Not Found" links={[
-        { title: 'Home', link: '/' }
+      <Breadcrumbs current={Strings.notFound[lang]} links={[
+        { title: Strings.home[lang], link: '/' }
       ]} />
 
-      <SectionHeader title="Error 404. Page not found" />
+      <SectionHeader title={Strings.error404PageNotFound[lang]} />
 
-      <Link to="/">Go to home page</Link>
+      <Link to="/">{Strings.goToHomePage[lang]}</Link>
     </Section>
   )
 }

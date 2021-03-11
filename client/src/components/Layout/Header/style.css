@@ -84,8 +84,19 @@
   align-items: center;
   justify-content: center;
   color: var(--actions-color);
+  position: relative;
   pointer-events: initial !important;
   user-select: none;
+}
+.head_profile::before {
+  content: '';
+  border-radius: 50%;
+  border: 1px solid rgb(0 0 0 / 5%);
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .head_search {
   display: flex;

@@ -66,13 +66,13 @@ const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, a
             {imageTypes.find(i => i === item.type) ? (
               <div className="attached_file card_left" style={{ backgroundImage: `url(${item.url})` }}>
                 <span className="remove_file" onClick={() => removeFile(item)}>
-                  <i className="bx bx-x"></i>
+                  <i className="bx bx-x" />
                 </span>
               </div>
             ) : (
               <div className="attached_file card_left empty">
                 <span className="remove_file" onClick={() => removeFile(item)}>
-                  <i className="bx bx-x"></i>
+                  <i className="bx bx-x" />
                 </span>
                 <div className="attached_info">{regexp.exec(item.name)[1]}</div>
               </div>
@@ -86,13 +86,18 @@ const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, a
           <div className="card_outside_title with_hint">
             {title || 'Attach file'}
             <div className="title_hint">
-              <i className="bx bx-help-circle"></i>
+              <i className="bx bx-help-circle" />
               <div className="hint_popover">{hint || 'Max files count: 4; Max size: 12 Mb per file'}</div>
             </div>
           </div>
 
           <div className="form_block">
-            <FileInput onChange={handleFile} multiple={multiple} accept={accept} disabled={files.length >= maxCount} />
+            <FileInput
+              onChange={handleFile}
+              multiple={multiple}
+              accept={accept}
+              disabled={files.length >= maxCount}
+            />
           </div>
         </div>
       )}

@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Default = ({ boardId }) => {
+const Default = ({ boardId, lang }) => {
   const [threads, setThreads] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
@@ -75,9 +75,9 @@ const Default = ({ boardId }) => {
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message="No threads yet" />
+      ) : <Errorer message={Strings.noThreadsYet[lang]} />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message="Unable to display threads" />
+  ) : <Errorer message={Strings.unableToDisplayThreads[lang]} />
 }
 
 export default Default;

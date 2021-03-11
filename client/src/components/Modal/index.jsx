@@ -6,7 +6,7 @@ import './datePicker.css';
 import { StoreContext } from 'store/Store';
 import { useForm } from 'hooks/useForm';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import ModalBody from './ModalBody';
 import FormCardItem from 'components/Card/FormCardItem';
@@ -18,7 +18,7 @@ import Loader from 'components/Loader';
 
 const Modal = ({ open, close }) => {
   const history = useHistory()
-  const { postType, setPostType, token } = useContext(StoreContext)
+  const { postType, setPostType, token, lang } = useContext(StoreContext)
   const modalOpen = open ? 'modal open' : 'modal'
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -28,13 +28,13 @@ const Modal = ({ open, close }) => {
 
     if (postType.type === 'thread') {
       if (!values.title.trim()) {
-        return setErrors({ title: 'Enter thread title' })
+        return setErrors({ title: Strings.enterThreadTitle[lang] })
       }
       if (!values.body.trim()) {
-        return setErrors({ body: 'Enter content' })
+        return setErrors({ body: Strings.enterContent[lang] })
       }
       if (!values.boardId) {
-        return setErrors({ boardId: 'Choose from list' })
+        return setErrors({ boardId: Strings.chooseFromList[lang] })
       }
 
       setLoading(true)
@@ -43,10 +43,10 @@ const Modal = ({ open, close }) => {
 
     if (postType.type === 'userThreadEdit') {
       if (!values.title.trim()) {
-        return setErrors({ title: 'Enter thread title' })
+        return setErrors({ title: Strings.enterThreadTitle[lang] })
       }
       if (!values.body.trim()) {
-        return setErrors({ body: 'Enter content' })
+        return setErrors({ body: Strings.enterContent[lang] })
       }
 
       setLoading(true)
@@ -55,10 +55,10 @@ const Modal = ({ open, close }) => {
 
     if (postType.type === 'adminThreadEdit') {
       if (!values.title.trim()) {
-        return setErrors({ title: 'Enter thread title' })
+        return setErrors({ title: Strings.enterThreadTitle[lang] })
       }
       if (!values.body.trim()) {
-        return setErrors({ body: 'Enter content' })
+        return setErrors({ body: Strings.enterContent[lang] })
       }
 
       setLoading(true)
@@ -67,7 +67,7 @@ const Modal = ({ open, close }) => {
 
     if (postType.type === 'answer') {
       if (!values.body.trim()) {
-        return setErrors({ body: 'Enter content' })
+        return setErrors({ body: Strings.enterContent[lang] })
       }
 
       setLoading(true)
@@ -76,7 +76,7 @@ const Modal = ({ open, close }) => {
 
     if (postType.type === 'answerEdit') {
       if (!values.body.trim()) {
-        return setErrors({ body: 'Enter content' })
+        return setErrors({ body: Strings.enterContent[lang] })
       }
 
       setLoading(true)
@@ -116,7 +116,7 @@ const Modal = ({ open, close }) => {
       .then(data => {
         if (data.docs?.length) {
           setBoards(data.docs)
-        } else throw Error('Boards not loaded')
+        } else throw Error(Strings.boardsNotLoaded[lang])
       })
       .catch(err => {
         setErrors({ general: err.message })
@@ -254,10 +254,10 @@ const Modal = ({ open, close }) => {
 
     if (postType.type === 'ban') {
       if (!banValues.reason.trim()) {
-        return setErrors({ reason: 'Enter reason' })
+        return setErrors({ reason: Strings.enterReason[lang] })
       }
       if (!date) {
-        return setErrors({ expiresAt: 'Enter date' })
+        return setErrors({ expiresAt: Strings.enterDate[lang] })
       }
 
       setLoading(true)
@@ -298,26 +298,26 @@ const Modal = ({ open, close }) => {
   }
 
   const threadContent = (
-    <ModalBody title="New thread" onClick={close}>
+    <ModalBody title={Strings.newThread[lang]} onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <FormCardItem title="Thread title" error={errors.title}>
+        <FormCardItem title={Strings.threadTitle[lang]} error={errors.title}>
           <div className={errors.title ? 'form_block error' : 'form_block' }>
             <Input
               name="title"
               value={values.title}
-              placeholder="Enter title"
+              placeholder={Strings.enterTitle[lang]}
               maxLength="100"
               onChange={onChange}
             />
           </div>
         </FormCardItem>
 
-        <FormCardItem title="Content" error={errors.body}>
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
           <TextareaForm
             className={errors.body ? 'form_block error' : 'form_block' }
             name="body"
             value={values.body}
-            placeholder="Enter your message"
+            placeholder={Strings.enterContent[lang]}
             onChange={onChange}
           />
         </FormCardItem>
@@ -327,7 +327,7 @@ const Modal = ({ open, close }) => {
           clearFiles={clearFiles}
         />
 
-        <FormCardItem title="Choose board" error={errors.boardId}>
+        <FormCardItem title={Strings.chooseABoard[lang]} error={errors.boardId}>
           <div className={errors.boardId ? 'form_block select error' : 'form_block select' }>
             <select
               className="input_area select_area"
@@ -336,13 +336,13 @@ const Modal = ({ open, close }) => {
               onChange={onChange}
               onClick={loadBoards}
             >
-              <option value="">Select a board</option>
+              <option value="">{Strings.select[lang]}</option>
               {boards.length ? (
                 boards.map(item => (
                   <option key={item._id} value={item._id}>{item.title}</option>
                 ))
               ) : (
-                <option value="">Loading...</option>
+                <option value="">{Strings.loading[lang]}...</option>
               )}
             </select>
           </div>
@@ -357,7 +357,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
-            : <InputButton text="Create thread" />
+            : <InputButton text={Strings.createThread[lang]} />
           }
         </div>
       </form>
@@ -365,14 +365,14 @@ const Modal = ({ open, close }) => {
   )
 
   const answerContent = (
-    <ModalBody title="Answer in thread" onClick={close}>
+    <ModalBody title={Strings.answerInThread[lang]} onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <FormCardItem title="Content" error={errors.body}>
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
           <TextareaForm
             className={errors.body ? 'form_block error' : 'form_block' }
             name="body"
             value={values.body}
-            placeholder="Enter your message"
+            placeholder={Strings.enterContent[lang]}
             onChange={onChange}
           />
         </FormCardItem>
@@ -391,7 +391,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
-            : <InputButton text="Answer" />
+            : <InputButton text={Strings.answer[lang]} />
           }
         </div>
       </form>
@@ -399,14 +399,14 @@ const Modal = ({ open, close }) => {
   )
 
   const editAnswerContent = (
-    <ModalBody title="Edit answer" onClick={close}>
+    <ModalBody title={Strings.editAnswer[lang]} onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <FormCardItem title="Content" error={errors.body}>
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
           <TextareaForm
             className={errors.body ? 'form_block error' : 'form_block' }
             name="body"
             value={values.body}
-            placeholder="Enter your message"
+            placeholder={Strings.enterContent[lang]}
             onChange={onChange}
           />
         </FormCardItem>
@@ -425,7 +425,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
-            : <InputButton text="Edit" />
+            : <InputButton text={Strings.edit[lang]} />
           }
         </div>
       </form>
@@ -433,26 +433,26 @@ const Modal = ({ open, close }) => {
   )
 
   const editThreadContent = (
-    <ModalBody title="Edit thread" onClick={close}>
+    <ModalBody title={Strings.editThread[lang]} onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
-        <FormCardItem title="Thread title" error={errors.title}>
+        <FormCardItem title={Strings.threadTitle[lang]} error={errors.title}>
           <div className={errors.title ? 'form_block error' : 'form_block' }>
             <Input
               name="title"
               value={values.title}
-              placeholder="Enter title"
+              placeholder={Strings.enterTitle[lang]}
               maxLength="100"
               onChange={onChange}
             />
           </div>
         </FormCardItem>
 
-        <FormCardItem title="Content" error={errors.body}>
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
           <TextareaForm
             className={errors.body ? 'form_block error' : 'form_block' }
             name="body"
             value={values.body}
-            placeholder="Enter your message"
+            placeholder={Strings.enterContent[lang]}
             onChange={onChange}
           />
         </FormCardItem>
@@ -471,7 +471,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
-            : <InputButton text="Edit" />
+            : <InputButton text={Strings.edit[lang]} />
           }
         </div>
       </form>
@@ -479,38 +479,39 @@ const Modal = ({ open, close }) => {
   )
 
   const banContent = (
-    <ModalBody title="Ban user" onClick={close}>
+    <ModalBody title={Strings.banUser[lang]} onClick={close}>
       <form className="form_inner" onSubmit={banSubmit}>
-        <FormCardItem title="Reason" error={errors.reason}>
+        <FormCardItem title={Strings.reason[lang]} error={errors.reason}>
           <div className={errors.reason ? 'form_block error' : 'form_block' }>
             <Input
               name="reason"
               value={banValues.reason}
-              placeholder="Enter reason"
+              placeholder={Strings.enterReason[lang]}
               maxLength="100"
               onChange={banChange}
             />
           </div>
         </FormCardItem>
 
-        <FormCardItem title="Content" error={errors.body}>
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
           <TextareaForm
             className={errors.body ? 'form_block error' : 'form_block' }
             name="body"
             value={banValues.body}
-            placeholder="Enter your message"
             onChange={banChange}
             panel={false}
           />
         </FormCardItem>
 
-        <FormCardItem title="Duration" error={errors.expiresAt}>
+        <FormCardItem title={Strings.banDuration[lang]} error={errors.expiresAt}>
           <div className={errors.expiresAt ? 'form_block error' : 'form_block' }>
             <DatePicker
               className="input_area"
               selected={date}
+              minDate={date}
               showTimeSelect
               dateFormat="MMM d, yyyy h:mm aa"
+              timeFormat="HH:mm"
               onChange={date => setDate(date)}
             />
           </div>
@@ -525,7 +526,7 @@ const Modal = ({ open, close }) => {
         <div className="card_item">
           {loading
             ? <Loader className="btn" />
-            : <InputButton text="Ban" />
+            : <InputButton text={Strings.ban[lang]} />
           }
         </div>
       </form>

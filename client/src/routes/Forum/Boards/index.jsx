@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
+import { Strings } from 'support/Constants';
+
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
@@ -16,8 +18,8 @@ import NewestThread from './NewestThread';
 import Answers from './Answers';
 
 const Boards = () => {
-  document.title = 'Forum | Boards'
-  const { setPostType, setFabVisible } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.boards
+  const { setPostType, setFabVisible, lang } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const [sort, setSort] = useState('default')
 
@@ -30,27 +32,27 @@ const Boards = () => {
       })
     }
     setInit(false)
-  }, [setInit, init, setPostType, setFabVisible])
+  }, [init])
 
   return (
     <Section>
-      <Breadcrumbs current="All boards" links={[
-        { title: 'Home', link: '/' }
+      <Breadcrumbs current={Strings.allBoards[lang]} links={[
+        { title: Strings.home[lang], link: '/' }
       ]} />
 
       <SortNav links={[
-        { title: 'Default', sort: 'default' },
-        { title: 'Popular', sort: 'popular' },
-        { title: 'Recently answered', sort: 'newestanswer' },
-        { title: 'By newest thread', sort: 'newestthread' },
-        { title: 'By answers count', sort: 'answers' }
+        { title: Strings.default[lang], sort: 'default' },
+        { title: Strings.popular[lang], sort: 'popular' },
+        { title: Strings.recentlyAnswered[lang], sort: 'newestanswer' },
+        { title: Strings.byNewestThread[lang], sort: 'newestthread' },
+        { title: Strings.byAnswersCount[lang], sort: 'answers' }
       ]} setSort={setSort} state={sort} />
 
-      {sort === 'popular' && <Popular />}
-      {sort === 'newestanswer' && <NewestAnswer />}
-      {sort === 'newestthread' && <NewestThread />}
-      {sort === 'answers' && <Answers />}
-      {sort === 'default' && <Default />}
+      {sort === 'popular' && <Popular lang={lang} />}
+      {sort === 'newestanswer' && <NewestAnswer lang={lang} />}
+      {sort === 'newestthread' && <NewestThread lang={lang} />}
+      {sort === 'answers' && <Answers lang={lang} />}
+      {sort === 'default' && <Default lang={lang} />}
     </Section>
   )
 }

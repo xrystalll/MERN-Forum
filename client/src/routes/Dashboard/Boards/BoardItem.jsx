@@ -1,14 +1,16 @@
 import { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { Strings } from 'support/Constants';
 import { counter, declOfNum } from 'support/Utils';
+
 import { useForm } from 'hooks/useForm';
 
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
 import { Button, InputButton } from 'components/Button';
 
-const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros }) => {
+const BoardItem = ({ lang, data, editBoard, deleteBoard, fetchErrors, setFetchErros }) => {
   const [edit, setEdit] = useState(false)
   const [errors, setErrors] = useState({})
 
@@ -17,13 +19,13 @@ const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros })
     setFetchErros({})
 
     if (!values.name.trim()) {
-      return setErrors({ name: 'Enter short name' })
+      return setErrors({ name: Strings.enterShortName[lang] })
     }
     if (!values.title.trim()) {
-      return setErrors({ title: 'Enter title' })
+      return setErrors({ title: Strings.enterTitle[lang] })
     }
     if (!values.position || values.position <= 0) {
-      return setErrors({ position: 'Enter position' })
+      return setErrors({ position: Strings.enterPosition[lang] })
     }
 
     setEdit(false)
@@ -67,16 +69,16 @@ const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros })
             {!edit ? (
               <div className="edit_action_menu">
                 <div className="action edit" onClick={() => setEdit(true)}>
-                  <i className="bx bx-pencil"></i>
+                  <i className="bx bx-pencil" />
                 </div>
                 <div className="action delete" onClick={deleteClick}>
-                  <i className="bx bx-trash-alt"></i>
+                  <i className="bx bx-trash-alt" />
                 </div>
               </div>
             ) : (
               <div className="edit_action_menu">
                 <div className="action cancel" onClick={close}>
-                  <i className="bx bx-x"></i>
+                  <i className="bx bx-x" />
                 </div>
               </div>
             )}
@@ -86,62 +88,66 @@ const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros })
             {!edit ? (
               <Fragment>
                 <div className="act_btn foot_btn disable">
-                  <i className="bx bx-news"></i>
+                  <i className="bx bx-news" />
                   <span className="card_count">{counter(data.threadsCount)}</span>
-                  <span className="hidden">{declOfNum(data.threadsCount, ['thread', 'threads', 'threads'])}</span>
+                  <span className="hidden">
+                    {declOfNum(data.threadsCount, [Strings.thread1[lang], Strings.thread2[lang], Strings.thread3[lang]])}
+                  </span>
                 </div>
 
                 <div className="act_btn foot_btn disable">
-                  <i className="bx bx-message-square-detail"></i>
+                  <i className="bx bx-message-square-detail" />
                   <span className="card_count">{counter(data.answersCount)}</span>
-                  <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
+                  <span className="hidden">
+                    {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
+                  </span>
                 </div>
               </Fragment>
             ) : (
               <form className="form_inner edit_form" onSubmit={onSubmit}>
-                <FormCardItem title="Board short name*" error={errors.name}>
+                <FormCardItem title={Strings.boardShortName[lang] + '*'} error={errors.name}>
                   <div className={errors.name ? 'form_block error' : 'form_block' }>
                     <Input
                       name="name"
                       value={values.name}
-                      placeholder="Enter short name"
+                      placeholder={Strings.enterShortName[lang]}
                       maxLength="21"
                       onChange={onChange}
                     />
                   </div>
                 </FormCardItem>
 
-                <FormCardItem title="Board title*" error={errors.title}>
+                <FormCardItem title={Strings.boardTitle[lang] + '*'} error={errors.title}>
                   <div className={errors.title ? 'form_block error' : 'form_block' }>
                     <Input
                       name="title"
                       value={values.title}
-                      placeholder="Enter title"
+                      placeholder={Strings.enterTitle[lang]}
                       maxLength="50"
                       onChange={onChange}
                     />
                   </div>
                 </FormCardItem>
 
-                <FormCardItem title="Board description" error={errors.body}>
+                <FormCardItem title={Strings.boardDescription[lang]} error={errors.body}>
                   <div className={errors.body ? 'form_block error' : 'form_block' }>
                     <Input
                       name="body"
                       value={values.body}
-                      placeholder="Enter description"
+                      placeholder={Strings.enterDescription[lang]}
                       maxLength="100"
                       onChange={onChange}
                     />
                   </div>
                 </FormCardItem>
 
-                <FormCardItem title="Board position*" error={errors.position}>
+                <FormCardItem title={Strings.boardPosition[lang] + '*'} error={errors.position}>
                   <div className={errors.position ? 'form_block error' : 'form_block' }>
                     <Input
                       type="number"
                       name="position"
                       value={values.position}
-                      placeholder="Enter position"
+                      placeholder={Strings.enterPosition[lang]}
                       onChange={onChange}
                     />
                   </div>
@@ -153,7 +159,7 @@ const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros })
                   </div>
                 )}
 
-                <InputButton text="Save" />
+                <InputButton text={Strings.save[lang]} />
               </form>
             )}
           </footer>
@@ -163,7 +169,7 @@ const BoardItem = ({ data, editBoard, deleteBoard, fetchErrors, setFetchErros })
   )
 }
 
-const NewBoardItem = ({ createBoard, setCreate, fetchErrors, setFetchErros }) => {
+const NewBoardItem = ({ lang, createBoard, setCreate, fetchErrors, setFetchErros }) => {
   const [errors, setErrors] = useState({})
 
   const formCallback = () => {
@@ -171,13 +177,13 @@ const NewBoardItem = ({ createBoard, setCreate, fetchErrors, setFetchErros }) =>
     setFetchErros({})
 
     if (!values.name.trim()) {
-      return setErrors({ name: 'Enter short name' })
+      return setErrors({ name: Strings.enterShortName[lang] })
     }
     if (!values.title.trim()) {
-      return setErrors({ title: 'Enter title' })
+      return setErrors({ title: Strings.enterTitle[lang] })
     }
     if (!values.position || values.position <= 0) {
-      return setErrors({ position: 'Enter position' })
+      return setErrors({ position: Strings.enterPosition[lang] })
     }
 
     createBoard({
@@ -206,49 +212,49 @@ const NewBoardItem = ({ createBoard, setCreate, fetchErrors, setFetchErros }) =>
         <div className="card_block">
           <footer className="card_foot">
             <form className="form_inner edit_form" onSubmit={onSubmit}>
-              <FormCardItem title="Board short name*" error={errors.name}>
+              <FormCardItem title={Strings.boardShortName[lang] + '*'} error={errors.name}>
                 <div className={errors.name ? 'form_block error' : 'form_block' }>
                   <Input
                     name="name"
                     value={values.name}
-                    placeholder="Enter short name"
+                    placeholder={Strings.enterShortName[lang]}
                     maxLength="21"
                     onChange={onChange}
                   />
                 </div>
               </FormCardItem>
 
-              <FormCardItem title="Board title*" error={errors.title}>
+              <FormCardItem title={Strings.boardTitle[lang] + '*'} error={errors.title}>
                 <div className={errors.title ? 'form_block error' : 'form_block' }>
                   <Input
                     name="title"
                     value={values.title}
-                    placeholder="Enter title"
+                    placeholder={Strings.enterTitle[lang]}
                     maxLength="50"
                     onChange={onChange}
                   />
                 </div>
               </FormCardItem>
 
-              <FormCardItem title="Board description" error={errors.body}>
+              <FormCardItem title={Strings.boardDescription[lang]} error={errors.body}>
                 <div className={errors.body ? 'form_block error' : 'form_block' }>
                   <Input
                     name="body"
                     value={values.body}
-                    placeholder="Enter description"
+                    placeholder={Strings.enterDescription[lang]}
                     maxLength="100"
                     onChange={onChange}
                   />
                 </div>
               </FormCardItem>
 
-              <FormCardItem title="Board position*" error={errors.position}>
+              <FormCardItem title={Strings.boardPosition[lang] + '*'} error={errors.position}>
                 <div className={errors.position ? 'form_block error' : 'form_block' }>
                   <Input
                     type="number"
                     name="position"
                     value={values.position}
-                    placeholder="Enter position"
+                    placeholder={Strings.enterPosition[lang]}
                     onChange={onChange}
                   />
                 </div>
@@ -261,8 +267,8 @@ const NewBoardItem = ({ createBoard, setCreate, fetchErrors, setFetchErros }) =>
               )}
 
               <div className="buttons_group">
-                <InputButton text="Create" />
-                <Button className="secondary" text="Cancel" onClick={close} />
+                <InputButton text={Strings.create[lang]} />
+                <Button className="secondary" text={Strings.cancel[lang]} onClick={close} />
               </div>
             </form>
           </footer>

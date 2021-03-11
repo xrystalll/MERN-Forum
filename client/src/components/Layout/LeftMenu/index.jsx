@@ -2,11 +2,13 @@ import { Fragment, useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
+
+import { Strings } from 'support/Constants';
 import { counter } from 'support/Utils';
 import './style.css';
 
 const LeftMenu = ({ open, setMenuOpen }) => {
-  const { user } = useContext(StoreContext)
+  const { user, lang } = useContext(StoreContext)
   const [messages] = useState(0)
   const menuOpen = open ? 'left_bar open' : 'left_bar'
 
@@ -19,13 +21,13 @@ const LeftMenu = ({ open, setMenuOpen }) => {
               {user.role === 'admin' && (
                 <li className="nav_item">
                   <NavLink to="/dashboard" onClick={() => setMenuOpen(false)}>
-                    <span className="nav_text">Dashboard</span>
+                    <span className="nav_text">{Strings.dashboard[lang]}</span>
                   </NavLink>
                 </li>
               )}
               <li className="nav_item">
                 <NavLink to="/messages" onClick={() => setMenuOpen(false)}>
-                  <span className="nav_text">Messages</span>
+                  <span className="nav_text">{Strings.messages[lang]}</span>
                   {messages > 0 && <span className="nav_counter">{counter(messages)}</span>}
                 </NavLink>
               </li>
@@ -33,27 +35,27 @@ const LeftMenu = ({ open, setMenuOpen }) => {
           )}
           <li className="nav_item">
             <NavLink to="/boards" onClick={() => setMenuOpen(false)}>
-              <span className="nav_text">All boards</span>
+              <span className="nav_text">{Strings.allBoards[lang]}</span>
             </NavLink>
           </li>
           <li className="nav_item">
             <NavLink to="/uploads" onClick={() => setMenuOpen(false)}>
-              <span className="nav_text">Uploads</span>
+              <span className="nav_text">{Strings.filesUploads[lang]}</span>
             </NavLink>
           </li>
           <li className="nav_item">
             <NavLink to="/users" onClick={() => setMenuOpen(false)}>
-              <span className="nav_text">Users</span>
+              <span className="nav_text">{Strings.users[lang]}</span>
             </NavLink>
           </li>
           <li className="nav_item">
             <NavLink to="/admin" onClick={() => setMenuOpen(false)}>
-              <span className="nav_text">Admins</span>
+              <span className="nav_text">{Strings.admins[lang]}</span>
             </NavLink>
           </li>
           <li className="nav_item">
             <NavLink to="/rules" onClick={() => setMenuOpen(false)}>
-              <span className="nav_text">Rules</span>
+              <span className="nav_text">{Strings.rules[lang]}</span>
             </NavLink>
           </li>
         </ul>

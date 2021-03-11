@@ -1,9 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
-import { Section } from 'components/Section';
+import { Strings } from 'support/Constants';
+
 import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
 
@@ -11,8 +12,8 @@ import Newest from './Newest';
 import Old from './Old';
 
 const Bans = ({ history, location: { pathname } }) => {
-  document.title = 'Forum | Bans'
-  const { token } = useContext(StoreContext)
+  const { token, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.bans[lang]
   const { path } = useRouteMatch()
   const [sort, setSort] = useState(pathname.substr(pathname.lastIndexOf('/') + 1) || 'bans')
 
@@ -28,15 +29,15 @@ const Bans = ({ history, location: { pathname } }) => {
   }, [sort])
 
   return (
-    <Section>
-      <Breadcrumbs current="Bans" links={[
-        { title: 'Home', link: '/' },
-        { title: 'Dashboard', link: '/dashboard' }
+    <Fragment>
+      <Breadcrumbs current={Strings.bans[lang]} links={[
+        { title: Strings.home[lang], link: '/' },
+        { title: Strings.dashboard[lang], link: '/dashboard' }
       ]} />
 
       <SortNav links={[
-        { title: 'Newest', sort: 'bans' },
-        { title: 'Oldest', sort: 'oldest' }
+        { title: Strings.newest[lang], sort: 'bans' },
+        { title: Strings.oldest[lang], sort: 'oldest' }
       ]} setSort={setSort} state={sort} />
 
       <Switch>
@@ -46,7 +47,7 @@ const Bans = ({ history, location: { pathname } }) => {
           <Redirect to={path} />
         </Route>
       </Switch>
-    </Section>
+    </Fragment>
   )
 }
 

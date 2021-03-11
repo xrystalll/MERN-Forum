@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { UserCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Old = () => {
+const Old = ({ lang }) => {
   const [users, setUsers] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
@@ -75,9 +75,9 @@ const Old = () => {
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message="No users yet" />
+      ) : <Errorer message={Strings.noUsersYet[lang]} />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message="Unable to display users" />
+  ) : <Errorer message={Strings.unableToDisplayUsers[lang]} />
 }
 
 export default Old;

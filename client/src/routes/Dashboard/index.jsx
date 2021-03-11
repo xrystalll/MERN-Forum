@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -15,8 +15,8 @@ import Bans from './Bans';
 import './style.css';
 
 const Dashboard = () => {
-  document.title = 'Forum | Admin dashboard'
-  const { setFabVisible } = useContext(StoreContext)
+  const { setFabVisible, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.adminDashboard[lang]
   const { path } = useRouteMatch()
   const [stats, setStats] = useState([])
 
@@ -47,11 +47,11 @@ const Dashboard = () => {
         <Route path={path + '/boards'} exact component={Boards} />
         <Route path={path + '/bans'} component={Bans} />
         <Route path={path} exact>
-          <Breadcrumbs current="Dashboard" links={[
-            { title: 'Home', link: '/' }
+          <Breadcrumbs current={Strings.dashboard[lang]} links={[
+            { title: Strings.home[lang], link: '/' }
           ]} />
 
-          <SectionHeader title="Admin dashboard" />
+          <SectionHeader title={Strings.adminDashboard[lang]} />
 
           {stats.length ? (
             <SlidesContainer>
@@ -63,23 +63,23 @@ const Dashboard = () => {
 
           <div className="admin__nav">
             <NavLink to={path + '/boards'} className="admin__nav_item">
-              <i className="bx bx-category"></i>
-              Boards
+              <i className="bx bx-category" />
+              {Strings.boards[lang]}
             </NavLink>
 
             <NavLink to={path + '/admins'} className="admin__nav_item">
-              <i className="bx bx-group"></i>
-              Admins
+              <i className="bx bx-group" />
+              {Strings.admins[lang]}
             </NavLink>
 
             <NavLink to={path + '/reports'} className="admin__nav_item">
-              <i className="bx bxs-flag-alt"></i>
-              Reports
+              <i className="bx bxs-flag-alt" />
+              {Strings.reports[lang]}
             </NavLink>
 
             <NavLink to={path + '/bans'} className="admin__nav_item">
-              <i className="bx bx-block"></i>
-              Bans
+              <i className="bx bx-block" />
+              {Strings.bans[lang]}
             </NavLink>
           </div>
         </Route>

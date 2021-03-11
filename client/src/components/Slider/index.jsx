@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 
+import { Strings } from 'support/Constants';
 import { counter, declOfNum } from 'support/Utils';
 import './style.css';
 
-const PopularBoardsContainer = ({ children }) => {
+const PopularBoardsContainer = ({ children, lang }) => {
   return (
     <div className="boards_slide">
       <ul className="boards_slide_list">
@@ -19,7 +20,7 @@ const PopularBoardsItem = ({ data }) => {
       <Link to={'/boards/' + data.name} className="slide_item_text">
         <span className="slide_title">{data.title}</span>
         <span className="slide_content">
-          {counter(data.threadsCount)} {declOfNum(data.threadsCount, ['thread', 'threads', 'threads'])}
+          {counter(data.threadsCount)} {declOfNum(data.threadsCount, [Strings.thread1[lang], Strings.thread2[lang], Strings.thread3[lang]])}
         </span>
       </Link>
     </li>

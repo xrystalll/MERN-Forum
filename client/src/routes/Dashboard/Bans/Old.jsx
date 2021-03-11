@@ -2,14 +2,14 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { BannedCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Old = () => {
-  const { token } = useContext(StoreContext)
+  const { token, lang } = useContext(StoreContext)
   const [bans, setBans] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
@@ -100,9 +100,9 @@ const Old = () => {
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message="No bans yet" />
+      ) : <Errorer message={Strings.noBansYet[lang]} />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message="Unable to display bans" />
+  ) : <Errorer message={Strings.unableToDisplayBans[lang]} />
 }
 
 export default Old;

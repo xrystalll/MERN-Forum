@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { BoardCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const NewestAnswer = () => {
+const NewestAnswer = ({ lang }) => {
   const [boards, setBoards] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
@@ -75,9 +75,9 @@ const NewestAnswer = () => {
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message="No boards yet" />
+      ) : <Errorer message={Strings.noBoardsYet[lang]} />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message="Unable to display boards" />
+  ) : <Errorer message={Strings.unableToDisplayBoards[lang]} />
 }
 
 export default NewestAnswer;

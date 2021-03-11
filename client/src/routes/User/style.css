@@ -10,6 +10,7 @@
   height: 100px;
   color: var(--actions-color);
   background-color: var(--secondary-bg-tint);
+  position: relative;
   background-size: cover;
   border-radius: 50%;
   margin-top: .5rem;
@@ -18,6 +19,16 @@
   justify-content: center;
   font-size: 1.8rem;
   user-select: none;
+}
+.profile_picture::before {
+  content: '';
+  border-radius: 50%;
+  border: 2px solid rgb(0 0 0 / 5%);
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .profile_head_right {
   margin: .5rem .5rem 1rem 1.5rem;

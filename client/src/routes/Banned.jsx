@@ -1,7 +1,9 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
-import { BACKEND } from 'support/Constants';
+import { StoreContext } from 'store/Store';
+
+import { BACKEND, Strings } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import { Section, SectionHeader } from 'components/Section';
@@ -9,13 +11,14 @@ import { BanInfoCard } from 'components/Card';
 import Loader from 'components/Loader';
 
 const Banned = ({ history }) => {
+  const { lang } = useContext(StoreContext)
   const [userId] = useState(localStorage.getItem('ban'))
   const [banInfo, setBanInfo] = useState({})
 
   useEffect(() => {
     if (!userId) return history.push('/')
 
-    document.title = 'Forum | Banned'
+    document.title = 'Forum | ' + Strings.youAreBanned[lang]
 
     const fetchBan = async () => {
       try {
@@ -41,7 +44,6 @@ const Banned = ({ history }) => {
     let timer
     if (banInfo.expiresAt) {
       timer = setInterval(() => {
-        console.log([banInfo.expiresAt, new Date().toISOString()], banInfo.expiresAt < new Date().toISOString())
         if (banInfo.expiresAt < new Date().toISOString()) {
           localStorage.removeItem('ban')
           history.push('/signin')
@@ -69,9 +71,12 @@ const Banned = ({ history }) => {
 
   return (
     <Section>
-      <SectionHeader title="Banned" />
+      <SectionHeader title={Strings.youAreBanned[lang]} />
 
-       {banInfo.createdAt ? <BanInfoCard data={banInfo} owner /> : <Loader className="more_loader" color="#64707d" />}
+      {banInfo.createdAt
+        ? <BanInfoCard data={banInfo} owner />
+        : <Loader className="more_loader" color="#64707d" />
+      }
     </Section>
   )
 }

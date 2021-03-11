@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 import Socket from 'support/Socket';
 
 import { Button } from 'components/Button';
@@ -11,7 +11,7 @@ import CustomScrollbar from 'components/CustomScrollbar';
 import NotificationsList from './NotificationsList';
 import './style.css';
 
-const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
+const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang }) => {
   const dropdown = useRef()
   const [menuHeight, setMenuHeight] = useState(null)
 
@@ -135,7 +135,11 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
             <div className="notif_list">
               {notifications.length ? (
                 <div className="card_item">
-                  <Button text="Delete all notifications" onClick={deleteNotifications} className="main hollow" />
+                  <Button
+                    text={Strings.deleteAllNotifications[lang]}
+                    onClick={deleteNotifications}
+                    className="main hollow"
+                  />
                 </div>
               ) : null}
 
@@ -146,7 +150,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token }) => {
           </CustomScrollbar>
         ) : <Loader color="#64707d" />
       ) : (
-        <Errorer message="Unable to display notifications" />
+        <Errorer message={Strings.unableToDisplayNotifications[lang]} />
       )}
     </div>
   )

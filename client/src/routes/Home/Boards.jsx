@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import { PopularBoardsContainer, PopularBoardsItem } from 'components/Slider';
 
-const Boards = () => {
+const Boards = ({ lang }) => {
   const [init, setInit] = useState(true)
   const [boards, setBoards] = useState([])
   const limit = 6
@@ -31,11 +31,14 @@ const Boards = () => {
   return (
     boards.length ? (
       <Section>
-        <SectionHeader title="Popular boards" link={{ title: 'All', url: '/boards' }} />
+        <SectionHeader
+          title={Strings.popularBoards[lang]}
+          link={{ title: Strings.all[lang], url: '/boards' }}
+        />
 
         <PopularBoardsContainer>
           {boards.map(item => (
-            <PopularBoardsItem key={item._id} data={item} />
+            <PopularBoardsItem key={item._id} lang={lang} data={item} />
           ))}
         </PopularBoardsContainer>
       </Section>

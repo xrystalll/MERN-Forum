@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Threads = () => {
+const Threads = ({ lang }) => {
   const [init, setInit] = useState(true)
   const [threads, setThreads] = useState([])
   const limit = 5
@@ -35,7 +35,7 @@ const Threads = () => {
 
   return (
     <Section>
-      <SectionHeader title="Recently threads" />
+      <SectionHeader title={Strings.recentlyThreads[lang]} />
 
       {!noData ? (
         threads.length ? (
@@ -44,7 +44,7 @@ const Threads = () => {
           ))
         ) : <Loader color="#64707d" />
       ) : (
-        <Errorer message="No threads yet" />
+        <Errorer message={Strings.noThreadsYet[lang]} />
       )}
     </Section>
   )

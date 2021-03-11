@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 import Socket from 'support/Socket';
 
 import { Card } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Answers = ({ user, thread, subcribed, clearSubcribe }) => {
+const Answers = ({ lang, user, thread, subcribed, clearSubcribe }) => {
   const [init, setInit] = useState(true)
   const [answers, setAnswers] = useState([])
   const pagination = false
@@ -60,7 +60,7 @@ const Answers = ({ user, thread, subcribed, clearSubcribe }) => {
       answers.map(item => (
         <Card key={item._id} data={item} threadData={thread} full type="answer" />
       ))
-    ) : <Errorer message="No answers yet" />
+    ) : <Errorer message={Strings.noAnswersYet[lang]} />
   ) : <Loader className="more_loader" color="#64707d" />
 }
 

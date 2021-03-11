@@ -17,7 +17,7 @@ export const SectionHeader = ({ title, link }) => {
       <div className="more_link">
         <Link to={link.url}>
           {link.title}
-          <i className="bx bx-chevron-right"></i>
+          <i className="bx bx-chevron-right" />
         </Link>
       </div>
     </div>

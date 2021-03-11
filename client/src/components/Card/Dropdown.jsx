@@ -19,8 +19,11 @@ const Dropdown = ({ children }) => {
 
   return (
     <div ref={dropdown} className={dropdownOpen ? 'dropdown open' : 'dropdown'}>
-      <div className="dropdown_trigger act_btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
-        <i className="bx bx-dots-horizontal-rounded"></i>
+      <div
+        className="dropdown_trigger act_btn"
+        onClick={() => setDropdownOpen(!dropdownOpen)}
+      >
+        <i className="bx bx-dots-horizontal-rounded" />
       </div>
       <div className="dropdown_content">
         {children}

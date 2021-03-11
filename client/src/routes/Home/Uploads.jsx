@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import Errorer from 'components/Errorer';
 
-const Uploads = () => {
+const Uploads = ({ lang }) => {
   const [init, setInit] = useState(true)
   const [uploads, setUploads] = useState([])
   const limit = 3
@@ -31,14 +31,17 @@ const Uploads = () => {
 
   return (
     <Section>
-      <SectionHeader title="Files/Uploads" link={{ title: 'All', url: '/uploads' }} />
+      <SectionHeader
+        title={Strings.filesUploads[lang]}
+        link={{ title: Strings.all[lang], url: '/uploads' }}
+      />
 
       {uploads.length ? (
         uploads.map(item => (
           <div key={item._id}>{item.title}</div>
         ))
       ) : (
-        <Errorer message="No uploads yet" />
+        <Errorer message={Strings.noUploadsYet[lang]} />
       )}
     </Section>
   )

@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import { Section } from 'components/Section';
@@ -14,7 +14,7 @@ import Errorer from 'components/Errorer';
 import Answers from './Answers';
 
 const Thread = ({ match }) => {
-  const { user, setPostType, setFabVisible } = useContext(StoreContext)
+  const { user, setPostType, setFabVisible, lang } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const { threadId } = match.params
 
@@ -34,7 +34,7 @@ const Thread = ({ match }) => {
   const [answersSubscribed, setAnswersSubscribed] = useState({})
 
   useEffect(() => {
-    const threadTitle = thread.title || 'Thread'
+    const threadTitle = thread.title || Strings.thread[lang]
     document.title = 'Forum | ' + threadTitle
     const fetchThread = async () => {
       try {
@@ -95,8 +95,8 @@ const Thread = ({ match }) => {
         !loading ? (
           <Fragment>
             <Breadcrumbs current={thread.title} links={[
-              { title: 'Home', link: '/' },
-              { title: 'All boards', link: '/boards' },
+              { title: Strings.home[lang], link: '/' },
+              { title: Strings.allBoards[lang], link: '/boards' },
               { title: board.title, link: '/boards/' + board.name }
             ]} />
 
@@ -104,17 +104,23 @@ const Thread = ({ match }) => {
 
             <br />
 
-            <Answers user={user} thread={thread} subcribed={answersSubscribed} clearSubcribe={setAnswersSubscribed} />
+            <Answers
+              lang={lang}
+              user={user}
+              thread={thread}
+              subcribed={answersSubscribed}
+              clearSubcribe={setAnswersSubscribed}
+            />
           </Fragment>
         ) : <Loader color="#64707d" />
       ) : (
         <Fragment>
-          <Breadcrumbs current="Error" links={[
-            { title: 'Home', link: '/' },
-            { title: 'All boards', link: '/boards' }
+          <Breadcrumbs current={Strings.error[lang]} links={[
+            { title: Strings.home[lang], link: '/' },
+            { title: Strings.allBoards[lang], link: '/boards' }
           ]} />
 
-          <Errorer message="Thread not found" />
+          <Errorer message={Strings.threadNotFound[lang]} />
         </Fragment>
       )}
     </Section>

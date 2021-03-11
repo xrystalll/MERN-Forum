@@ -2,12 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
+
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import Dropdown from './Dropdown';
 
 const Notifications = () => {
-  const { user, token, logout } = useContext(StoreContext)
+  const { user, token, logout, lang } = useContext(StoreContext)
   const history = useHistory()
   const [notification, setNotification] = useState(JSON.parse(localStorage.getItem('notifications')))
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -40,8 +41,8 @@ const Notifications = () => {
   return (
     <li className="head_act_item notifications">
       {notification
-        ? <i className="bx bxs-bell bx-tada" onClick={openNotifications}></i>
-        : <i className="bx bx-bell" onClick={openNotifications}></i>
+        ? <i className="bx bxs-bell bx-tada" onClick={openNotifications} />
+        : <i className="bx bx-bell" onClick={openNotifications} />
       }
 
       {dropdownOpen && (
@@ -51,6 +52,7 @@ const Notifications = () => {
           setInformer={setNotification}
           user={user}
           token={token}
+          lang={lang}
         />
       )}
     </li>

@@ -4,6 +4,7 @@ import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
+
 import { counter, declOfNum, dateFormat } from 'support/Utils';
 import { BACKEND } from 'support/Constants';
 
@@ -243,7 +244,6 @@ const Card = ({ data, threadData, full = false, type }) => {
           body: data.body
         }
       })
-      setBanned(true)
       setModalOpen(true)
     }
   }
@@ -270,15 +270,15 @@ const Card = ({ data, threadData, full = false, type }) => {
               {full ? (
                 data.title && (
                   <div className="card_title full">
-                    {data.pined && <i className="thread_pin bx bx-pin"></i>}
-                    {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                    {data.pined && <i className="thread_pin bx bx-pin" />}
+                    {data.closed && <i className="thread_lock bx bx-lock-alt" />}
                     {data.title}
                   </div>
                 )
               ) : (
                 <Link to={'/thread/' + data._id} className="card_title">
-                  {data.pined && <i className="thread_pin bx bx-pin"></i>}
-                  {data.closed && <i className="thread_lock bx bx-lock-alt"></i>}
+                  {data.pined && <i className="thread_pin bx bx-pin" />}
+                  {data.closed && <i className="thread_lock bx bx-lock-alt" />}
                   {data.title}
                 </Link>
               )}
@@ -288,7 +288,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                   {data.author.displayName}
                   {full && (
                     <Fragment>
-                      {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online"></span>}
+                      {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
                       {data.author.role === 'admin' ? (
                         <span className="user_status">admin</span>
                       ) : (
@@ -346,7 +346,11 @@ const Card = ({ data, threadData, full = false, type }) => {
                   {data.attach.map((item, index) => (
                     <Fragment key={index}>
                       {imageTypes.find(i => i === item.type) ? (
-                        <div onClick={() => imageView(BACKEND + item.file)} className="attached_file card_left" style={{ backgroundImage: `url(${BACKEND + item.file})` }}></div>
+                        <div
+                          onClick={() => imageView(BACKEND + item.file)}
+                          className="attached_file card_left"
+                          style={{ backgroundImage: `url(${BACKEND + item.file})` }}
+                        />
                       ) : (
                         <a href={item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
                           <div className="attached_info">{regexp.exec(item.file)[1]}</div>
@@ -371,13 +375,13 @@ const Card = ({ data, threadData, full = false, type }) => {
               <Fragment>
                 {user && user.id !== data.author._id && (
                   <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
-                    <i className="bx bx-redo"></i>
+                    <i className="bx bx-redo" />
                     <span>Answer</span>
                   </div>
                 )}
 
                 <div className="act_btn foot_btn likes" onClick={onLike}>
-                  <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'}></i>
+                  <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
                   {likes.length ? (
                     <Fragment>
                       <span className="card_count">{counter(likes.length)}</span>
@@ -404,7 +408,7 @@ const Card = ({ data, threadData, full = false, type }) => {
 
                 {data.answersCount > 0 && (
                   <div className="act_btn foot_btn disable">
-                    <i className="bx bx-message-square-detail"></i>
+                    <i className="bx bx-message-square-detail" />
                     <span className="card_count">{counter(data.answersCount)}</span>
                     <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
                   </div>
@@ -412,7 +416,7 @@ const Card = ({ data, threadData, full = false, type }) => {
               </Fragment>
             ) : (
               <div className="act_btn foot_btn disable">
-                <i className="bx bx-message-square-detail"></i>
+                <i className="bx bx-message-square-detail" />
                 <span className="card_count">{counter(data.answersCount)}</span>
                 <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
               </div>
@@ -422,7 +426,7 @@ const Card = ({ data, threadData, full = false, type }) => {
           {full && data.edited && (
             data.edited.createdAt && (
               <div className="act_btn foot_btn under_foot disable">
-                <i className="bx bx-pencil"></i>
+                <i className="bx bx-pencil" />
                 <span className="card_count">
                   {dateFormat(data.edited.createdAt)}
                 </span>
@@ -448,13 +452,13 @@ const BoardCard = ({ data }) => {
 
           <footer className="card_foot">
             <div className="act_btn foot_btn disable">
-              <i className="bx bx-news"></i>
+              <i className="bx bx-news" />
               <span className="card_count">{counter(data.threadsCount)}</span>
               <span className="hidden">{declOfNum(data.threadsCount, ['thread', 'threads', 'threads'])}</span>
             </div>
 
             <div className="act_btn foot_btn disable">
-              <i className="bx bx-message-square-detail"></i>
+              <i className="bx bx-message-square-detail" />
               <span className="card_count">{counter(data.answersCount)}</span>
               <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
             </div>
@@ -521,7 +525,7 @@ const BannedCard = ({ data, unBan }) => {
 
               <div className="edit_action_menu">
                 <div className="action delete" onClick={() => unBan(data._id)}>
-                  <i className="bx bx-trash-alt"></i>
+                  <i className="bx bx-trash-alt" />
                 </div>
               </div>
             </div>

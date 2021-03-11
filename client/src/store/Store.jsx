@@ -17,6 +17,11 @@ if (localStorage.getItem('token')) {
   }
 }
 
+const langs = ['ru', 'en', 'jp']
+const langFromLS = langs.find(i => i === localStorage.getItem('lang'))
+const langFromNL = langs.find(i => i === window.navigator.language)
+const lang = langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
+
 const initialState = {
   user,
   token,
@@ -25,7 +30,8 @@ const initialState = {
     id: null,
     someData: null
   },
-  fab: true
+  fab: true,
+  lang
 }
 
 const StoreContext = createContext(initialState)
@@ -75,20 +81,23 @@ const Store = ({ children }) => {
     })
   }
 
+  const store = {
+    lang: state.lang,
+    token: state.token,
+    user: state.user,
+    setUserPicture,
+    modalOpen,
+    setModalOpen,
+    postType: state.postType,
+    setPostType,
+    fab: state.fab,
+    setFabVisible,
+    login,
+    logout
+  }
+
   return (
-    <StoreContext.Provider value={{
-      token: state.token,
-      user: state.user,
-      setUserPicture,
-      modalOpen,
-      setModalOpen,
-      postType: state.postType,
-      setPostType,
-      fab: state.fab,
-      setFabVisible,
-      login,
-      logout
-    }}>
+    <StoreContext.Provider value={store}>
       {children}
     </StoreContext.Provider>
   )

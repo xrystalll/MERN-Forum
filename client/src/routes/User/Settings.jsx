@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import { SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -13,8 +13,8 @@ import { Button } from 'components/Button';
 import Loader from 'components/Loader';
 
 const Settings = ({ match }) => {
-  document.title = 'Forum | Profile settings'
-  const { user, setUserPicture, token } = useContext(StoreContext)
+  const { user, setUserPicture, token, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.profileSettings[lang]
   const { userName } = match.params
   const history = useHistory()
 
@@ -70,17 +70,17 @@ const Settings = ({ match }) => {
 
   return (
     <Fragment>
-      <Breadcrumbs current="Settings" links={[
-        { title: 'Home', link: '/' },
-        { title: 'Users', link: '/users' },
+      <Breadcrumbs current={Strings.settings[lang]} links={[
+        { title: Strings.home[lang], link: '/' },
+        { title: Strings.users[lang], link: '/users' },
         { title: user.displayName, link: '/user/' + user.name }
       ]} />
 
-      <SectionHeader title="Profile settings" />
+      <SectionHeader title={Strings.profileSettings[lang]} />
 
       <FileUploadForm
-        title="Upload profile picture"
-        hint="Accepted: png, jpg, jpeg, gif; Max files count: 1; Max size: 8 Mb"
+        title={Strings.uploadProfilePicture[lang]}
+        hint={`${Strings.accepted[lang]}: png, jpg, jpeg, gif; ${Strings.maxFilesCount[lang]}: 1; ${Strings.maxSize[lang]}: 8 Mb`}
         multiple={false}
         accept="image/jpeg,image/png,image/gif"
         sendFiles={getFile}
@@ -90,7 +90,7 @@ const Settings = ({ match }) => {
       <div className="card_item">
         {uploading
           ? <Loader className="btn main" />
-          : <Button text="Upload" onClick={upload} className="main hollow" />
+          : <Button text={Strings.upload[lang]} onClick={upload} className="main hollow" />
         }
       </div>
     </Fragment>

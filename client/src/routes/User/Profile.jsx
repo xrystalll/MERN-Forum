@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Breadcrumbs from 'components/Breadcrumbs';
@@ -12,7 +12,7 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Profile = ({ userName }) => {
-  const { user, token } = useContext(StoreContext)
+  const { user, token, lang } = useContext(StoreContext)
 
   const [userData, setUserData] = useState({})
   const [loading, setLoading] = useState(true)
@@ -20,7 +20,7 @@ const Profile = ({ userName }) => {
 
   useEffect(() => {
     const profileName = userData.displayName || userName
-    document.title = 'Forum | Profile ' + profileName
+    document.title = `Forum | ${Strings.profile[lang]} ${profileName}`
 
     if (!loading) {
       if (userData.name === userName) return
@@ -53,8 +53,8 @@ const Profile = ({ userName }) => {
   return (
     <Fragment>
       <Breadcrumbs current={userData.displayName || userName} links={[
-        { title: 'Home', link: '/' },
-        { title: 'Users', link: '/users' }
+        { title: Strings.home[lang], link: '/' },
+        { title: Strings.users[lang], link: '/users' }
       ]} />
 
       {!noData ? (
@@ -79,11 +79,20 @@ const Profile = ({ userName }) => {
                         {userData.displayName}
                         {userData.role === 'admin' && <span className="user_status">admin</span>}
                       </div>
-                      <div>{new Date() - new Date(userData.onlineAt) < 5 * 60000 ? 'online' : 'Last seen ' + dateFormat(userData.onlineAt)}</div>
+                      <div>
+                        {new Date() - new Date(userData.onlineAt) < 5 * 60000
+                          ? 'online'
+                          : Strings.lastSeen[lang] + ' ' + dateFormat(userData.onlineAt)
+                        }
+                      </div>
 
                       {user.id === userData._id && (
                         <div className="profile_head_actions">
-                          <LinkButton link={'/user/' + userData.name + '/settings'} className="hollow" text="Settings" />
+                          <LinkButton
+                            link={'/user/' + userData.name + '/settings'}
+                            className="hollow"
+                            text={Strings.settings[lang]}
+                          />
                         </div>
                       )}
                     </div>
@@ -94,7 +103,7 @@ const Profile = ({ userName }) => {
           </Fragment>
         ) : <Loader color="#64707d" />
       ) : (
-        <Errorer message="Unable to display user profile" />
+        <Errorer message={Strings.unableToDisplayUserProfile[lang]} />
       )}
     </Fragment>
   )

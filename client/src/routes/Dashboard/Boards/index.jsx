@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import Breadcrumbs from 'components/Breadcrumbs';
 import { Button } from 'components/Button';
@@ -13,8 +13,8 @@ import { BoardItem, NewBoardItem } from './BoardItem';
 import './style.css';
 
 const Boards = () => {
-  document.title = 'Forum | Manage boards'
-  const { token } = useContext(StoreContext)
+  const { token, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.manageBoards[lang]
 
   const [boards, setBoards] = useState([])
   const [page, setPage] = useState(1)
@@ -143,17 +143,22 @@ const Boards = () => {
 
   return (
     <Fragment>
-      <Breadcrumbs current="Manage boards" links={[
-        { title: 'Home', link: '/' },
-        { title: 'Dashboard', link: '/dashboard' }
+      <Breadcrumbs current={Strings.manageBoards[lang]} links={[
+        { title: Strings.home[lang], link: '/' },
+        { title: Strings.dashboard[lang], link: '/dashboard' }
       ]} />
 
       <div className="card_item">
-        <Button className="main hollow" text="Create new board" onClick={() => setCreate(!create)} />
+        <Button
+          className="main hollow"
+          text={Strings.createNewBoard[lang]}
+          onClick={() => setCreate(!create)}
+        />
       </div>
 
       {create && (
         <NewBoardItem
+          lang={lang}
           createBoard={createBoard}
           setCreate={setCreate}
           fetchErrors={fetchErrors}
@@ -169,6 +174,7 @@ const Boards = () => {
                 {boards.map(item => (
                   <BoardItem
                     key={item._id}
+                    lang={lang}
                     data={item}
                     editBoard={editBoard}
                     deleteBoard={deleteBoard}
@@ -180,10 +186,10 @@ const Boards = () => {
 
               {moreLoading && <Loader className="more_loader" color="#64707d" />}
             </Fragment>
-          ) : <Errorer message="No boards yet" />
+          ) : <Errorer message={Strings.noBoardsYet[lang]} />
         ) : <Loader color="#64707d" />
       ) : (
-        <Errorer message="Unable to display boards" />
+        <Errorer message={Strings.unableToDisplayBoards[lang]} />
       )}
     </Fragment>
   )

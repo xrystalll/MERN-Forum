@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
 @import url('https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css');
 
 :root {
-  --font-ss: 'Inter', sans-serif;
+  --font-ss: 'Inter', 'Noto Sans JP', sans-serif;
   --border-radius: 12px;
   --border-radius-inner: calc(var(--border-radius) / 2);
   --transition-background: background-color .2s;
@@ -885,109 +886,6 @@ a.head_text:hover {
   background: none;
 }
 
-/* Markdown */
-.markdown {
-  font-weight: 400;
-}
-.markdown em {
-  font-style: italic;
-}
-.markdown strong {
-  font-weight: 700;
-}
-.markdown ol, .markdown ul {
-  margin-left: 1.4rem;
-  margin-top: .3rem;
-  margin-bottom: .3rem;
-}
-.markdown ul {
-  list-style: initial;
-}
-.markdown ul > li > ul {
-  list-style: revert;
-}
-.markdown code, .markdown pre {
-  font-family: monospace;
-  background-color: var(--dark-bg) !important;
-  border-radius: var(--border-radius-inner);
-  padding-right: .8rem;
-}
-.markdown pre {
-  margin: .5rem 0;
-  padding: .2rem .3rem !important;
-  display: flex;
-  overflow: auto;
-  white-space: nowrap;
-}
-.markdown .linenumber {
-  min-width: 36px !important;
-}
-.markdown blockquote {
-  position: relative;
-  display: flex;
-  color: var(--main-success-color);
-  margin-top: .5rem;
-  margin-bottom: .5rem;
-}
-.markdown blockquote:before {
-  content: '>';
-  position: relative;
-  top: -1px;
-  margin-right: .2rem;
-}
-.markdown h1 {
-  font-size: 2rem;
-  margin: 1rem 0;
-}
-.markdown h2 {
-  font-size: 1.5rem;
-  margin: .8rem 0;
-}
-.markdown h3 {
-  font-size: 1.25rem;
-  margin: .5rem 0;
-}
-.markdown h4 {
-  font-size: 1rem;
-  margin: .4rem 0;
-}
-.markdown h5 {
-  font-size: .8rem;
-  margin: .3rem 0;
-}
-.markdown h6 {
-  font-size: 0.7rem;
-  margin: .2rem 0;
-}
-.markdown img {
-  display: flex;
-  border-radius: var(--border-radius-inner);
-  width: 100%;
-  max-width: 350px;
-  margin: .3rem 0;
-  cursor: pointer;
-  user-select: none;
-}
-.markdown hr {
-  border: 1px solid var(--form-border-color);
-  margin: .7rem 0;
-}
-.markdown .spoiler {
-  background-color: var(--main-bg);
-  border-radius: var(--border-radius-inner);
-}
-.markdown .spoiler_text {
-  visibility: hidden;
-  user-select: none;
-}
-.markdown .spoiler:hover {
-  background-color: transparent;
-}
-.markdown .spoiler:hover .spoiler_text {
-  visibility: visible;
-  user-select: text;
-}
-
 /* Image lightbox */
 @keyframes closeWindow {
   0% {
@@ -1132,7 +1030,7 @@ a.head_text:hover {
   width: 40px;
   height: 40px;
   border: none;
-  opacity: 0.7;
+  opacity: .7;
   cursor: pointer;
 }
 .ril__builtinButton:hover {
@@ -1143,11 +1041,11 @@ a.head_text:hover {
 }
 
 .ril__builtinButtonDisabled {
-  opacity: 0.5;
+  opacity: .5;
   cursor: default;
 }
 .ril__builtinButtonDisabled:hover {
-  opacity: 0.5;
+  opacity: .5;
 }
 
 .ril__zoomOutButton, .ril__zoomInButton, .ril__closeButton {
@@ -1159,13 +1057,13 @@ a.head_text:hover {
 .ril__closeButton {
   font-size: 30px;
 }
-.ril__zoomOutButton:before {
+.ril__zoomOutButton::before {
   content: '\ebed';
 }
 .ril__zoomInButton:before {
   content: '\ebec';
 }
-.ril__closeButton:before {
+.ril__closeButton::before {
   content: '\ebe9';
 }
 
@@ -1182,13 +1080,13 @@ a.head_text:hover {
 .ril__navButtonPrev {
   left: 0;
 }
-.ril__navButtonPrev:before {
+.ril__navButtonPrev::before {
   content: '\e9af';
 }
 .ril__navButtonNext {
   right: 0;
 }
-.ril__navButtonNext:before {
+.ril__navButtonNext::before {
   content: '\e9b2';
 }
 

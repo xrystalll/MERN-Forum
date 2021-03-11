@@ -1,0 +1,102 @@
+/* Markdown */
+.markdown {
+  font-weight: 400;
+}
+.markdown em {
+  font-style: italic;
+}
+.markdown strong {
+  font-weight: 700;
+}
+.markdown ol, .markdown ul {
+  margin-left: 1.4rem;
+  margin-top: .3rem;
+  margin-bottom: .3rem;
+}
+.markdown ul {
+  list-style: initial;
+}
+.markdown ul > li > ul {
+  list-style: revert;
+}
+.markdown code, .markdown pre {
+  font-family: monospace;
+  background-color: var(--dark-bg) !important;
+  border-radius: var(--border-radius-inner);
+  padding-right: .8rem;
+}
+.markdown pre {
+  margin: .5rem 0;
+  padding: .2rem .3rem !important;
+  display: flex;
+  overflow: auto;
+  white-space: nowrap;
+}
+.markdown .linenumber {
+  min-width: 36px !important;
+}
+.markdown blockquote {
+  position: relative;
+  display: flex;
+  color: var(--main-success-color);
+  margin-top: .5rem;
+  margin-bottom: .5rem;
+}
+.markdown blockquote::before {
+  content: '>';
+  position: relative;
+  top: -1px;
+  margin-right: .2rem;
+}
+.markdown h1 {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+.markdown h2 {
+  font-size: 1.5rem;
+  margin: .8rem 0;
+}
+.markdown h3 {
+  font-size: 1.25rem;
+  margin: .5rem 0;
+}
+.markdown h4 {
+  font-size: 1rem;
+  margin: .4rem 0;
+}
+.markdown h5 {
+  font-size: .8rem;
+  margin: .3rem 0;
+}
+.markdown h6 {
+  font-size: .7rem;
+  margin: .2rem 0;
+}
+.markdown img {
+  display: flex;
+  border-radius: var(--border-radius-inner);
+  width: 100%;
+  max-width: 350px;
+  margin: .3rem 0;
+  cursor: pointer;
+  user-select: none;
+}
+.markdown hr {
+  border: 1px solid var(--form-border-color);
+  margin: .7rem 0;
+}
+.markdown .spoiler {
+  background-color: var(--main-bg);
+  border-radius: var(--border-radius-inner);
+}
+.markdown .spoiler_text {
+  visibility: hidden;
+  user-select: none;
+}
+.markdown .spoiler:hover {
+  background-color: transparent;
+}
+.markdown .spoiler:hover .spoiler_text {
+  visibility: visible;
+  user-select: text;
+}
