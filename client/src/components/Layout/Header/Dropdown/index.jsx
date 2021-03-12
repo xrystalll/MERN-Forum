@@ -34,12 +34,11 @@ const DropdownItem = ({ onClick, data, setActiveMenu, goToMenu, leftIcon, rightI
   )
 }
 
-const DropdownMenu = ({ lang, user, logout, setDropdownOpen }) => {
+const DropdownMenu = ({ lang, setLang, user, logout, setDropdownOpen }) => {
   const history = useHistory()
   const [activeMenu, setActiveMenu] = useState('main')
   const [menuHeight, setMenuHeight] = useState(null)
   const dropdown = useRef()
-  const [language, setLang] = useState(lang)
 
   useEffect(() => {
     setMenuHeight(dropdown.current?.querySelector('.menu').offsetHeight + 16)
@@ -157,7 +156,7 @@ const DropdownMenu = ({ lang, user, logout, setDropdownOpen }) => {
               goToMenu="main"
               onClick={setLanguage}
               data={{ lang: 'ru'}}
-              rightIcon={language === 'ru' ? 'check' : '' }
+              rightIcon={lang === 'ru' ? 'check' : '' }
               setActiveMenu={setActiveMenu}
             >
               <div className="menu-item-title">Russian</div>
@@ -189,7 +188,7 @@ const DropdownMenu = ({ lang, user, logout, setDropdownOpen }) => {
 }
 
 const Dropdown = () => {
-  const { user, logout, lang } = useContext(StoreContext)
+  const { user, logout, lang, setLang } = useContext(StoreContext)
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   return (
@@ -205,6 +204,7 @@ const Dropdown = () => {
       {dropdownOpen && (
         <DropdownMenu
           lang={lang}
+          setLang={setLang}
           user={user}
           logout={logout}
           setDropdownOpen={setDropdownOpen}

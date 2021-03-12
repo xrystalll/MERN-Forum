@@ -143,7 +143,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
                 </div>
               ) : null}
 
-              <NotificationsList notifications={notifications} />
+              <NotificationsList notifications={notifications} lang={lang} />
 
               {moreLoading && <Loader className="more_loader" color="#64707d" />}
             </div>

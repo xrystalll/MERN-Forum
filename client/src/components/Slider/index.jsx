@@ -4,7 +4,7 @@ import { Strings } from 'support/Constants';
 import { counter, declOfNum } from 'support/Utils';
 import './style.css';
 
-const PopularBoardsContainer = ({ children, lang }) => {
+const PopularBoardsContainer = ({ children }) => {
   return (
     <div className="boards_slide">
       <ul className="boards_slide_list">
@@ -14,7 +14,7 @@ const PopularBoardsContainer = ({ children, lang }) => {
   )
 }
 
-const PopularBoardsItem = ({ data }) => {
+const PopularBoardsItem = ({ data, lang }) => {
   return (
     <li className="boards_slide_item">
       <Link to={'/boards/' + data.name} className="slide_item_text">

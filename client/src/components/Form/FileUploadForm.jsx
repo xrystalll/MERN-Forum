@@ -1,8 +1,13 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
+
+import { StoreContext } from 'store/Store';
+
+import { Strings } from 'support/Constants';
 
 import FileInput from './FileInput';
 
 const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, accept }) => {
+  const { lang } = useContext(StoreContext)
   const [files, setFiles] = useState([])
   const [inputVisible, setInputVisible] = useState(true)
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
@@ -84,10 +89,12 @@ const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, a
       {inputVisible && (
         <div className="card_body file_input_body">
           <div className="card_outside_title with_hint">
-            {title || 'Attach file'}
+            {title || Strings.attachFile[lang]}
             <div className="title_hint">
               <i className="bx bx-help-circle" />
-              <div className="hint_popover">{hint || 'Max files count: 4; Max size: 12 Mb per file'}</div>
+              <div className="hint_popover">
+                {hint || `${Strings.maxFilesCount[lang]}: 4; ${Strings.maxSize[lang]}: 12 Mb ${Strings.perFile[lang]}`}
+              </div>
             </div>
           </div>
 

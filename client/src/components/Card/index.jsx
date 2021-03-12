@@ -6,13 +6,13 @@ import { toast } from 'react-toastify';
 import { StoreContext } from 'store/Store';
 
 import { counter, declOfNum, dateFormat } from 'support/Utils';
-import { BACKEND } from 'support/Constants';
+import { BACKEND, Strings } from 'support/Constants';
 
 import Dropdown from './Dropdown';
 import Markdown from 'components/Markdown';
 
 const Card = ({ data, threadData, full = false, type }) => {
-  const { user, token, setModalOpen, setPostType, setFabVisible } = useContext(StoreContext)
+  const { user, token, setModalOpen, setPostType, setFabVisible, lang } = useContext(StoreContext)
   const history = useHistory()
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
@@ -315,23 +315,59 @@ const Card = ({ data, threadData, full = false, type }) => {
               <Dropdown>
                 {user.role === 'admin' && (
                   <Fragment>
-                    {type !== 'answer' && <div onClick={onPin} className="dropdown_item">{data.pined ? 'Unpin' : 'Pin'}</div>}
-                    {type !== 'answer' && <div onClick={onClose} className="dropdown_item">{data.closed ? 'Open' : 'Close'}</div>}
-                    <div onClick={onDelete} className="dropdown_item">Delete</div>
+                    {type !== 'answer' && (
+                      <div
+                        onClick={onPin}
+                        className="dropdown_item"
+                      >
+                        {data.pined
+                          ? Strings.unpin[lang]
+                          : Strings.pin[lang]
+                        }
+                      </div>
+                    )}
+                    {type !== 'answer' && (
+                      <div
+                        onClick={onClose}
+                        className="dropdown_item"
+                      >
+                        {data.closed
+                          ? Strings.open[lang]
+                          : Strings.close[lang]
+                        }
+                      </div>
+                    )}
+                    <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
                     {user.id !== data.author._id && data.author.role !== 'admin' && (
-                      <div onClick={onBan} className="dropdown_item">{banned ? 'Unban user' : 'Ban user'}</div>
+                      <div
+                        onClick={onBan}
+                        className="dropdown_item"
+                      >
+                        {banned
+                          ? Strings.unbanUser[lang]
+                          : Strings.banUser[lang]
+                        }
+                      </div>
                     )}
                   </Fragment>
                 )}
                 {user.id === data.author._id || user.role === 'admin'
-                  ? <div onClick={editClick} className="dropdown_item">Edit</div>
+                  ? <div onClick={editClick} className="dropdown_item">{Strings.edit[lang]}</div>
                   : null
                 }
                 {type !== 'answer' && user.id === data.author._id && user.role !== 'admin' && (
-                  <div onClick={onClose} className="dropdown_item">{data.closed ? 'Open' : 'Close'}</div>
+                  <div
+                    onClick={onClose}
+                    className="dropdown_item"
+                  >
+                    {data.closed
+                      ? Strings.open[lang]
+                      : Strings.close[lang]
+                    }
+                  </div>
                 )}
                 {user.id !== data.author._id && (
-                  <div className="dropdown_item">Report</div>
+                  <div className="dropdown_item">{Strings.report[lang]}</div>
                 )}
               </Dropdown>
             )}
@@ -376,7 +412,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                 {user && user.id !== data.author._id && (
                   <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
                     <i className="bx bx-redo" />
-                    <span>Answer</span>
+                    <span>{Strings.answer[lang]}</span>
                   </div>
                 )}
 
@@ -385,7 +421,9 @@ const Card = ({ data, threadData, full = false, type }) => {
                   {likes.length ? (
                     <Fragment>
                       <span className="card_count">{counter(likes.length)}</span>
-                      <span className="hidden">{declOfNum(likes.length, ['like', 'likes', 'likes'])}</span>
+                      <span className="hidden">
+                        {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
+                      </span>
                       {user && (
                         <div className="likes_list" ref={likesList}>
                           {likes.slice(0, 4).map((item, index) => (
@@ -410,7 +448,9 @@ const Card = ({ data, threadData, full = false, type }) => {
                   <div className="act_btn foot_btn disable">
                     <i className="bx bx-message-square-detail" />
                     <span className="card_count">{counter(data.answersCount)}</span>
-                    <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
+                    <span className="hidden">
+                      {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
+                    </span>
                   </div>
                 )}
               </Fragment>
@@ -418,7 +458,9 @@ const Card = ({ data, threadData, full = false, type }) => {
               <div className="act_btn foot_btn disable">
                 <i className="bx bx-message-square-detail" />
                 <span className="card_count">{counter(data.answersCount)}</span>
-                <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
+                <span className="hidden">
+                  {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
+                </span>
               </div>
             )}
           </footer>
@@ -440,6 +482,8 @@ const Card = ({ data, threadData, full = false, type }) => {
 }
 
 const BoardCard = ({ data }) => {
+  const { lang } = useContext(StoreContext)
+
   return (
     <div className="card_item">
       <div className="card_body">
@@ -454,13 +498,17 @@ const BoardCard = ({ data }) => {
             <div className="act_btn foot_btn disable">
               <i className="bx bx-news" />
               <span className="card_count">{counter(data.threadsCount)}</span>
-              <span className="hidden">{declOfNum(data.threadsCount, ['thread', 'threads', 'threads'])}</span>
+              <span className="hidden">
+                {declOfNum(data.threadsCount, [Strings.thread1[lang], Strings.thread2[lang], Strings.thread3[lang]])}
+              </span>
             </div>
 
             <div className="act_btn foot_btn disable">
               <i className="bx bx-message-square-detail" />
               <span className="card_count">{counter(data.answersCount)}</span>
-              <span className="hidden">{declOfNum(data.answersCount, ['answer', 'answers', 'answers'])}</span>
+              <span className="hidden">
+                {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
+              </span>
             </div>
           </footer>
         </div>
@@ -501,6 +549,8 @@ const UserCard = ({ data }) => {
 }
 
 const BannedCard = ({ data, unBan }) => {
+  const { lang } = useContext(StoreContext)
+
   return (
     <div className="card_item">
       <div className="card_body">
@@ -532,8 +582,8 @@ const BannedCard = ({ data, unBan }) => {
           </div>
 
           <div className="card_content">
-            <p>Reason: {data.ban.reason}</p>
-            <p>Ban expires: {dateFormat(data.ban.expiresAt)}</p>
+            <p>{Strings.reason[lang]}: {data.ban.reason}</p>
+            <p>{Strings.banExpires[lang]}: {dateFormat(data.ban.expiresAt)}</p>
           </div>
 
           <footer className="card_foot">
@@ -548,13 +598,15 @@ const BannedCard = ({ data, unBan }) => {
 }
 
 const BanInfoCard = ({ data, owner }) => {
+  const { lang } = useContext(StoreContext)
+
   return (
     <div className="card_item">
       <div className="card_body">
         <div className="card_block">
           <div className="card_head">
             <div className="card_head_inner">
-              <div className="card_title full">{owner ? 'You are banned' : 'User banned'}</div>
+              <div className="card_title full">{owner ? Strings.youAreBanned[lang] : Strings.userBanned[lang]}</div>
               <div className="card_info">
                 <div className="head_text bold">Admin: {data.admin?.displayName}</div>
                 <span className="bullet">•</span>
@@ -566,8 +618,8 @@ const BanInfoCard = ({ data, owner }) => {
           </div>
 
           <div className="card_content">
-            <p>Reason: {data.reason}</p>
-            <p>Ban expires: {dateFormat(data.expiresAt)}</p>
+            <p>{Strings.reason[lang]}: {data.reason}</p>
+            <p>{Strings.banExpires[lang]}: {dateFormat(data.expiresAt)}</p>
           </div>
         </div>
       </div>

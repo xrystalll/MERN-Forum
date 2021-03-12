@@ -40,6 +40,14 @@ const Store = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState)
   const [modalOpen, setModalOpen] = useState(false)
 
+  const setLang = (payload) => {
+    localStorage.setItem('lang', payload)
+    dispatch({
+      type: 'SET_LANG',
+      payload
+    })
+  }
+
   const login = (payload) => {
     localStorage.setItem('token', payload.accessToken)
     localStorage.setItem('userPicture', payload.user?.picture || '')
@@ -83,6 +91,7 @@ const Store = ({ children }) => {
 
   const store = {
     lang: state.lang,
+    setLang,
     token: state.token,
     user: state.user,
     setUserPicture,

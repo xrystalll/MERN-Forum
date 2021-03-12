@@ -71,7 +71,7 @@ const SignIn = ({ history }) => {
 
   return (
     <Section>
-      <Breadcrumbs current={Strings.signup[lang]} links={[
+      <Breadcrumbs current={Strings.signIn[lang]} links={[
         { title: Strings.home[lang], link: '/' }
       ]} />
 

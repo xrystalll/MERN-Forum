@@ -1,6 +1,11 @@
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
+
+import { StoreContext } from 'store/Store';
+
+import { Strings } from 'support/Constants';
 
 const TextareaForm = ({ name, value, placeholder = '', required = false, onChange, className, panel = true }) => {
+  const { lang } = useContext(StoreContext)
   const textarea = useRef()
 
   const handleTag = (tag) => {
@@ -63,7 +68,7 @@ const TextareaForm = ({ name, value, placeholder = '', required = false, onChang
             <div className="bb_btn" role="button" onClick={() => handleTag('code')} title="Code">
               <i className="bx bx-code-alt" />
             </div>
-            <div className="bb_btn md" title="Textarea supports markdown">
+            <div className="bb_btn md" title={Strings.textFieldSupportsMarkdown[lang]}>
               <i className="bx bxl-markdown" />
             </div>
           </div>

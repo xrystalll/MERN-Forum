@@ -1,4 +1,12 @@
+import { useContext } from 'react';
+
+import { StoreContext } from 'store/Store';
+
+import { Strings } from 'support/Constants';
+
 const FileInput = ({ onChange, multiple = false, accept, disabled }) => {
+  const { lang } = useContext(StoreContext)
+
   return (
     <div className="file_area">
       <input
@@ -9,9 +17,9 @@ const FileInput = ({ onChange, multiple = false, accept, disabled }) => {
         onChange={onChange}
         disabled={disabled}
       />
-      <label htmlFor="fileInput" className="file_input" title="Choose file">
-        <div className="secondary_btn">Choose</div>
-        <span>File not selected</span>
+      <label htmlFor="fileInput" className="file_input" title={Strings.chooseAFile[lang]}>
+        <div className="secondary_btn">{Strings.choose[lang]}</div>
+        <span>{Strings.fileNotSelected[lang]}</span>
       </label>
     </div>
   )

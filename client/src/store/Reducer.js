@@ -1,5 +1,10 @@
 const Reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_LANG':
+      return {
+        ...state,
+        lang: action.payload
+      }
     case 'SET_TOKEN':
       return {
         ...state,
