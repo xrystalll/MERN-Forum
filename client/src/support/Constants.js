@@ -74,17 +74,17 @@ const Strings = {
   'unableToDisplayUserProfile': {
     ru: 'Невозможно отобразить профиль',
     en: 'Unable to display user profile',
-    jp: 'ユーザープロファイルを表示できません'
+    jp: 'ユーザープロフィールを表示できません'
   },
   'profileSettings': {
     ru: 'Настройки профиля',
     en: 'Profile settings',
-    jp: 'プロファイル設定'
+    jp: 'プロフィール設定'
   },
   'uploadProfilePicture': {
     ru: 'Загрузка изображения профиля',
     en: 'Upload profile picture',
-    jp: 'プロフィール写真をアップロードする'
+    jp: 'プロフィール画像'
   },
   'accepted': {
     ru: 'Разрешены',
@@ -179,7 +179,7 @@ const Strings = {
   'recentlyAnswered': {
     ru: 'Недавно отвеченные',
     en: 'Recently answered',
-    jp: '最近回答した'
+    jp: '最近答えした'
   },
   'byNewestThread': {
     ru: 'По новизне',
@@ -189,7 +189,7 @@ const Strings = {
   'byAnswersCount': {
     ru: 'По числу ответов',
     en: 'By answers count',
-    jp: '回答数で'
+    jp: '答え数で'
   },
   'noBoardsYet': {
     ru: 'Пока нет досок',
@@ -314,7 +314,7 @@ const Strings = {
   'enterDescription': {
     ru: 'Ведите описание',
     en: 'Enter description',
-    jp: ''
+    jp: '説明を入力してください'
   },
   'boardPosition': {
     ru: 'Позиция доски',
@@ -389,7 +389,7 @@ const Strings = {
   'signUp': {
     ru: 'Регистрация',
     en: 'Sign Up',
-    jp: 'サインアップ'
+    jp: '登録'
   },
   'enterEmail': {
     ru: 'Введите email',
@@ -409,12 +409,12 @@ const Strings = {
   'emailAddress': {
     ru: 'Адрес электронной почты',
     en: 'Email address',
-    jp: '電子メールアドレス'
+    jp: 'メールアドレス'
   },
   'confirmPassword': {
     ru: 'Подтверждение пароля',
     en: 'Confirm password',
-    jp: 'パスワードを認証する'
+    jp: 'パスワードの確認'
   },
   'createAccount': {
     ru: 'Зарегистрироваться',
@@ -494,17 +494,17 @@ const Strings = {
   'answerInThread': {
     ru: 'Ответить в тред',
     en: 'Answer in thread',
-    jp: 'スレッドに返信'
+    jp: 'スレッドに答え'
   },
   'answer': {
     ru: 'Ответить',
     en: 'Answer',
-    jp: '応答'
+    jp: '答え'
   },
   'editAnswer': {
     ru: 'Редактировать ответ',
     en: 'Edit answer',
-    jp: '回答を編集する'
+    jp: '答えを編集する'
   },
   'edit': {
     ru: 'Редактировать',
@@ -554,17 +554,17 @@ const Strings = {
   'enterForSearch': {
     ru: 'Введите для поиска',
     en: 'Enter for search',
-    jp: '探す'
+    jp: '検索'
   },
   'noNotificationYet': {
     ru: 'Уведомлений пока нет',
     en: 'No notification yet',
-    jp: 'すべての通知を削除します'
+    jp: 'まだ通知はありません'
   },
   'deleteAllNotifications': {
     ru: 'Удалить все уведомления',
     en: 'Delete all notifications',
-    jp: ''
+    jp: 'すべての通知を削除します'
   },
   'unableToDisplayNotifications': {
     ru: 'Невозможно отобразить уведомления',
@@ -574,7 +574,7 @@ const Strings = {
   'openProfile': {
     ru: 'Открыть профиль',
     en: 'Open profile',
-    jp: 'プロファイルを開く'
+    jp: 'プロフィールを開く'
   },
   'language': {
     ru: 'Язык',

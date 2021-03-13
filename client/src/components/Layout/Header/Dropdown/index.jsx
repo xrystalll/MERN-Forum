@@ -49,7 +49,7 @@ const DropdownMenu = ({ lang, setLang, user, logout, setDropdownOpen }) => {
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
-  })
+  }, [])
 
   const handleClickOutside = ({ target }) => {
     if (dropdown.current?.contains(target)) return

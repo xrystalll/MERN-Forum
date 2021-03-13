@@ -31,7 +31,7 @@ const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, a
     return () => {
       document.removeEventListener('paste', handlePaste)
     }
-  })
+  }, [])
 
   const handlePaste = (e) => {
     if (files.length >= maxCount) return

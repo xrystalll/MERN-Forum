@@ -1,4 +1,6 @@
 import moment from 'moment';
+import 'moment/locale/ru';
+import 'moment/locale/ja';
 
 export const counter = (count = 0) => {
   if (count < 1e3) return count
@@ -13,6 +15,6 @@ export const declOfNum = (number, titles) => {
 }
 
 export const dateFormat = (date) => {
-  return moment(date).calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YYYY, hh:mm' })
+  return moment(date).locale(localStorage.getItem('lang') || 'en').calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YYYY, hh:mm' })
 }
 

@@ -10,7 +10,7 @@ import Dropdown from './Dropdown';
 const Notifications = () => {
   const { user, token, logout, lang } = useContext(StoreContext)
   const history = useHistory()
-  const [notification, setNotification] = useState(JSON.parse(localStorage.getItem('notifications')))
+  const [notification, setNotification] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
@@ -21,8 +21,12 @@ const Notifications = () => {
   }, [user.id])
 
   useEffect(() => {
+    Socket.on('notificationsCount', (data) => {
+      if (data.count > 0) {
+        setNotification(true)
+      }
+    })
     Socket.on('newNotification', (data) => {
-      localStorage.setItem('notifications', true)
       setNotification(true)
     })
     Socket.on('ban', (data) => {

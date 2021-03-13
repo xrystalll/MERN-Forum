@@ -50,7 +50,7 @@ const Answers = ({ boardId, lang }) => {
     return () => {
       document.removeEventListener('scroll', handleScroll)
     }
-  })
+  }, [])
 
   const handleScroll = () => {
     if (!moreTrigger) return

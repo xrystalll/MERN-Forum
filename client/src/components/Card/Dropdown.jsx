@@ -9,7 +9,7 @@ const Dropdown = ({ children }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  })
+  }, [])
 
   const handleClickOutside = ({ target }) => {
     if (dropdown.current?.contains(target)) return

@@ -20,7 +20,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
-  })
+  }, [])
 
   const handleClickOutside = ({ target }) => {
     if (target.nodeName === 'A') {
@@ -32,7 +32,6 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
   }
 
   useEffect(() => {
-    localStorage.removeItem('notifications')
     setInformer(false)
   }, [informer])
 

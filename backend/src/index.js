@@ -8,7 +8,9 @@ const cors = require('cors');
 const RateLimit = require('express-rate-limit');
 const createError = require('http-errors');
 
+const Mongoose = require('mongoose');
 const DB = require('./modules/DB');
+const Notification = require('./modules/models/Notification');
 
 const app = express()
 
@@ -42,8 +44,14 @@ app.use('/', require('./routes'))
 app.use('/auth', require('./routes/auth'))
 
 io.on('connection', (socket) => {
-  socket.on('join', (data) => {
+  socket.on('join', async (data) => {
     socket.join(data.room)
+
+    if (/notification:/.test(data.room)) {
+      const userId = data.room.replace('notification:', '')
+      const notifications = await Notification.find({ to: Mongoose.Types.ObjectId(userId), read: false })
+      io.to(data.room).emit('notificationsCount', { count: notifications.length })
+    }
   })
 
   socket.on('leave', (data) => {
