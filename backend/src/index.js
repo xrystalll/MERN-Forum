@@ -11,6 +11,7 @@ const createError = require('http-errors');
 const Mongoose = require('mongoose');
 const DB = require('./modules/DB');
 const Notification = require('./modules/models/Notification');
+const Report = require('./modules/models/Report');
 
 const app = express()
 
@@ -51,6 +52,13 @@ io.on('connection', (socket) => {
       const userId = data.room.replace('notification:', '')
       const notifications = await Notification.find({ to: Mongoose.Types.ObjectId(userId), read: false })
       io.to(data.room).emit('notificationsCount', { count: notifications.length })
+    }
+
+    if (data.room === 'adminNotification') {
+      const reports = await Report.find({ read: false })
+      if (reports.length) {
+        io.to(data.room).emit('newAdminNotification', { type: 'report' })
+      }
     }
   })
 

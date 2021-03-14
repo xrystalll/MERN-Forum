@@ -6,8 +6,9 @@ const Board = require('../models/Board');
 const Thread = require('../models/Thread');
 const Answer = require('../models/Answer');
 const Ban = require('../models/Ban');
+const Report = require('../models/Report');
 
-const getStats = async (req, res, next) => {
+module.exports.getStats = async (req, res, next) => {
   try {
     res.json([{
       _id: 1,
@@ -35,7 +36,7 @@ const getStats = async (req, res, next) => {
   }
 }
 
-const getUsers = async (req, res, next) => {
+module.exports.getUsers = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort } = req.query
 
@@ -59,7 +60,20 @@ const getUsers = async (req, res, next) => {
   }
 }
 
-const getUser = async (req, res, next) => {
+module.exports.getAdmins = async (req, res, next) => {
+  try {
+    const { limit = 10, page = 1 } = req.query
+
+    const select = '_id name displayName createdAt onlineAt picture role'
+    const admins = await User.paginate({ role: 'admin' }, { sort: { createdAt: -1 }, page, limit, select })
+
+    res.json(admins)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getUser = async (req, res, next) => {
   try {
     const { userName } = req.query
 
@@ -86,7 +100,7 @@ const getUser = async (req, res, next) => {
   }
 }
 
-const getBans = async (req, res, next) => {
+module.exports.getBans = async (req, res, next) => {
   try {
     const { limit = 10, page = 1 } = req.query
 
@@ -107,7 +121,7 @@ const getBans = async (req, res, next) => {
   }
 }
 
-const getBan = async (req, res, next) => {
+module.exports.getBan = async (req, res, next) => {
   try {
     const { userId } = req.query
 
@@ -128,7 +142,7 @@ const getBan = async (req, res, next) => {
   }
 }
 
-const createBan = async (req, res, next) => {
+module.exports.createBan = async (req, res, next) => {
   try {
     const { userId, reason, body = '', expiresAt } = req.body
     const admin = req.payload.role === 'admin'
@@ -159,7 +173,7 @@ const createBan = async (req, res, next) => {
   }
 }
 
-const unBan = async (req, res, next) => {
+module.exports.unBan = async (req, res, next) => {
   try {
     const { userId } = req.body
     const admin = req.payload.role === 'admin'
@@ -177,4 +191,66 @@ const unBan = async (req, res, next) => {
   }
 }
 
-module.exports = { getStats, getUsers, getUser, getBans, getBan, createBan, unBan }
+module.exports.getReports = async (req, res, next) => {
+  try {
+    const { limit = 10, page = 1, sort } = req.query
+
+    const populate = {
+      path: 'from',
+      select: '_id name displayName onlineAt picture role'
+    }
+    const read = sort === 'read' ? { read: true} : { read: false }
+    const reports = await Report.paginate(read, { sort: { createdAt: -1 }, page, limit, populate })
+
+    if (reports.totalDocs) {
+      await Report.updateMany({ read: false }, { read: true })
+    }
+
+    res.json(reports)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.createReport = async (req, res, next) => {
+  try {
+    const { threadId, body } = req.body
+
+    if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
+    if (body.trim() === '') return next(createError.BadRequest('Report body must not be empty'))
+
+    const thread = await Thread.findById(threadId)
+
+    const newReport = new Report({
+      from: req.payload.id,
+      threadId,
+      title: thread.title,
+      body: body.substring(0, 1000),
+      createdAt: new Date().toISOString(),
+      read: false
+    })
+    const report = await newReport.save()
+
+    const populate = {
+      path: 'from',
+      select: '_id name displayName onlineAt picture role'
+    }
+    const populatedReport = await Report.findById(report._id).populate(populate)
+
+    res.json(populatedReport)
+
+    req.io.to('adminNotification').emit('newAdminNotification', { type: 'report' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.deleteReports = async (req, res, next) => {
+  try {
+    await Report.deleteMany({ read: true })
+
+    res.json({ message: 'Reports successfully deleted' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}

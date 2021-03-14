@@ -8,19 +8,19 @@ import { Strings } from 'support/Constants';
 import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
 
-import Newest from './Newest';
-import Old from './Old';
+import Unread from './Unread';
+import Read from './Read';
 
-const Bans = ({ history, location: { pathname } }) => {
+const Reports = ({ history, location: { pathname } }) => {
   const { lang } = useContext(StoreContext)
-  document.title = 'Forum | ' + Strings.bans[lang]
+  document.title = 'Forum | ' + Strings.reports[lang]
   const { path } = useRouteMatch()
-  const [sort, setSort] = useState(pathname.substr(pathname.lastIndexOf('/') + 1) || 'bans')
+  const [sort, setSort] = useState(pathname.substr(pathname.lastIndexOf('/') + 1) || 'reports')
 
   useEffect(() => {
     let route
-    if (sort === 'oldest') {
-      route = path + '/oldest'
+    if (sort === 'read') {
+      route = path + '/read'
     } else {
       route = path
     }
@@ -28,21 +28,25 @@ const Bans = ({ history, location: { pathname } }) => {
     history.push(route)
   }, [sort])
 
+  useEffect(() => {
+    localStorage.removeItem('reports')
+  }, [])
+
   return (
     <Fragment>
-      <Breadcrumbs current={Strings.bans[lang]} links={[
+      <Breadcrumbs current={Strings.reports[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.dashboard[lang], link: '/dashboard' }
       ]} />
 
       <SortNav links={[
-        { title: Strings.newest[lang], sort: 'bans' },
-        { title: Strings.oldest[lang], sort: 'oldest' }
+        { title: Strings.unread[lang], sort: 'reports' },
+        { title: Strings.read[lang], sort: 'read' }
       ]} setSort={setSort} state={sort} />
 
       <Switch>
-        <Route path={path + '/oldest'} component={Old} />
-        <Route path={path} exact component={Newest} />
+        <Route path={path + '/read'} component={Read} />
+        <Route path={path} exact component={Unread} />
         <Route>
           <Redirect to={path} />
         </Route>
@@ -51,4 +55,4 @@ const Bans = ({ history, location: { pathname } }) => {
   )
 }
 
-export default Bans;
+export default Reports;

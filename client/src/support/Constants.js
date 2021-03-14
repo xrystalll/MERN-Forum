@@ -51,6 +51,11 @@ const Strings = {
     en: 'No users yet',
     jp: 'まだユーザーはいません'
   },
+  'noAdminsYet': {
+    ru: 'Пока нет админов',
+    en: 'No admins yet',
+    jp: 'まだ管理者はいません'
+  },
   'unableToDisplayUsers': {
     ru: 'Невозможно отобразить пользователей',
     en: 'Unable to display users',
@@ -334,7 +339,7 @@ const Strings = {
   'cancel': {
     ru: 'Отменить',
     en: 'Cancel',
-    jp: '取消'
+    jp: 'キャンセル'
   },
   'noBansYet': {
     ru: 'Пока нет банов',
@@ -624,7 +629,7 @@ const Strings = {
   'pin': {
     ru: 'Закрепить',
     en: 'Pin',
-    jp: 'アンカー'
+    jp: 'ピン'
   },
   'unpin': {
     ru: 'Открепить',
@@ -680,6 +685,46 @@ const Strings = {
     ru: 'Пользователь забанен',
     en: 'User banned',
     jp: 'ユーザー禁止'
+  },
+  'unread': {
+    ru: 'Непрочитанные',
+    en: 'Unread',
+    jp: 'すでに読んだ'
+  },
+  'read': {
+    ru: 'Прочитанные',
+    en: 'Read',
+    jp: '読む'
+  },
+  'noReportsYet': {
+    ru: 'Пока нет жалоб',
+    en: 'No reports yet',
+    jp: 'まだ苦情はありません'
+  },
+  'unableToDisplayReports': {
+    ru: 'Невозможно отобразить жалобы',
+    en: 'Unable to display reports',
+    jp: '苦情を表示できません'
+  },
+  'reportSent': {
+    ru: 'Жалоба отправлена',
+    en: 'Report sent',
+    jp: '苦情が送信されました'
+  },
+  'search': {
+    ru: 'Поиск',
+    en: 'Search',
+    jp: '検索'
+  },
+  'searchResults': {
+    ru: 'Результаты поиска',
+    en: 'Search results',
+    jp: 'の検索結果'
+  },
+  'enterYourSearchTerm': {
+    ru: 'Введите запрос для поиска',
+    en: 'Enter your search term',
+    jp: '検索語を入力してください'
   },
 }
 

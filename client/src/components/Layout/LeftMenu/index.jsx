@@ -1,8 +1,9 @@
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useEffect, useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
+import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 import { Strings } from 'support/Constants';
 import { counter } from 'support/Utils';
 import './style.css';
@@ -10,7 +11,29 @@ import './style.css';
 const LeftMenu = ({ open, setMenuOpen }) => {
   const { user, lang } = useContext(StoreContext)
   const [messages] = useState(0)
+  const [adminNotification, setAdminNotification] = useState(false)
   const menuOpen = open ? 'left_bar open' : 'left_bar'
+
+  useEffect(() => {
+    if (user?.role === 'admin') joinToRoom('adminNotification')
+    return () => {
+      if (user?.role === 'admin') leaveFromRoom('adminNotification')
+    }
+  }, [user?.role])
+
+  useEffect(() => {
+    Socket.on('newAdminNotification', (data) => {
+      if (data.type === 'report') {
+        localStorage.setItem('reports', true)
+      }
+      setAdminNotification(true)
+    })
+  }, [])
+
+  const dashboardClick = () => {
+    setAdminNotification(false)
+    setMenuOpen(false)
+  }
 
   return (
     <aside className={menuOpen}>
@@ -20,8 +43,9 @@ const LeftMenu = ({ open, setMenuOpen }) => {
             <Fragment>
               {user.role === 'admin' && (
                 <li className="nav_item">
-                  <NavLink to="/dashboard" onClick={() => setMenuOpen(false)}>
+                  <NavLink to="/dashboard" onClick={dashboardClick}>
                     <span className="nav_text">{Strings.dashboard[lang]}</span>
+                    {adminNotification && <span className="nav_counter dot"></span>}
                   </NavLink>
                 </li>
               )}
@@ -49,7 +73,7 @@ const LeftMenu = ({ open, setMenuOpen }) => {
             </NavLink>
           </li>
           <li className="nav_item">
-            <NavLink to="/admin" onClick={() => setMenuOpen(false)}>
+            <NavLink to="/admins" onClick={() => setMenuOpen(false)}>
               <span className="nav_text">{Strings.admins[lang]}</span>
             </NavLink>
           </li>

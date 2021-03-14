@@ -33,6 +33,7 @@ const userSchema = new Schema({
   ua: String
 })
 userSchema.plugin(mongoosePaginate)
+userSchema.index({ name: 'text', displayName: 'text' })
 
 userSchema.pre('save', async function(next) {
   try {

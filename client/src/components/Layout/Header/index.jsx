@@ -2,6 +2,9 @@ import { Fragment, useEffect, useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
+import { useHistory } from 'react-router-dom';
+
+import { useForm } from 'hooks/useForm';
 
 import { Strings } from 'support/Constants';
 
@@ -12,6 +15,7 @@ import './style.css';
 const Header = ({ setMenuState }) => {
   const { user, token, lang } = useContext(StoreContext)
   const searchField = useRef()
+  const history = useHistory()
   const [searchActive, setSearchActive] = useState(false)
 
   useEffect(() => {
@@ -30,6 +34,14 @@ const Header = ({ setMenuState }) => {
     setSearchActive(false)
   }
 
+  const formCallback = () => {
+    history.push('/search/' + values.query)
+  }
+
+  const { onChange, onSubmit, values } = useForm(formCallback, {
+    query: ''
+  })
+
   return (
     <header className="app_head">
       <div className="head_inner">
@@ -42,12 +54,17 @@ const Header = ({ setMenuState }) => {
 
         <ul className="head_act">
           <li className={searchActive ? 'head_search open' : 'head_search'}>
-            <input
-              ref={searchField}
-              className="head_search_field"
-              type="search"
-              placeholder={Strings.enterForSearch[lang] + '...'}
-            />
+            <form className="head_search_form" onSubmit={onSubmit}>
+              <input
+                ref={searchField}
+                className="head_search_field"
+                type="search"
+                name="query"
+                value={values.query}
+                placeholder={Strings.enterForSearch[lang] + '...'}
+                onChange={onChange}
+              />
+            </form>
             <i className="head_search_ic bx bx-search" onClick={() => setSearchActive(!searchActive)} />
           </li>
 

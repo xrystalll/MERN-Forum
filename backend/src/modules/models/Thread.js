@@ -30,5 +30,6 @@ const threadSchema = new Schema({
   newestAnswer: String
 })
 threadSchema.plugin(mongoosePaginate)
+threadSchema.index({ title: 'text', body: 'text' })
 
 module.exports = model('Thread', threadSchema);

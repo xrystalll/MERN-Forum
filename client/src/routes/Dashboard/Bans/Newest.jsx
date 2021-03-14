@@ -21,7 +21,7 @@ const Newest = () => {
   const [moreTrigger, setMoreTrigger] = useState(true)
 
   useEffect(() => {
-    const fetchbans = async () => {
+    const fetchBans = async () => {
       if (!hasNextPage) return
       setMoreLoading(true)
 
@@ -45,7 +45,7 @@ const Newest = () => {
       }
     }
 
-    fetchbans()
+    fetchBans()
   }, [page])
 
   useEffect(() => {

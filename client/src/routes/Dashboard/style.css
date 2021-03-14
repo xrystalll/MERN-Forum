@@ -6,6 +6,7 @@
   margin-top: 2rem;
 }
 .admin__nav_item {
+  position: relative;
   background-color: var(--secondary-bg-tint);
   color: var(--main-text);
   border-radius: var(--border-radius);
@@ -26,6 +27,19 @@
   font-size: 36px;
   margin: .8rem;
   color: var(--secondary-text);
+}
+.admin__nav_item.new {
+  background-color: var(--secondary-bg);
+}
+.admin__nav_item.new::before {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
 }
 @media (max-width: 400px) {
   .admin__nav {

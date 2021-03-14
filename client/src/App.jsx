@@ -10,10 +10,12 @@ import { GeneralRoute, AuthRoute, UsersOnlyRoute, AdminsOnlyRoute } from 'compon
 import Home from 'routes/Home';
 import SignUp from 'routes/Auth/SignUp';
 import SignIn from 'routes/Auth/SignIn';
+import Search from 'routes/Search';
 import Boards from 'routes/Forum/Boards';
 import Board from 'routes/Forum/Board';
 import Thread from 'routes/Forum/Thread';
 import Users from 'routes/Users';
+import Admins from 'routes/Users/Admins';
 import User from 'routes/User';
 import Banned from 'routes/Banned';
 import Dashboard from 'routes/Dashboard';
@@ -35,11 +37,13 @@ const App = () => {
             <GeneralRoute exact path="/" component={Home} />
             <AuthRoute path="/signup" component={SignUp} />
             <AuthRoute path="/signin" component={SignIn} />
+            <GeneralRoute path="/search" component={Search} />
             <GeneralRoute exact path="/boards" component={Boards} />
             <GeneralRoute path="/boards/:boardName" component={Board} />
             <GeneralRoute path="/thread/:threadId" component={Thread} />
             <GeneralRoute path="/users" component={Users} />
             <UsersOnlyRoute path="/user/:userName" component={User} />
+            <GeneralRoute path="/admins" component={Admins} />
             <AdminsOnlyRoute path="/dashboard" component={Dashboard} />
             <Route path="/banned" component={Banned} />
             <Route path="*" component={NotFound} status={404} />

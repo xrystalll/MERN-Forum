@@ -4,13 +4,13 @@ import { toast } from 'react-toastify';
 import { StoreContext } from 'store/Store';
 import { BACKEND, Strings } from 'support/Constants';
 
-import { BannedCard } from 'components/Card';
+import { NotificationCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Old = () => {
+const Unread = () => {
   const { token, lang } = useContext(StoreContext)
-  const [bans, setBans] = useState([])
+  const [reports, setReports] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -21,16 +21,20 @@ const Old = () => {
   const [moreTrigger, setMoreTrigger] = useState(true)
 
   useEffect(() => {
-    const fetchBans = async () => {
+    const fetchReports = async () => {
       if (!hasNextPage) return
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${BACKEND}/api/bans?limit=${limit}&page=${page}&sort=old`)
+        const data = await fetch(`${BACKEND}/api/reports?limit=${limit}&page=${page}`, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
         const response = await data.json()
 
         if (!response.error) {
-          setBans(prev => [...prev, ...response.docs])
+          setReports(prev => [...prev, ...response.docs])
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -45,7 +49,7 @@ const Old = () => {
       }
     }
 
-    fetchBans()
+    fetchReports()
   }, [page])
 
   useEffect(() => {
@@ -66,43 +70,21 @@ const Old = () => {
     }
   }
 
-  const unBan = (userId) => {
-    fetch(BACKEND + '/api/ban/delete', {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userId })
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.error) {
-          setBans(bans.filter(item => item._id !== userId))
-          if (bans.filter(item => item._id !== userId).length === 0) {
-            setBans([])
-            setNoData(true)
-          }
-        } else throw Error(data.error?.message || 'Error')
-      })
-      .catch(err => toast.error(err.message))
-  }
-
   return !noData ? (
     !loading ? (
-      bans.length ? (
+      reports.length ? (
         <Fragment>
           <div className="items_list">
-            {bans.map(item => (
-              <BannedCard key={item._id} data={item} unBan={unBan} />
+            {reports.map(item => (
+              <NotificationCard key={item._id} data={item} />
             ))}
           </div>
 
           {moreLoading && <Loader className="more_loader" color="#64707d" />}
         </Fragment>
-      ) : <Errorer message={Strings.noBansYet[lang]} />
+      ) : <Errorer message={Strings.noReportsYet[lang]} />
     ) : <Loader color="#64707d" />
-  ) : <Errorer message={Strings.unableToDisplayBans[lang]} />
+  ) : <Errorer message={Strings.unableToDisplayReports[lang]} />
 }
 
-export default Old;
+export default Unread;

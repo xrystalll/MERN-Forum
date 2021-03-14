@@ -134,14 +134,17 @@
   .head_search:hover {
     background-color: var(--secondary-bg-tint-focus)
   }
-  .head_search_field {
+  .head_search_form {
     display: none;
   }
-  .head_search.open .head_search_field {
+  .head_search.open .head_search_form {
     display: flex;
     position: absolute;
     right: 0;
     width: calc(100% - 48px);
+  }
+  .head_search.open .head_search_field {
+    width: 100%;
   }
   .head_search_ic {
     display: block !important;

@@ -105,13 +105,32 @@ const Card = ({ data, threadData, full = false, type }) => {
     setModalOpen(true)
   }
 
+  const reportClick = () => {
+    const id = type === 'answer' ? data.threadId : data._id
+
+    fetch(BACKEND + '/api/report/create', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        threadId: id,
+        body: data.body
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          toast.success(Strings.reportSent[lang])
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
+  }
+
   const answerTo = (toId, displayName) => {
-    let id
-    if (type === 'answer') {
-      id = data.threadId
-    } else {
-      id = data._id
-    }
+    const id = type === 'answer' ? data.threadId : data._id
+
     setPostType({
       type: 'answer',
       id,
@@ -152,7 +171,7 @@ const Card = ({ data, threadData, full = false, type }) => {
     })
       .then(response => response.json())
       .then(data => {
-         if (data.error) throw Error(data.error?.message || 'Error')
+        if (data.error) throw Error(data.error?.message || 'Error')
       })
       .catch(err => toast.error(err.message))
   }
@@ -184,7 +203,7 @@ const Card = ({ data, threadData, full = false, type }) => {
       })
         .then(response => response.json())
         .then(data => {
-           if (data.error) throw Error(data.error?.message || 'Error')
+          if (data.error) throw Error(data.error?.message || 'Error')
         })
         .catch(err => toast.error(err.message))
     }
@@ -211,7 +230,7 @@ const Card = ({ data, threadData, full = false, type }) => {
       })
         .then(response => response.json())
         .then(data => {
-           if (data.error) throw Error(data.error?.message || 'Error')
+          if (data.error) throw Error(data.error?.message || 'Error')
         })
         .catch(err => toast.error(err.message))
     }
@@ -367,7 +386,7 @@ const Card = ({ data, threadData, full = false, type }) => {
                   </div>
                 )}
                 {user.id !== data.author._id && (
-                  <div className="dropdown_item">{Strings.report[lang]}</div>
+                  <div onClick={reportClick} className="dropdown_item">{Strings.report[lang]}</div>
                 )}
               </Dropdown>
             )}

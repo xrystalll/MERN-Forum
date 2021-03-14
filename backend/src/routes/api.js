@@ -8,11 +8,16 @@ const ForumController = require('../modules/controllers/forumController');
 
 router.get('/stats', GeneralController.getStats)
 router.get('/users', GeneralController.getUsers)
+router.get('/admins', GeneralController.getAdmins)
 router.get('/user', verifyAccessToken, GeneralController.getUser)
 router.get('/bans', GeneralController.getBans)
 router.get('/ban', GeneralController.getBan)
 router.post('/ban/create', verifyAccessToken, GeneralController.createBan)
 router.delete('/ban/delete', verifyAccessToken, GeneralController.unBan)
+
+router.get('/reports', verifyAccessToken, GeneralController.getReports)
+router.post('/report/create', verifyAccessToken, GeneralController.createReport)
+router.delete('/reports/delete', verifyAccessToken, GeneralController.deleteReports)
 
 router.get('/profile', verifyAccessToken, ProfileController.getProfile)
 router.put('/profile/upload/picture', verifyAccessToken, ProfileController.uploadUserPicture)

@@ -27,5 +27,6 @@ const answerSchema = new Schema({
   attach: [attachSchema]
 })
 answerSchema.plugin(mongoosePaginate)
+answerSchema.index({ body: 'text' })
 
 module.exports = model('Answer', answerSchema);

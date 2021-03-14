@@ -13,5 +13,6 @@ const boardSchema = new Schema({
   newestAnswer: String
 })
 boardSchema.plugin(mongoosePaginate)
+boardSchema.index({ name: 'text', title: 'text', body: 'text' })
 
 module.exports = model('Board', boardSchema);

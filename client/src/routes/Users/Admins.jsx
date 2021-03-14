@@ -1,16 +1,32 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
+
 import { BACKEND, Strings } from 'support/Constants';
 
-import { BannedCard } from 'components/Card';
+import { Section } from 'components/Section';
+import Breadcrumbs from 'components/Breadcrumbs';
+import { UserCard } from 'components/Card';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
-const Old = () => {
-  const { token, lang } = useContext(StoreContext)
-  const [bans, setBans] = useState([])
+const Admins = () => {
+  const { setPostType, setFabVisible, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.admins[lang]
+  const [init, setInit] = useState(true)
+
+  useEffect(() => {
+    if (init) {
+      setFabVisible(true)
+      setPostType({
+        type: 'thread',
+        id: null
+      })
+    }
+    setInit(false)
+  }, [init])
+
+  const [admins, setAdmins] = useState([])
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -21,16 +37,16 @@ const Old = () => {
   const [moreTrigger, setMoreTrigger] = useState(true)
 
   useEffect(() => {
-    const fetchBans = async () => {
+    const fetchAdmins = async () => {
       if (!hasNextPage) return
       setMoreLoading(true)
 
       try {
-        const data = await fetch(`${BACKEND}/api/bans?limit=${limit}&page=${page}&sort=old`)
+        const data = await fetch(`${BACKEND}/api/admins?limit=${limit}&page=${page}`)
         const response = await data.json()
 
         if (!response.error) {
-          setBans(prev => [...prev, ...response.docs])
+          setAdmins(prev => [...prev, ...response.docs])
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -45,7 +61,7 @@ const Old = () => {
       }
     }
 
-    fetchBans()
+    fetchAdmins()
   }, [page])
 
   useEffect(() => {
@@ -66,43 +82,32 @@ const Old = () => {
     }
   }
 
-  const unBan = (userId) => {
-    fetch(BACKEND + '/api/ban/delete', {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userId })
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.error) {
-          setBans(bans.filter(item => item._id !== userId))
-          if (bans.filter(item => item._id !== userId).length === 0) {
-            setBans([])
-            setNoData(true)
-          }
-        } else throw Error(data.error?.message || 'Error')
-      })
-      .catch(err => toast.error(err.message))
-  }
+  return (
+    <Section>
+      <Breadcrumbs current={Strings.admins[lang]} links={[
+        { title: Strings.home[lang], link: '/' }
+      ]} />
 
-  return !noData ? (
-    !loading ? (
-      bans.length ? (
-        <Fragment>
-          <div className="items_list">
-            {bans.map(item => (
-              <BannedCard key={item._id} data={item} unBan={unBan} />
-            ))}
-          </div>
+      {!noData ? (
+        !loading ? (
+          admins.length ? (
+            <Fragment>
+              <div className="items_list">
+                {admins.map(item => (
+                  <UserCard key={item._id} data={item} />
+                ))}
+              </div>
 
-          {moreLoading && <Loader className="more_loader" color="#64707d" />}
-        </Fragment>
-      ) : <Errorer message={Strings.noBansYet[lang]} />
-    ) : <Loader color="#64707d" />
-  ) : <Errorer message={Strings.unableToDisplayBans[lang]} />
+              {moreLoading && <Loader className="more_loader" color="#64707d" />}
+            </Fragment>
+          ) : <Errorer message={Strings.noAdminsYet[lang]} />
+        ) : <Loader color="#64707d" />
+      ) : (
+        <Errorer message={Strings.unableToDisplayUsers[lang]} />
+      )}
+
+    </Section>
+  )
 }
 
-export default Old;
+export default Admins;

@@ -11,6 +11,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import { SlidesContainer, SlideItem } from 'components/Slider';
 
 import Boards from './Boards';
+import Reports from './Reports';
 import Bans from './Bans';
 import './style.css';
 
@@ -45,6 +46,7 @@ const Dashboard = () => {
     <Section>
       <Switch>
         <Route path={path + '/boards'} exact component={Boards} />
+        <Route path={path + '/reports'} component={Reports} />
         <Route path={path + '/bans'} component={Bans} />
         <Route path={path} exact>
           <Breadcrumbs current={Strings.dashboard[lang]} links={[
@@ -72,7 +74,10 @@ const Dashboard = () => {
               {Strings.admins[lang]}
             </NavLink>
 
-            <NavLink to={path + '/reports'} className="admin__nav_item">
+            <NavLink
+              to={path + '/reports'}
+              className={!!localStorage.getItem('reports') ? 'admin__nav_item new' : 'admin__nav_item'}
+            >
               <i className="bx bxs-flag-alt" />
               {Strings.reports[lang]}
             </NavLink>
