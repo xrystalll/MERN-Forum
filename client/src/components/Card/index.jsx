@@ -116,6 +116,7 @@ const Card = ({ data, threadData, full = false, type }) => {
       },
       body: JSON.stringify({
         threadId: id,
+        postId: data._id,
         body: data.body
       })
     })
@@ -616,6 +617,49 @@ const BannedCard = ({ data, unBan }) => {
   )
 }
 
+const BannedAll = ({ data }) => {
+  const { lang } = useContext(StoreContext)
+
+  return (
+    <div className="card_item">
+      <div className="card_body">
+        <div className="card_block">
+          <div className="card_head user_head">
+            <div className="card_head_inner row">
+              <Link to={'/user/' + data.user.name} className="card_title user_title">
+                {data.user.picture ? (
+                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.user.picture})` }} />
+                ) : (
+                  <div className="head_profile">
+                    {data.user.displayName.charAt(0)}
+                  </div>
+                )}
+                <div className="user_info">
+                  <div className="user_info_top">
+                    {data.user.displayName}
+                  </div>
+                  <div className="head_text">{dateFormat(data.createdAt)}</div>
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          <div className="card_content">
+            <p>{Strings.reason[lang]}: {data.reason}</p>
+            <p>{Strings.banExpires[lang]}: {dateFormat(data.expiresAt)}</p>
+          </div>
+
+          <footer className="card_foot">
+            <div className="act_btn foot_btn disable">
+              <span className="card_count">Admin: {data.admin.displayName}</span>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const BanInfoCard = ({ data, owner }) => {
   const { lang } = useContext(StoreContext)
 
@@ -679,4 +723,4 @@ const NotificationCard = ({ data }) => {
   )
 }
 
-export { Card, BoardCard, UserCard, BannedCard, BanInfoCard, NotificationCard };
+export { Card, BoardCard, UserCard, BannedCard, BannedAll, BanInfoCard, NotificationCard };

@@ -651,6 +651,11 @@ const Strings = {
     en: 'Delete',
     jp: 'デリート'
   },
+  'deleteAll': {
+    ru: 'Удалить все',
+    en: 'Delete all',
+    jp: 'すべて削除'
+  },
   'unbanUser': {
     ru: 'Разбанить',
     en: 'Unban user',
@@ -725,6 +730,16 @@ const Strings = {
     ru: 'Введите запрос для поиска',
     en: 'Enter your search term',
     jp: '検索語を入力してください'
+  },
+  'noResults': {
+    ru: 'Нет результатов',
+    en: 'No results',
+    jp: '結果がありません'
+  },
+  'unableToDisplaySearchResults': {
+    ru: 'Невозможно отобразить результаты поиска',
+    en: 'Unable to display search results',
+    jp: '検索結果を表示できません'
   },
 }
 

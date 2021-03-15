@@ -18,8 +18,8 @@ import NewestThread from './NewestThread';
 import Answers from './Answers';
 
 const Boards = () => {
-  document.title = 'Forum | ' + Strings.boards
   const { setPostType, setFabVisible, lang } = useContext(StoreContext)
+  document.title = 'Forum | ' + Strings.boards[lang]
   const [init, setInit] = useState(true)
   const [sort, setSort] = useState('default')
 

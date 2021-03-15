@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { BACKEND, Strings } from 'support/Constants';
 import Socket from 'support/Socket';
@@ -123,7 +124,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
           setNotifications([])
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(console.error)
+      .catch(err => toast.error(err.message))
   }
 
   return (

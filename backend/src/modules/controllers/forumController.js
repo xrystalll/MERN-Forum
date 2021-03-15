@@ -80,8 +80,10 @@ module.exports.createBoard = async (req, res, next) => {
     const nameExist = await Board.findOne({ name: name.trim().substring(0, 12) })
     if (nameExist) return next(createError.Conflict('Board with this short name is already been created'))
 
+    const nameUrl = name.trim().toLowerCase().substring(0, 12).replace(/[^a-z0-9-_]/g, '')
+
     const newBoard = new Board({
-      name: name.trim().substring(0, 12),
+      name: nameUrl,
       title: title.trim().substring(0, 21),
       body: body.substring(0, 100),
       position,

@@ -9,7 +9,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
 
 import Newest from './Newest';
-import Old from './Old';
+import All from './All';
 
 const Bans = ({ history, location: { pathname } }) => {
   const { lang } = useContext(StoreContext)
@@ -19,8 +19,8 @@ const Bans = ({ history, location: { pathname } }) => {
 
   useEffect(() => {
     let route
-    if (sort === 'oldest') {
-      route = path + '/oldest'
+    if (sort === 'all') {
+      route = path + '/all'
     } else {
       route = path
     }
@@ -37,11 +37,11 @@ const Bans = ({ history, location: { pathname } }) => {
 
       <SortNav links={[
         { title: Strings.newest[lang], sort: 'bans' },
-        { title: Strings.oldest[lang], sort: 'oldest' }
+        { title: Strings.all[lang], sort: 'all' }
       ]} setSort={setSort} state={sort} />
 
       <Switch>
-        <Route path={path + '/oldest'} component={Old} />
+        <Route path={path + '/all'} component={All} />
         <Route path={path} exact component={Newest} />
         <Route>
           <Redirect to={path} />

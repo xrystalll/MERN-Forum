@@ -1,7 +1,9 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
+
+import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { BACKEND, Strings } from 'support/Constants';
 
@@ -16,63 +18,9 @@ const Boards = () => {
   const { token, lang } = useContext(StoreContext)
   document.title = 'Forum | ' + Strings.manageBoards[lang]
 
-  const [boards, setBoards] = useState([])
-  const [page, setPage] = useState(1)
-  const [nextPage, setNextPage] = useState(1)
-  const [hasNextPage, setHasNextPage] = useState(true)
-  const limit = 10
-  const [loading, setLoading] = useState(true)
-  const [moreLoading, setMoreLoading] = useState(false)
-  const [noData, setNoData] = useState(false)
-  const [moreTrigger, setMoreTrigger] = useState(true)
+  const { loading, moreLoading, noData, items, setItems, setNoData } = useMoreFetch({ method: 'boards' })
   const [create, setCreate] = useState(false)
   const [fetchErrors, setFetchErros] = useState({})
-
-  useEffect(() => {
-    const fetchBoards = async () => {
-      if (!hasNextPage) return
-      setMoreLoading(true)
-
-      try {
-        const data = await fetch(`${BACKEND}/api/boards?limit=${limit}&page=${page}`)
-        const response = await data.json()
-
-        if (!response.error) {
-          setBoards(prev => [...prev, ...response.docs])
-          setNextPage(response.nextPage)
-          setHasNextPage(response.hasNextPage)
-          setLoading(false)
-          setMoreLoading(false)
-          setNoData(false)
-          setMoreTrigger(true)
-        } else throw Error(response.error?.message || 'Error')
-      } catch(err) {
-        setLoading(false)
-        setNoData(true)
-        setMoreLoading(false)
-      }
-    }
-
-    fetchBoards()
-  }, [page])
-
-  useEffect(() => {
-    document.addEventListener('scroll', handleScroll)
-    return () => {
-      document.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-
-  const handleScroll = () => {
-    if (!moreTrigger) return
-
-    const scrollTop = window.innerHeight + document.documentElement.scrollTop
-    const scrollHeight = document.scrollingElement.scrollHeight
-    if (scrollTop >= scrollHeight - 150) {
-      setMoreTrigger(false)
-      setPage(nextPage)
-    }
-  }
 
   const createBoard = (data) => {
     fetch(BACKEND + '/api/board/create', {
@@ -88,7 +36,7 @@ const Boards = () => {
         if (!data.error) {
           setNoData(false)
           setCreate(false)
-          setBoards(prev => [data, ...prev])
+          setItems(prev => [data, ...prev])
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
@@ -108,10 +56,10 @@ const Boards = () => {
       .then(response => response.json())
       .then(data => {
         if (!data.error) {
-          let newArray = [...boards]
+          let newArray = [...items]
           newArray[newArray.findIndex(item => item._id === data._id)] = data
 
-          setBoards(newArray)
+          setItems(newArray)
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
@@ -131,9 +79,9 @@ const Boards = () => {
       .then(response => response.json())
       .then(data => {
         if (!data.error) {
-          setBoards(boards.filter(item => item._id !== boardId))
-          if (boards.filter(item => item._id !== boardId).length === 0) {
-            setBoards([])
+          setItems(items.filter(item => item._id !== boardId))
+          if (items.filter(item => item._id !== boardId).length === 0) {
+            setItems([])
             setNoData(true)
           }
         } else throw Error(data.error?.message || 'Error')
@@ -168,10 +116,10 @@ const Boards = () => {
 
       {!noData ? (
         !loading ? (
-          boards.length ? (
+          items.length ? (
             <Fragment>
               <div className="items_list">
-                {boards.map(item => (
+                {items.map(item => (
                   <BoardItem
                     key={item._id}
                     lang={lang}

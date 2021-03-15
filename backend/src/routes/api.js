@@ -6,6 +6,7 @@ const GeneralController = require('../modules/controllers/generalController');
 const ProfileController = require('../modules/controllers/profileController');
 const ForumController = require('../modules/controllers/forumController');
 
+router.get('/search', GeneralController.search)
 router.get('/stats', GeneralController.getStats)
 router.get('/users', GeneralController.getUsers)
 router.get('/admins', GeneralController.getAdmins)

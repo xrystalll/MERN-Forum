@@ -7,6 +7,7 @@ const reportSchema = new Schema({
     ref: 'User'
   },
   threadId: Schema.Types.ObjectId,
+  postId: Schema.Types.ObjectId,
   title: String,
   body: String,
   createdAt: String,

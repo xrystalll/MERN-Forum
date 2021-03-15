@@ -102,18 +102,30 @@ module.exports.getUser = async (req, res, next) => {
 
 module.exports.getBans = async (req, res, next) => {
   try {
-    const { limit = 10, page = 1 } = req.query
+    const { limit = 10, page = 1, sort } = req.query
 
-    const select = '_id name displayName createdAt onlineAt picture role ban'
-    const populate = {
-      path: 'ban',
-      select: '_id admin reason body createdAt expiresAt',
-      populate: {
+    let bans
+    if (sort === 'all') {
+      const populate = [{
+        path: 'user',
+        select: '_id name displayName onlineAt picture role'
+      }, {
         path: 'admin',
         select: '_id name displayName onlineAt picture role'
+      }]
+      bans = await Ban.paginate({}, { sort: { createdAt: -1 }, page, limit, populate })
+    } else {
+      const select = '_id name displayName createdAt onlineAt picture role ban'
+      const populate = {
+        path: 'ban',
+        select: '_id admin reason body createdAt expiresAt',
+        populate: {
+          path: 'admin',
+          select: '_id name displayName onlineAt picture role'
+        }
       }
+      bans = await User.paginate({ ban: { $ne: null } }, { page, limit, select, populate })
     }
-    const bans = await User.paginate({ ban: { $ne: null } }, { page, limit, select, populate })
 
     res.json(bans)
   } catch(err) {
@@ -214,16 +226,21 @@ module.exports.getReports = async (req, res, next) => {
 
 module.exports.createReport = async (req, res, next) => {
   try {
-    const { threadId, body } = req.body
+    const { threadId, postId, body } = req.body
 
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
+    if (!postId) return next(createError.BadRequest('postId must not be empty'))
     if (body.trim() === '') return next(createError.BadRequest('Report body must not be empty'))
+
+    const reportExist = await Report.find({ postId: Mongoose.Types.ObjectId(postId) })
+    if (reportExist.length) return next(createError.BadRequest('Report to the post already has'))
 
     const thread = await Thread.findById(threadId)
 
     const newReport = new Report({
       from: req.payload.id,
       threadId,
+      postId,
       title: thread.title,
       body: body.substring(0, 1000),
       createdAt: new Date().toISOString(),
@@ -250,6 +267,27 @@ module.exports.deleteReports = async (req, res, next) => {
     await Report.deleteMany({ read: true })
 
     res.json({ message: 'Reports successfully deleted' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.search = async (req, res, next) => {
+  try {
+    const { limit = 10, page = 1, query } = req.query
+
+    if (!query) return next(createError.BadRequest('query must not be empty'))
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const results = await Thread.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
+
+    res.json(results)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
