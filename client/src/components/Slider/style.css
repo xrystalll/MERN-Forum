@@ -13,7 +13,10 @@
   grid-template-columns: repeat(5, minmax(112px, 1fr));
 }
 @media (max-width: 746px) {
-  .boards_slide_list::-webkit-scrollbar, .slides_list::-webkit-scrollbar, .sort_nav::-webkit-scrollbar, .breadcrumb_body::-webkit-scrollbar {
+  .boards_slide_list::-webkit-scrollbar,
+  .slides_list::-webkit-scrollbar,
+  .sort_nav::-webkit-scrollbar,
+  .breadcrumb_body::-webkit-scrollbar {
     width: 0px;
     height: 0px;
   }

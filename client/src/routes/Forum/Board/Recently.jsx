@@ -17,7 +17,7 @@ const Recently = ({ boardId, lang }) => {
         <Fragment>
           <div className="items_list">
             {items.map(item => (
-              <Card key={item._id} data={item} />
+              <Card key={item._id} data={item} preview />
             ))}
           </div>
 

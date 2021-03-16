@@ -741,6 +741,26 @@ const Strings = {
     en: 'Unable to display search results',
     jp: '検索結果を表示できません'
   },
+  'showMore': {
+    ru: 'Показать полностью',
+    en: 'Show more',
+    jp: '完全に表示'
+  },
+  'showLess': {
+    ru: 'Свернуть',
+    en: 'Show less',
+    jp: '表示を減らす'
+  },
+  'threads': {
+    ru: 'Треды',
+    en: 'Thread',
+    jp: 'スレッド'
+  },
+  'answers': {
+    ru: 'Ответы',
+    en: 'Answers',
+    jp: '答え'
+  },
 }
 
 export { BACKEND, Strings };

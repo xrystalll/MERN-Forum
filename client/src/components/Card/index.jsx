@@ -11,7 +11,7 @@ import { BACKEND, Strings } from 'support/Constants';
 import Dropdown from './Dropdown';
 import Markdown from 'components/Markdown';
 
-const Card = ({ data, threadData, full = false, type }) => {
+const Card = ({ data, threadData, full = false, preview = false, type }) => {
   const { user, token, setModalOpen, setPostType, setFabVisible, lang } = useContext(StoreContext)
   const history = useHistory()
   const likesList = useRef()
@@ -19,6 +19,7 @@ const Card = ({ data, threadData, full = false, type }) => {
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(preview ? true : false)
   const regexp = /(?:\.([^.]+))?$/
 
   useEffect(() => {
@@ -393,37 +394,53 @@ const Card = ({ data, threadData, full = false, type }) => {
             )}
           </header>
 
-          {full && (
-            <div className="card_content markdown">
-              <Markdown source={data.body} onImageClick={imageView} />
+          {(full || preview) && (
+            <Fragment>
+              <div
+                className={data.attach && data.attach.length === 1 ? 'card_content with_attach_list markdown' : 'card_content markdown'}
+              >
+                {data.attach && (
+                  <div className={data.attach.length > 1 ? 'attach_grid' : 'attach_list'}>
+                    {data.attach.map((item, index) => (
+                      <Fragment key={index}>
+                        {imageTypes.find(i => i === item.type) ? (
+                          <div
+                            onClick={() => imageView(BACKEND + item.file)}
+                            className="attached_file image_file card_left"
+                            style={{ backgroundImage: `url(${BACKEND + item.file})` }}
+                          />
+                        ) : (
+                          <a href={item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
+                            <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                          </a>
+                        )}
+                      </Fragment>
+                    ))}
+                  </div>
+                )}
 
-              {data.attach && (
-                <div className="attach_list">
-                  {data.attach.map((item, index) => (
-                    <Fragment key={index}>
-                      {imageTypes.find(i => i === item.type) ? (
-                        <div
-                          onClick={() => imageView(BACKEND + item.file)}
-                          className="attached_file card_left"
-                          style={{ backgroundImage: `url(${BACKEND + item.file})` }}
-                        />
-                      ) : (
-                        <a href={item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
-                          <div className="attached_info">{regexp.exec(item.file)[1]}</div>
-                        </a>
-                      )}
-                    </Fragment>
-                  ))}
+                {imageOpen && (
+                  <Lightbox
+                    mainSrc={image}
+                    onCloseRequest={() => setImageOpen(false)}
+                  />
+                )}
+
+                <Markdown
+                  source={collapsed && data.body.length > 200 ? data.body.slice(0, 200) + '...' : data.body}
+                  onImageClick={imageView}
+                />
+              </div>
+
+              {preview && data.body.length > 200 && (
+                <div
+                  className="text_show_more"
+                  onClick={() => setCollapsed(!collapsed)}
+                >
+                  {collapsed ? Strings.showMore[lang] : Strings.showLess[lang]}
                 </div>
               )}
-
-              {imageOpen && (
-                <Lightbox
-                  mainSrc={image}
-                  onCloseRequest={() => setImageOpen(false)}
-                />
-              )}
-            </div>
+            </Fragment>
           )}
 
           <footer className="card_foot">
@@ -475,13 +492,17 @@ const Card = ({ data, threadData, full = false, type }) => {
                 )}
               </Fragment>
             ) : (
-              <div className="act_btn foot_btn disable">
-                <i className="bx bx-message-square-detail" />
-                <span className="card_count">{counter(data.answersCount)}</span>
-                <span className="hidden">
-                  {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
-                </span>
-              </div>
+              type !== 'answer' ? (
+                <div className="act_btn foot_btn disable">
+                  <i className="bx bx-message-square-detail" />
+                  <span className="card_count">{counter(data.answersCount)}</span>
+                  <span className="hidden">
+                    {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
+                  </span>
+                </div>
+              ) : (
+                <Link to={'/thread/' + data.threadId} className="text_show_more">{Strings.open[lang]} {Strings.thread1[lang]}</Link>
+              )
             )}
           </footer>
 

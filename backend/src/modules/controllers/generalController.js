@@ -274,18 +274,35 @@ module.exports.deleteReports = async (req, res, next) => {
 
 module.exports.search = async (req, res, next) => {
   try {
-    const { limit = 10, page = 1, query } = req.query
+    const { limit = 10, page = 1, query, type } = req.query
 
     if (!query) return next(createError.BadRequest('query must not be empty'))
 
-    const populate = [{
-      path: 'author',
-      select: '_id name displayName onlineAt picture role'
-    }, {
-      path: 'likes',
-      select: '_id name displayName picture'
-    }]
-    const results = await Thread.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
+    let results
+    if (type === 'answers') {
+      const populate = [{
+        path: 'author',
+        select: '_id name displayName onlineAt picture role'
+      }, {
+        path: 'likes',
+        select: '_id name displayName picture'
+      }]
+      results = await Answer.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
+    } else if (type === 'users') {
+      const select = '_id name displayName createdAt onlineAt picture role'
+      results = await User.paginate({ $text: { $search: query } }, { sort: { onlineAt: -1 }, page, limit, select })
+    } else if (type === 'boards') {
+      results = await Board.paginate({ $text: { $search: query } }, { sort: { newestAnswer: -1 }, page, limit })
+    } else {
+      const populate = [{
+        path: 'author',
+        select: '_id name displayName onlineAt picture role'
+      }, {
+        path: 'likes',
+        select: '_id name displayName picture'
+      }]
+      results = await Thread.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
+    }
 
     res.json(results)
   } catch(err) {

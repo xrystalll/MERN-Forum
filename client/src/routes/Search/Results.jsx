@@ -1,49 +1,26 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { useParams } from 'react-router-dom';
-
-import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { Strings } from 'support/Constants';
 
 import { SectionHeader } from 'components/Section';
-import { Card } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
-const Results = ({ lang }) => {
+import Threads from './Threads';
+import Answers from './Answers';
+import Boards from './Boards';
+import Users from './Users';
+
+const Results = ({ lang, type }) => {
   const { searchQuery } = useParams()
-  const { loading, moreLoading, noData, items, refetch } = useMoreFetch({ method: 'search', params: { query: searchQuery } })
-  const [init, setInit] = useState(true)
-
-  useEffect(() => {
-    if (!init) {
-      refetch((Math.random() * 100).toFixed())
-    } else {
-      setInit(false)
-    }
-  }, [searchQuery])
 
   return (
     <Fragment>
       <SectionHeader title={Strings.searchResults[lang]} />
 
-      {!noData ? (
-        !loading ? (
-          items.length ? (
-            <Fragment>
-              <div className="items_list">
-                {items.map(item => (
-                  <Card key={item._id} data={item} />
-                ))}
-              </div>
-
-              {moreLoading && <Loader className="more_loader" color="#64707d" />}
-            </Fragment>
-          ) : <Errorer message={Strings.noResults[lang]} />
-        ) : <Loader color="#64707d" />
-      ) : (
-        <Errorer message={Strings.unableToDisplaySearchResults[lang]} />
-      )}
+      {type === 'users' && <Users lang={lang} query={searchQuery} type={type} />}
+      {type === 'boards' && <Boards lang={lang} query={searchQuery} type={type} />}
+      {type === 'answers' && <Answers lang={lang} query={searchQuery} type={type} />}
+      {type === 'threads' && <Threads lang={lang} query={searchQuery} type={type} />}
     </Fragment>
   )
 }

@@ -77,10 +77,10 @@ module.exports.createBoard = async (req, res, next) => {
     if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
     if (!position || !Number.isInteger(position) || position < 0) return next(createError.BadRequest('Position must be number'))
 
-    const nameExist = await Board.findOne({ name: name.trim().substring(0, 12) })
-    if (nameExist) return next(createError.Conflict('Board with this short name is already been created'))
-
     const nameUrl = name.trim().toLowerCase().substring(0, 12).replace(/[^a-z0-9-_]/g, '')
+
+    const nameExist = await Board.findOne({ name: nameUrl })
+    if (nameExist) return next(createError.Conflict('Board with this short name is already been created'))
 
     const newBoard = new Board({
       name: nameUrl,
@@ -127,11 +127,13 @@ module.exports.editBoard = async (req, res, next) => {
     if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
     if (!position || !Number.isInteger(position) || position < 0) return next(createError.BadRequest('Position must be number'))
 
-    const nameExist = await Board.findOne({ name: name.trim().substring(0, 12) })
+    const nameUrl = name.trim().toLowerCase().substring(0, 12).replace(/[^a-z0-9-_]/g, '')
+
+    const nameExist = await Board.findOne({ name: nameUrl })
     if (nameExist) return next(createError.Conflict('Board with this short name is already been created'))
 
     await Board.updateOne({ _id: Mongoose.Types.ObjectId(boardId) }, {
-      name: name.trim().substring(0, 12),
+      name: nameUrl,
       title: title.trim().substring(0, 21),
       body: body.substring(0, 100),
       position,
