@@ -297,6 +297,78 @@ const Modal = ({ open, close }) => {
       })
   }
 
+  const [folders, setFolders] = useState([])
+
+  const loadFolders = () => {
+    if (folders.length) return
+
+    fetch(`${BACKEND}/api/folders?pagination=${pagination}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.docs?.length) {
+          setFolders(data.docs)
+        } else throw Error(Strings.foldersNotLoaded[lang])
+      })
+      .catch(err => {
+        setErrors({ general: err.message })
+      })
+  }
+
+  const uploadCallback = () => {
+    setErrors({})
+
+    if (postType.type === 'upload') {
+      if (!fileValues.title.trim()) {
+        return setErrors({ title: Strings.enterTitle[lang] })
+      }
+      if (!fileValues.body.trim()) {
+        return setErrors({ body: Strings.enterContent[lang] })
+      }
+      if (!fileValues.folderId) {
+        return setErrors({ folderId: Strings.chooseFromList[lang] })
+      }
+
+      setLoading(true)
+      createFile()
+    }
+  }
+
+  const { onChange: fileChange, onSubmit: uploadSubmit, values: fileValues } = useForm(uploadCallback, {
+    folderId: postType.id,
+    title: '',
+    body: ''
+  })
+
+  const createFile = () => {
+    const formData = new FormData()
+    files.map(item => formData.append('file', item))
+    formData.append('postData', JSON.stringify({
+      folderId: fileValues.folderId,
+      title: fileValues.title.substring(0, 100),
+      body: fileValues.body.substring(0, 1000)
+    }))
+
+    fetch(`${BACKEND}/api/file/create`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        setLoading(false)
+        if (!data.error) {
+          close()
+          history.push('/file/' + data._id)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        setLoading(false)
+        setErrors({ general: err.message })
+      })
+  }
+
   const threadContent = (
     <ModalBody title={Strings.newThread[lang]} onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
@@ -533,6 +605,76 @@ const Modal = ({ open, close }) => {
     </ModalBody>
   )
 
+  const uploadContent = (
+    <ModalBody title={Strings.newFile[lang]} onClick={close}>
+      <form className="form_inner" onSubmit={uploadSubmit}>
+        <FormCardItem title={Strings.fileTitle[lang]} error={errors.title}>
+          <div className={errors.title ? 'form_block error' : 'form_block' }>
+            <Input
+              name="title"
+              value={fileValues.title}
+              placeholder={Strings.enterTitle[lang]}
+              maxLength="100"
+              onChange={fileChange}
+            />
+          </div>
+        </FormCardItem>
+
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
+          <TextareaForm
+            className={errors.body ? 'form_block error' : 'form_block' }
+            name="body"
+            value={fileValues.body}
+            placeholder={Strings.enterContent[lang]}
+            onChange={fileChange}
+          />
+        </FormCardItem>
+
+        <FileUploadForm
+          title={Strings.yourFile[lang]}
+          hint={`${Strings.maxFilesCount[lang]}: 1; ${Strings.maxSize[lang]}: 80 Mb`}
+          multiple={false}
+          sendFiles={getFile}
+          clearFiles={clearFiles}
+        />
+
+        <FormCardItem title={Strings.chooseAFolder[lang]} error={errors.folderId}>
+          <div className={errors.folderId ? 'form_block select error' : 'form_block select' }>
+            <select
+              className="input_area select_area"
+              name="folderId"
+              value={fileValues.folderId}
+              onChange={fileChange}
+              onClick={loadFolders}
+            >
+              <option value="">{Strings.select[lang]}</option>
+              {folders.length ? (
+                folders.map(item => (
+                  <option key={item._id} value={item._id}>{item.title}</option>
+                ))
+              ) : (
+                <option value="">{Strings.loading[lang]}...</option>
+              )}
+            </select>
+          </div>
+        </FormCardItem>
+
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
+        <div className="card_item">
+          {loading
+            ? <Loader className="btn" />
+            : <InputButton text={Strings.uploadFile[lang]} />
+          }
+        </div>
+      </form>
+    </ModalBody>
+  )
+
   let modalContent
   if (postType.type === 'thread') {
     modalContent = threadContent
@@ -548,6 +690,9 @@ const Modal = ({ open, close }) => {
   }
   if (postType.type === 'ban') {
     modalContent = banContent
+  }
+  if (postType.type === 'upload') {
+    modalContent = uploadContent
   }
 
   return (

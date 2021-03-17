@@ -744,4 +744,88 @@ const NotificationCard = ({ data }) => {
   )
 }
 
-export { Card, BoardCard, UserCard, BannedCard, BannedAll, BanInfoCard, NotificationCard };
+const FolderCard = ({ data }) => {
+  const { lang } = useContext(StoreContext)
+
+  return (
+    <div className="card_item">
+      <div className="card_body">
+        <div className="card_block">
+          <header className="card_head">
+            <div className="card_head_inner">
+              <Link to={'/uploads/' + data.name} className="card_title">{data.title}</Link>
+            </div>
+          </header>
+
+          <footer className="card_foot">
+            <div className="act_btn foot_btn disable">
+              <i className="bx bx-folder" />
+              <span className="card_count">{counter(data.filesCount)}</span>
+              <span className="hidden">
+                {declOfNum(data.threadsCount, [Strings.file1[lang], Strings.file2[lang], Strings.file3[lang]])}
+              </span>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const FileCard = ({ data }) => {
+  const { lang } = useContext(StoreContext)
+  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
+
+  return (
+    <div className="card_item file_card">
+      <div className="card_body">
+        <div className="card_block with_left">
+          {imageTypes.find(i => i === data.file.type) ? (
+            <div
+              className="card_left"
+              style={{ backgroundImage: `url(${BACKEND + data.file.url})` }}
+            />
+          ) : (
+            <div className="card_left empty" />
+          )}
+
+          <div className="card_right">
+            <header className="card_head">
+              <div className="card_head_inner">
+                <Link to={'/file/' + data._id} className="card_title">{data.title}</Link>
+
+                <div className="card_info">
+                  <Link to={'/user/' + data.author.name} className="head_text bold">{data.author.displayName}</Link>
+                  <span className="bullet">•</span>
+                  <span className="head_text">
+                    <time>{dateFormat(data.createdAt)}</time>
+                  </span>
+                </div>
+              </div>
+            </header>
+
+            <footer className="card_foot">
+              <div className="act_btn foot_btn disable">
+                <i className="bx bx-download"></i>
+                <span className="card_count">{counter(data.downloads)}</span>
+                <span className="hidden">
+                  {declOfNum(data.downloads, [Strings.download1[lang], Strings.download2[lang], Strings.download3[lang]])}
+                </span>
+              </div>
+
+              <div className="act_btn foot_btn disable">
+                <i className="bx bx-heart"></i>
+                  <span className="card_count">{counter(data.likes.length)}</span>
+                  <span className="hidden">
+                    {declOfNum(data.likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
+                  </span>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export { Card, BoardCard, UserCard, BannedCard, BannedAll, BanInfoCard, NotificationCard, FolderCard, FileCard };

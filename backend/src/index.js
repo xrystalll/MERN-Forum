@@ -12,6 +12,7 @@ const Mongoose = require('mongoose');
 const DB = require('./modules/DB');
 const Notification = require('./modules/models/Notification');
 const Report = require('./modules/models/Report');
+const File = require('./modules/models/File');
 
 const app = express()
 
@@ -58,6 +59,10 @@ io.on('connection', (socket) => {
       const reports = await Report.find({ read: false })
       if (reports.length) {
         io.to(data.room).emit('newAdminNotification', { type: 'report' })
+      }
+      const files = await File.find({ moderated: false })
+      if (files.length) {
+        io.to(data.room).emit('newAdminNotification', { type: 'file' })
       }
     }
   })

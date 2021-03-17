@@ -314,7 +314,7 @@ const Strings = {
   'boardDescription': {
     ru: 'Описание доски',
     en: 'Board description',
-    jp: '説明を入力してください'
+    jp: 'ボードの説明'
   },
   'enterDescription': {
     ru: 'Ведите описание',
@@ -760,6 +760,131 @@ const Strings = {
     ru: 'Ответы',
     en: 'Answers',
     jp: '答え'
+  },
+  'folder': {
+    ru: 'Папка',
+    en: 'Folder',
+    jp: 'フォルダ'
+  },
+  'uploadsFolders': {
+    ru: 'Папки загрузок',
+    en: 'Uploads folders',
+    jp: 'フォルダをアップロードします'
+  },
+  'manageUploadsFolders': {
+    ru: 'Управление папками Загрузок',
+    en: 'Manage Uploads folders',
+    jp: 'アップロードフォルダを管理する'
+  },
+  'createNewFolder': {
+    ru: 'Создать новую папку',
+    en: 'Create new folder',
+    jp: '新しいフォルダを作成します'
+  },
+  'file1': {
+    ru: 'файл',
+    en: 'file',
+    jp: 'ファイル'
+  },
+  'file2': {
+    ru: 'файла',
+    en: 'files',
+    jp: 'ファイル'
+  },
+  'file3': {
+    ru: 'файлов',
+    en: 'files',
+    jp: 'ファイル'
+  },
+  'folderShortName': {
+    ru: 'Короткое имя папки',
+    en: 'Folder short name',
+    jp: 'フォルダの短縮名'
+  },
+  'folderTitle': {
+    ru: 'Название папки',
+    en: 'Folder title',
+    jp: 'フォルダータイトル'
+  },
+  'folderDescription': {
+    ru: 'Описание папки',
+    en: 'Folder description',
+    jp: 'フォルダの説明'
+  },
+  'folderPosition': {
+    ru: 'Позиция папки',
+    en: 'Folder position',
+    jp: 'フォルダの位置'
+  },
+  'noFoldersYet': {
+    ru: 'Пока нет папок',
+    en: 'No folders yet',
+    jp: 'まだフォルダはありません'
+  },
+  'unableToDisplayFolders': {
+    ru: 'Невозможно отобразить папки',
+    en: 'Unable to display folders',
+    jp: 'フォルダを表示できません'
+  },
+  'unableToDisplayFolder': {
+    ru: 'Невозможно отобразить папку',
+    en: 'Unable to display folder',
+    jp: 'フォルダを表示できません'
+  },
+  'newFile': {
+    ru: 'Новый файл',
+    en: 'New file',
+    jp: '新しいファイル'
+  },
+  'noFilesYet': {
+    ru: 'Пока нет файлов',
+    en: 'No files yet',
+    jp: 'まだファイルはありません'
+  },
+  'unableToDisplayFiles': {
+    ru: 'Невозможно отобразить файлы',
+    en: 'Unable to display files',
+    jp: 'ファイルを表示できません'
+  },
+  'download1': {
+    ru: 'скачивание',
+    en: 'download',
+    jp: 'ダウンロード'
+  },
+  'download2': {
+    ru: 'скачивания',
+    en: 'downloads',
+    jp: 'ダウンロード'
+  },
+  'download3': {
+    ru: 'скачиваний',
+    en: 'downloads',
+    jp: 'ダウンロード'
+  },
+  'fileTitle': {
+    ru: 'Заголовок файла',
+    en: 'File title',
+    jp: 'ファイルタイトル'
+  },
+  'chooseAFolder': {
+    ru: 'Выберите папку',
+    en: 'Choose a folder',
+    jp: 'フォルダを選択してください'
+  },
+  'yourFile': {
+    ru: 'Ваш файл',
+    en: 'Your file',
+    jp: 'あなたのファイル'
+  },
+  'uploadFile': {
+    ru: 'Загрузить файл',
+    en: 'Upload file',
+    jp: 'ファイルをアップロードする'
+  },
+  'foldersNotLoaded': {
+    ru: 'Папки не загружены',
+    en: 'Folders not loaded',
+    jp: 'フォルダーがロードされていません'
   },
 }
 

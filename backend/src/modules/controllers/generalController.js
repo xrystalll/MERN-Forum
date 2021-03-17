@@ -211,7 +211,7 @@ module.exports.getReports = async (req, res, next) => {
       path: 'from',
       select: '_id name displayName onlineAt picture role'
     }
-    const read = sort === 'read' ? { read: true} : { read: false }
+    const read = sort === 'read' ? { read: true } : { read: false }
     const reports = await Report.paginate(read, { sort: { createdAt: -1 }, page, limit, populate })
 
     if (reports.totalDocs) {

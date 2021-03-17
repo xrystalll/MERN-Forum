@@ -5,6 +5,7 @@ const { verifyAccessToken } = require('../modules/utils/jwt');
 const GeneralController = require('../modules/controllers/generalController');
 const ProfileController = require('../modules/controllers/profileController');
 const ForumController = require('../modules/controllers/forumController');
+const UploadsController = require('../modules/controllers/uploadsController');
 
 router.get('/search', GeneralController.search)
 router.get('/stats', GeneralController.getStats)
@@ -47,5 +48,21 @@ router.post('/answer/create', verifyAccessToken, ForumController.createAnswer)
 router.delete('/answer/delete', verifyAccessToken, ForumController.deleteAnswer)
 router.put('/answer/edit', verifyAccessToken, ForumController.editAnswer)
 router.put('/answer/like', verifyAccessToken, ForumController.likeAnswer)
+
+router.get('/folders', UploadsController.getFolders)
+router.get('/folder', UploadsController.getFolder)
+router.post('/folder/create', verifyAccessToken, UploadsController.createFolder)
+router.delete('/folder/delete', verifyAccessToken, UploadsController.deleteFolder)
+router.put('/folder/edit', verifyAccessToken, UploadsController.editFolder)
+
+router.get('/files/all/admin', verifyAccessToken, UploadsController.getAdminAllFiles)
+router.get('/files/all', UploadsController.getAllFiles)
+router.get('/files', UploadsController.getFiles)
+router.get('/file', UploadsController.getFile)
+router.post('/file/create', verifyAccessToken, UploadsController.createFile)
+router.delete('/file/delete', verifyAccessToken, UploadsController.deleteFile)
+router.put('/file/edit', verifyAccessToken, UploadsController.editFile)
+router.put('/file/like', verifyAccessToken, UploadsController.likeFile)
+router.put('/file/moderate', verifyAccessToken, UploadsController.moderateFile)
 
 module.exports = router

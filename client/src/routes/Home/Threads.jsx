@@ -20,9 +20,12 @@ const Threads = ({ lang }) => {
         const response = await data.json()
 
         if (!response.error) {
-          setInit(false)
-          setThreads(response.docs)
-          setNoData(false)
+          if (response.docs.length) {
+            setInit(false)
+            setThreads(response.docs)
+          } else {
+            setNoData(true)
+          }
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         console.error(err)

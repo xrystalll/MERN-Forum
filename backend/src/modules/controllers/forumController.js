@@ -23,7 +23,7 @@ const storage = (dest, name) => {
 const upload = multer({
   storage: storage('forum', 'attach'),
   limits: { fields: 1, fileSize: 1048576 * 12 } // 12Mb
-}).array('attach' , 4)
+}).array('attach', 4)
 
 module.exports.getBoards = async (req, res, next) => {
   try {
@@ -123,6 +123,7 @@ module.exports.editBoard = async (req, res, next) => {
     const admin = req.payload.role === 'admin'
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!boardId) return next(createError.BadRequest('boardId must not be empty'))
     if (name.trim() === '') return next(createError.BadRequest('Board name must not be empty'))
     if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
     if (!position || !Number.isInteger(position) || position < 0) return next(createError.BadRequest('Position must be number'))
@@ -136,7 +137,7 @@ module.exports.editBoard = async (req, res, next) => {
       name: nameUrl,
       title: title.trim().substring(0, 21),
       body: body.substring(0, 100),
-      position,
+      position
     })
     const board = await Board.findById(boardId)
 
@@ -306,7 +307,8 @@ module.exports.editThread = async (req, res, next) => {
 
       const { threadId, title, body, closed } = JSON.parse(req.body.postData)
 
-      if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
+      if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
+      if (title.trim() === '') return next(createError.BadRequest('Thread title must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
       const thread = await Thread.findById(threadId)
@@ -374,6 +376,7 @@ module.exports.adminEditThread = async (req, res, next) => {
       const admin = req.payload.role === 'admin'
 
       if (!admin) return next(createError.Unauthorized('Action not allowed'))
+      if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
       if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
@@ -618,6 +621,7 @@ module.exports.editAnswer = async (req, res, next) => {
 
       const { answerId, body } = JSON.parse(req.body.postData)
 
+      if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Answer body must not be empty'))
 
       const answer = await Answer.findById(answerId)

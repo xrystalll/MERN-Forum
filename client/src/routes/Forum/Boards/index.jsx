@@ -7,9 +7,6 @@ import { Strings } from 'support/Constants';
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import SortNav from 'components/SortNav';
-import { BoardCard } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
 import Default from './Default';
 import Popular from './Popular';

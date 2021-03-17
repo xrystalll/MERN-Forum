@@ -91,6 +91,11 @@ const Layout = ({ children }) => {
                 <span>{Strings.answer[lang]}</span>
                 <i className="bx bx-pencil" />
               </Fragment>
+            ) : postType.type === 'upload' ? (
+              <Fragment>
+                <span>{Strings.newFile[lang]}</span>
+                <i className="bx bx-cloud-upload" />
+              </Fragment>
             ) : (
               <Fragment>
                 <span>{Strings.createNew[lang]}</span>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
+import { FileCard } from 'components/Card';
 import Errorer from 'components/Errorer';
 
 const Uploads = ({ lang }) => {
@@ -12,18 +13,17 @@ const Uploads = ({ lang }) => {
 
   useEffect(() => {
     const fetchUploads = async () => {
-      return
-      // try {
-      //   const data = await fetch(`${BACKEND}/api/uploads?limit=${limit}`)
-      //   const response = await data.json()
+      try {
+        const data = await fetch(`${BACKEND}/api/files/all?limit=${limit}&sort=moderated`)
+        const response = await data.json()
 
-      //   if (!response.error) {
-      //     setInit(false)
-      //     setUploads(response.docs)
-      //   } else throw Error(response.error?.message || 'Error')
-      // } catch(err) {
-      //   console.error(err)
-      // }
+        if (!response.error) {
+          setInit(false)
+          setUploads(response.docs)
+        } else throw Error(response.error?.message || 'Error')
+      } catch(err) {
+        console.error(err)
+      }
     }
 
     init && fetchUploads()
@@ -38,7 +38,7 @@ const Uploads = ({ lang }) => {
 
       {uploads.length ? (
         uploads.map(item => (
-          <div key={item._id}>{item.title}</div>
+          <FileCard key={item._id} data={item}/>
         ))
       ) : (
         <Errorer message={Strings.noUploadsYet[lang]} />

@@ -19,6 +19,9 @@ import Admins from 'routes/Users/Admins';
 import User from 'routes/User';
 import Banned from 'routes/Banned';
 import Dashboard from 'routes/Dashboard';
+import Folders from 'routes/Uploads/Folders';
+import Folder from 'routes/Uploads/Folder';
+import File from 'routes/Uploads/File';
 import { NotFound } from 'routes/Error';
 
 const App = () => {
@@ -45,6 +48,9 @@ const App = () => {
             <UsersOnlyRoute path="/user/:userName" component={User} />
             <GeneralRoute path="/admins" component={Admins} />
             <AdminsOnlyRoute path="/dashboard" component={Dashboard} />
+            <GeneralRoute exact path="/uploads" component={Folders} />
+            <GeneralRoute path="/uploads/:folderName" component={Folder} />
+            <GeneralRoute path="/file/:fileId" component={File} />
             <Route path="/banned" component={Banned} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>
