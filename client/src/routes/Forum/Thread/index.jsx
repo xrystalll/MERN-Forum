@@ -36,6 +36,7 @@ const Thread = ({ match }) => {
   useEffect(() => {
     const threadTitle = thread.title || Strings.thread[lang]
     document.title = 'Forum | ' + threadTitle
+
     const fetchThread = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/thread?threadId=${threadId}`)

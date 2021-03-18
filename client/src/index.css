@@ -181,7 +181,7 @@ ul {
 }
 .empty_top {
   margin-top: 8px;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 
@@ -290,6 +290,12 @@ ul {
   top: 22px;
   left: 24px;
 }
+img.card_left {
+  width: calc(100% - 38px);
+  height: 100%;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
 .card_right {
   width: calc(100% - 88px);
 }
@@ -305,6 +311,9 @@ ul {
   .card_head {
     font-size: .95rem;
   }
+}
+.card_head.column {
+  flex-direction: column;
 }
 .card_head_inner {
   display: flex;

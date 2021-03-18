@@ -14,6 +14,7 @@ import Boards from './Boards';
 import Reports from './Reports';
 import Bans from './Bans';
 import Folders from './Folders';
+import Files from './Files';
 import './style.css';
 
 const Dashboard = () => {
@@ -50,6 +51,7 @@ const Dashboard = () => {
         <Route path={path + '/reports'} component={Reports} />
         <Route path={path + '/bans'} component={Bans} />
         <Route path={path + '/folders'} component={Folders} />
+        <Route path={path + '/files'} component={Files} />
         <Route path={path} exact>
           <Breadcrumbs current={Strings.dashboard[lang]} links={[
             { title: Strings.home[lang], link: '/' }
@@ -92,6 +94,14 @@ const Dashboard = () => {
             <NavLink to={path + '/folders'} className="admin__nav_item">
               <i className="bx bx-folder" />
               {Strings.uploadsFolders[lang]}
+            </NavLink>
+
+            <NavLink
+              to={path + '/files'}
+              className={!!localStorage.getItem('files') ? 'admin__nav_item new' : 'admin__nav_item'}
+            >
+              <i className="bx bx-file-blank" />
+              {Strings.moderateFiles[lang]}
             </NavLink>
           </div>
         </Route>

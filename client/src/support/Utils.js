@@ -18,3 +18,12 @@ export const dateFormat = (date) => {
   return moment(date).locale(localStorage.getItem('lang') || 'en').calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YYYY, hh:mm' })
 }
 
+export const formatBytes = (bytes, decimals) => {
+  if (bytes === 0) return '0 bytes'
+
+  const k = 1024
+  const dm = decimals <= 0 ? 0 : decimals || 2
+  const sizes = ['bytes', 'Kb', 'Mb', 'Gb']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}

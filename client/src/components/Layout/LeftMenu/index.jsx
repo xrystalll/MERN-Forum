@@ -26,6 +26,9 @@ const LeftMenu = ({ open, setMenuOpen }) => {
       if (data.type === 'report') {
         localStorage.setItem('reports', true)
       }
+      if (data.type === 'file') {
+        localStorage.setItem('files', true)
+      }
       setAdminNotification(true)
     })
   }, [])

@@ -24,13 +24,13 @@
 }
 
 .edit {
-  color: var(--main-success-color);
+  color: var(--main-success-color) !important;
 }
 .delete {
-  color: var(--main-danger-color);
+  color: var(--main-danger-color) !important;
 }
 .cancel {
-  color: var(--main-info-color);
+  color: var(--main-info-color) !important;
 }
 .cancel i {
   font-size: 22px !important;

@@ -211,9 +211,9 @@ module.exports.getFile = async (req, res, next) => {
     }]
     const file = await File.findById(fileId).populate(populate)
 
-    if (!file.moderated) return next(createError.BadRequest('File not modarated'))
-
     const folder = await Folder.findById(file.folderId).select('_id name title')
+
+    if (!file.moderated) return res.json({ folder, message: 'File on moderation' })
 
     res.json({ folder, file })
   } catch(err) {
@@ -379,7 +379,7 @@ module.exports.likeFile = async (req, res, next) => {
 
 module.exports.moderateFile = async (req, res, next) => {
   try {
-    const { fileId } = req.query
+    const { fileId } = req.body
     const admin = req.payload.role === 'admin'
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))

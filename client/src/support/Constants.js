@@ -753,7 +753,7 @@ const Strings = {
   },
   'threads': {
     ru: 'Треды',
-    en: 'Thread',
+    en: 'Threads',
     jp: 'スレッド'
   },
   'answers': {
@@ -772,8 +772,8 @@ const Strings = {
     jp: 'フォルダをアップロードします'
   },
   'manageUploadsFolders': {
-    ru: 'Управление папками Загрузок',
-    en: 'Manage Uploads folders',
+    ru: 'Управление папками загрузок',
+    en: 'Manage uploads folders',
     jp: 'アップロードフォルダを管理する'
   },
   'createNewFolder': {
@@ -885,6 +885,51 @@ const Strings = {
     ru: 'Папки не загружены',
     en: 'Folders not loaded',
     jp: 'フォルダーがロードされていません'
+  },
+  'moderateFiles': {
+    ru: 'Модерировать файлы',
+    en: 'Moderate files',
+    jp: '中程度のファイル'
+  },
+  'needToModerate': {
+    ru: 'Нужно модерировать',
+    en: 'Need to moderate',
+    jp: 'モデレートする必要があります'
+  },
+  'download': {
+    ru: 'Скачать',
+    en: 'Download',
+    jp: 'ダウンロード'
+  },
+  'publish': {
+    ru: 'Опубликовать',
+    en: 'Publish',
+    jp: '公開する'
+  },
+  'onModeration': {
+    ru: 'На модерации',
+    en: 'On moderation',
+    jp: '節度について'
+  },
+  'theFileWillBePublishedAfterModeration': {
+    ru: 'Файл будет опубликован после модерации',
+    en: 'The file will be published after moderation',
+    jp: 'ファイルはモデレート後に公開されます'
+  },
+  'fileNotFound': {
+    ru: 'Файл не найден',
+    en: 'File not found',
+    jp: 'ファイルが見つかりません'
+  },
+  'file': {
+    ru: 'Файл',
+    en: 'File',
+    jp: 'ファイル'
+  },
+  'fileDeleted': {
+    ru: 'Файл удален',
+    en: 'File deleted',
+    jp: 'ファイルが削除されました'
   },
 }
 

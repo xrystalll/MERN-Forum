@@ -8,8 +8,9 @@ import { StoreContext } from 'store/Store';
 import { counter, declOfNum, dateFormat } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
-import Dropdown from './Dropdown';
 import Markdown from 'components/Markdown';
+
+import Dropdown from './Dropdown';
 
 const Card = ({ data, threadData, full = false, preview = false, type }) => {
   const { user, token, setModalOpen, setPostType, setFabVisible, lang } = useContext(StoreContext)
@@ -806,7 +807,7 @@ const FileCard = ({ data }) => {
 
             <footer className="card_foot">
               <div className="act_btn foot_btn disable">
-                <i className="bx bx-download"></i>
+                <i className="bx bx-download" />
                 <span className="card_count">{counter(data.downloads)}</span>
                 <span className="hidden">
                   {declOfNum(data.downloads, [Strings.download1[lang], Strings.download2[lang], Strings.download3[lang]])}
@@ -814,7 +815,7 @@ const FileCard = ({ data }) => {
               </div>
 
               <div className="act_btn foot_btn disable">
-                <i className="bx bx-heart"></i>
+                <i className="bx bx-heart" />
                   <span className="card_count">{counter(data.likes.length)}</span>
                   <span className="hidden">
                     {declOfNum(data.likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
