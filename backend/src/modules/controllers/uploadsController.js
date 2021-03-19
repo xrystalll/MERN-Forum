@@ -9,6 +9,20 @@ const File = require('../models/File');
 
 const deleteFiles = require('../utils//deleteFiles');
 
+const checkFileExec = (file, callback) => {
+  if (
+    file.mimetype === 'text/javascript' ||
+    file.mimetype === 'text/html' ||
+    file.mimetype === 'text/css' ||
+    file.mimetype === 'application/json' ||
+    file.mimetype === 'application/ld+json' ||
+    file.mimetype === 'application/php'
+  ) {
+    callback('File format is not allowed', false)
+  }
+  else callback(null, true)
+}
+
 const storage = (dest, name) => {
   return multer.diskStorage({
     destination: path.join(__dirname, '..', '..', '..', 'public', dest),
@@ -20,6 +34,7 @@ const storage = (dest, name) => {
 
 const upload = multer({
   storage: storage('uploads', 'file'),
+  fileFilter: (req, file, callback) => checkFileExec(file, callback),
   limits: { fields: 1, fileSize: 1048576 * 80 } // 80Mb
 }).single('file')
 
@@ -291,40 +306,19 @@ module.exports.deleteFile = async (req, res, next) => {
 
 module.exports.editFile = async (req, res, next) => {
   try {
-    upload(req, res, async (err) => {
-      if (err) return next(createError.BadRequest(err.message))
+    const { fileId, title, body } = req.body
+    const admin = req.payload.role === 'admin'
 
-      const { fileId, title, body } = JSON.parse(req.body.postData)
-      const admin = req.payload.role === 'admin'
+    if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
+    if (title.trim() === '') return next(createError.BadRequest('File title must not be empty'))
+    if (body.trim() === '') return next(createError.BadRequest('File body must not be empty'))
 
-      if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
-      if (title.trim() === '') return next(createError.BadRequest('File title must not be empty'))
-      if (body.trim() === '') return next(createError.BadRequest('File body must not be empty'))
+    const file = await File.findById(fileId)
 
-      const file = await File.findById(fileId)
-
-      if (req.payload.id !== file.author.toString() || !admin) return next(createError.Unauthorized('Action not allowed'))
-
-      if (req.file) {
-        const fileUri = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(file.file.url))
-        deleteFiles([fileUri], (err) => {
-          if (err) console.error(err)
-        })
-      }
-
-      let fileObj = file.file
-      if (req.file) {
-        fileObj = {
-          url: `/uploads/${req.file.filename}`,
-          type: req.file.mimetype,
-          size: req.file.size
-        }
-      }
-
+    if (req.payload.id === file.author.toString() || admin) {
       await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, {
         title: title.trim().substring(0, 100),
-        body: body.substring(0, 1000),
-        file: fileObj
+        body: body.substring(0, 1000)
       })
 
       const populate = [{
@@ -339,7 +333,9 @@ module.exports.editFile = async (req, res, next) => {
       res.json(editedFile)
 
       req.io.to('file:' + fileId).emit('fileEdited', editedFile)
-    })
+    } else {
+      return next(createError.Unauthorized('Action not allowed'))
+    }
   } catch(err) {
     next(createError.InternalServerError(err))
   }
@@ -388,6 +384,31 @@ module.exports.moderateFile = async (req, res, next) => {
     await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { moderated: true })
 
     res.json({ message: 'File successfully moderated' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.download = async (req, res, next) => {
+  try {
+    const { fileId } = req.body
+
+    if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
+
+    await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { $inc: { downloads: 1 } })
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const file = await File.findById(fileId).populate(populate)
+
+    res.json(file)
+
+    req.io.to('file:' + fileId).emit('fileDownloaded', file)
   } catch(err) {
     next(createError.InternalServerError(err))
   }

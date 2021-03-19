@@ -10,6 +10,8 @@ const Report = require('../models/Report');
 
 module.exports.getStats = async (req, res, next) => {
   try {
+    const bans = await User.find({ ban: { $ne: null } })
+
     res.json([{
       _id: 1,
       title: 'Users',
@@ -29,7 +31,7 @@ module.exports.getStats = async (req, res, next) => {
     }, {
       _id: 5,
       title: 'Bans',
-      count: await Ban.countDocuments()
+      count: bans.length
     }])
   } catch(err) {
     next(createError.InternalServerError(err))

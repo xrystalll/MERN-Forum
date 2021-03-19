@@ -931,6 +931,36 @@ const Strings = {
     en: 'File deleted',
     jp: 'ファイルが削除されました'
   },
+  'editFile': {
+    ru: 'Редактировать файл',
+    en: 'Edit file',
+    jp: 'ファイル編集'
+  },
+  'copyFileLink': {
+    ru: 'Копировать ссылку на файл',
+    en: 'Copy file link',
+    jp: 'ファイルリンクのコピー'
+  },
+  'linkCopied': {
+    ru: 'Ссылка скопирована',
+    en: 'Link copied',
+    jp: 'リンクがコピーされました'
+  },
+  'failedToCopyLink': {
+    ru: 'Ссылка скопирована',
+    en: 'Failed to copy link',
+    jp: 'リンクのコピーに失敗しました'
+  },
+  'extension': {
+    ru: 'Расширение',
+    en: 'Extension',
+    jp: '拡張子'
+  },
+  'fileSize': {
+    ru: 'Размер файла',
+    en: 'File size',
+    jp: 'ファイルサイズ'
+  },
 }
 
 export { BACKEND, Strings };

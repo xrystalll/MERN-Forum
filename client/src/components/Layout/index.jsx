@@ -60,6 +60,12 @@ const Layout = ({ children }) => {
         id: postType.id
       })
     }
+    if (postType.type === 'fileEdit') {
+      setPostType({
+        type: 'upload',
+        id: null
+      })
+    }
     setModalOpen(false)
   }
 
@@ -86,12 +92,17 @@ const Layout = ({ children }) => {
 
         {user && fab && (
           <div className="fab" onClick={fabClick}>
-            {postType.type === 'answer' ? (
+            {
+              postType.type === 'answer' ||
+              postType.type === 'answerEdit' ||
+              postType.type === 'userThreadEdit' ||
+              postType.type === 'adminThreadEdit'
+               ? (
               <Fragment>
                 <span>{Strings.answer[lang]}</span>
                 <i className="bx bx-pencil" />
               </Fragment>
-            ) : postType.type === 'upload' ? (
+            ) : postType.type === 'upload' || postType.type === 'fileEdit' ? (
               <Fragment>
                 <span>{Strings.newFile[lang]}</span>
                 <i className="bx bx-cloud-upload" />

@@ -1,5 +1,4 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -14,8 +13,8 @@ import Errorer from 'components/Errorer';
 
 import FileContent from './FileContent';
 
-const File = ({ match }) => {
-  const { user, token, setPostType, lang } = useContext(StoreContext)
+const File = ({ history, match }) => {
+  const { user, token, setPostType, setModalOpen, lang } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const { fileId } = match.params
 
@@ -74,7 +73,7 @@ const File = ({ match }) => {
 
   useEffect(() => {
     Socket.on('fileDeleted', (data) => {
-      toast.info(Strings.fileDeleted[lang])
+      history.push('/uploads/' + folder.name)
     })
     Socket.on('fileEdited', (data) => {
       setFile(data)
@@ -82,7 +81,40 @@ const File = ({ match }) => {
     Socket.on('fileLiked', (data) => {
       setFile(data)
     })
+    Socket.on('fileDownloaded', (data) => {
+      setFile(data)
+    })
   }, [])
+
+  const deleteFile = () => {
+    fetch(BACKEND + '/api/file/delete', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ fileId })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          history.push('/uploads/' + folder.name)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
+  }
+
+  const editFile = () => {
+    setPostType({
+      type: 'fileEdit',
+      id: fileId,
+      someData: {
+        title: file.title,
+        body: file.body
+      }
+    })
+    setModalOpen(true)
+  }
 
   return (
     <Section>
@@ -100,6 +132,8 @@ const File = ({ match }) => {
               user={user}
               token={token}
               lang={lang}
+              deleteFile={deleteFile}
+              editFile={editFile}
             />
           </Fragment>
         ) : <Loader color="#64707d" />

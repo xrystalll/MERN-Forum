@@ -157,6 +157,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
       .then(response => response.json())
       .then(data => {
         if (data.message) {
+          toast.success(data.message)
           history.push('/')
         } else throw Error(data.error?.message || 'Error')
       })
@@ -760,7 +761,7 @@ const FolderCard = ({ data }) => {
 
           <footer className="card_foot">
             <div className="act_btn foot_btn disable">
-              <i className="bx bx-folder" />
+              <i className="bx bx-file-blank" />
               <span className="card_count">{counter(data.filesCount)}</span>
               <span className="hidden">
                 {declOfNum(data.threadsCount, [Strings.file1[lang], Strings.file2[lang], Strings.file3[lang]])}
@@ -773,7 +774,7 @@ const FolderCard = ({ data }) => {
   )
 }
 
-const FileCard = ({ data }) => {
+const FileCard = ({ data, deleteFile }) => {
   const { lang } = useContext(StoreContext)
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
 
@@ -821,6 +822,12 @@ const FileCard = ({ data }) => {
                     {declOfNum(data.likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
                   </span>
               </div>
+
+              {deleteFile && (
+                <div className="act_btn foot_btn delete" onClick={() => deleteFile(data._id)}>
+                  <i className="bx bx-trash-alt" />
+                </div>
+              )}
             </footer>
           </div>
         </div>

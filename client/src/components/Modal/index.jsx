@@ -331,12 +331,24 @@ const Modal = ({ open, close }) => {
       setLoading(true)
       createFile()
     }
+
+    if (postType.type === 'fileEdit') {
+      if (!fileValues.title.trim()) {
+        return setErrors({ title: Strings.enterTitle[lang] })
+      }
+      if (!fileValues.body.trim()) {
+        return setErrors({ body: Strings.enterContent[lang] })
+      }
+
+      setLoading(true)
+      editFile()
+    }
   }
 
   const { onChange: fileChange, onSubmit: uploadSubmit, values: fileValues } = useForm(uploadCallback, {
     folderId: postType.id,
-    title: '',
-    body: ''
+    title: postType?.someData?.title || '',
+    body: postType?.someData?.body || ''
   })
 
   const createFile = () => {
@@ -361,6 +373,36 @@ const Modal = ({ open, close }) => {
         if (!data.error) {
           close()
           history.push('/file/' + data._id)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        setLoading(false)
+        setErrors({ general: err.message })
+      })
+  }
+
+  const editFile = () => {
+    fetch(`${BACKEND}/api/file/edit`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fileId: fileValues.folderId,
+        title: fileValues.title,
+        body: fileValues.body
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setLoading(false)
+        if (!data.error) {
+          close()
+          setPostType({
+            type: 'upload',
+            id: null
+          })
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
@@ -675,6 +717,47 @@ const Modal = ({ open, close }) => {
     </ModalBody>
   )
 
+  const editFileContent = (
+    <ModalBody title={Strings.editFile[lang]} onClick={close}>
+      <form className="form_inner" onSubmit={uploadSubmit}>
+        <FormCardItem title={Strings.fileTitle[lang]} error={errors.title}>
+          <div className={errors.title ? 'form_block error' : 'form_block' }>
+            <Input
+              name="title"
+              value={fileValues.title}
+              placeholder={Strings.enterTitle[lang]}
+              maxLength="100"
+              onChange={fileChange}
+            />
+          </div>
+        </FormCardItem>
+
+        <FormCardItem title={Strings.content[lang]} error={errors.body}>
+          <TextareaForm
+            className={errors.body ? 'form_block error' : 'form_block' }
+            name="body"
+            value={fileValues.body}
+            placeholder={Strings.enterContent[lang]}
+            onChange={fileChange}
+          />
+        </FormCardItem>
+
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
+        <div className="card_item">
+          {loading
+            ? <Loader className="btn" />
+            : <InputButton text={Strings.edit[lang]} />
+          }
+        </div>
+      </form>
+    </ModalBody>
+  )
+
   let modalContent
   if (postType.type === 'thread') {
     modalContent = threadContent
@@ -693,6 +776,9 @@ const Modal = ({ open, close }) => {
   }
   if (postType.type === 'upload') {
     modalContent = uploadContent
+  }
+  if (postType.type === 'fileEdit') {
+    modalContent = editFileContent
   }
 
   return (

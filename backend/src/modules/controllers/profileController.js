@@ -28,8 +28,8 @@ const storage = (dest, name) => {
 
 const upload = multer({
   storage: storage('users', 'picture'),
-  limits: { fileSize: 1048576 * 8 }, // 8Mb
-  fileFilter: (req, file, callback) => checkFileType(file, callback)
+  fileFilter: (req, file, callback) => checkFileType(file, callback),
+  limits: { fileSize: 1048576 * 8 } // 8Mb
 }).single('picture')
 
 const getProfile = async (req, res, next) => {

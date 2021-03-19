@@ -64,5 +64,6 @@ router.delete('/file/delete', verifyAccessToken, UploadsController.deleteFile)
 router.put('/file/edit', verifyAccessToken, UploadsController.editFile)
 router.put('/file/like', verifyAccessToken, UploadsController.likeFile)
 router.put('/file/moderate', verifyAccessToken, UploadsController.moderateFile)
+router.put('/file/download', UploadsController.download)
 
 module.exports = router

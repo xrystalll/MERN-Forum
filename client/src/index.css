@@ -199,6 +199,9 @@ ul {
   align-items: flex-start;
   margin-bottom: .4rem;
 }
+.card_item.center {
+  justify-content: center;
+}
 .card_body {
   flex: 1 auto;
   min-width: 0;
@@ -298,6 +301,7 @@ img.card_left {
 }
 .card_right {
   width: calc(100% - 88px);
+  overflow: hidden;
 }
 .card_head {
   display: flex;
@@ -457,6 +461,11 @@ a.head_text:hover {
   margin: .75rem;
   cursor: pointer;
   user-select: none;
+}
+.secondary_text {
+  color: var(--actions-color);
+  font-size: .95rem;
+  margin-right: .5rem;
 }
 
 .attach_list {
