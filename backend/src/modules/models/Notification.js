@@ -11,7 +11,7 @@ const notificationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  threadId: Schema.Types.ObjectId,
+  pageId: Schema.Types.ObjectId,
   title: String,
   body: String,
   createdAt: String,

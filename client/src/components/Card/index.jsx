@@ -714,13 +714,21 @@ const BanInfoCard = ({ data, owner }) => {
 }
 
 const NotificationCard = ({ data }) => {
+  let pagePath = '/thread/' + data.threadId
+  if (data.type === 'answerToThread' || data.type === 'answerToAnswer') {
+    pagePath = '/thread/' + data.pageId
+  }
+  if (data.type === 'commentToFile' || data.type === 'commentToComment') {
+    pagePath = '/file/' + data.pageId
+  }
+
   return (
     <div className="card_item">
       <div className="card_body">
         <div className={data.read ? 'card_block' : 'card_block noread'}>
           <header className="card_head">
             <div className="card_head_inner">
-              <Link to={'/thread/' + data.threadId} className="card_title">
+              <Link to={pagePath} className="card_title">
                 {data.title}
               </Link>
 

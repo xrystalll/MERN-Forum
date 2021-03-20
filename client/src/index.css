@@ -780,6 +780,11 @@ a.head_text:hover {
   margin-left: .5rem;
 }
 
+.comments_form {
+  margin-bottom: 1.5rem !important;
+  max-width: initial;
+}
+
 .input_area {
   height: 36px;
   max-height: inherit !important;

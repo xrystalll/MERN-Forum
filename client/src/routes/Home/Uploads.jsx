@@ -10,6 +10,7 @@ const Uploads = ({ lang }) => {
   const [init, setInit] = useState(true)
   const [uploads, setUploads] = useState([])
   const limit = 3
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchUploads = async () => {
@@ -20,16 +21,18 @@ const Uploads = ({ lang }) => {
         if (!response.error) {
           setInit(false)
           setUploads(response.docs)
+          setLoading(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         console.error(err)
+        setLoading(false)
       }
     }
 
     init && fetchUploads()
   }, [init])
 
-  return (
+  return !loading && (
     <Section>
       <SectionHeader
         title={Strings.filesUploads[lang]}

@@ -66,4 +66,9 @@ router.put('/file/like', verifyAccessToken, UploadsController.likeFile)
 router.put('/file/moderate', verifyAccessToken, UploadsController.moderateFile)
 router.put('/file/download', UploadsController.download)
 
+router.get('/file/comments', UploadsController.getComments)
+router.post('/file/comment/create', verifyAccessToken, UploadsController.createComment)
+router.delete('/file/comment/delete', verifyAccessToken, UploadsController.deleteComment)
+router.put('/file/comment/like', verifyAccessToken, UploadsController.likeComment)
+
 module.exports = router

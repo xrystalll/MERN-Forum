@@ -570,7 +570,7 @@ module.exports.createAnswer = async (req, res, next) => {
           type,
           to,
           from: req.payload.id,
-          threadId,
+          pageId: threadId,
           title: thread.title,
           body: body.substring(0, 1000),
           createdAt: new Date().toISOString(),

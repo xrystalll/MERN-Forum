@@ -961,6 +961,21 @@ const Strings = {
     en: 'File size',
     jp: 'ファイルサイズ'
   },
+  'comments': {
+    ru: 'Комментарии',
+    en: 'Comments',
+    jp: 'コメント'
+  },
+  'noCommentsYet': {
+    ru: 'Пока нет комментариев',
+    en: 'No comments yet',
+    jp: 'コメントはまだありません'
+  },
+  'enterYourComment': {
+    ru: 'Введите комментарий',
+    en: 'Enter your comment',
+    jp: 'コメントを入力してください'
+  },
 }
 
 export { BACKEND, Strings };

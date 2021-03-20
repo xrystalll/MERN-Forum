@@ -6,6 +6,8 @@ const multer = require('multer');
 
 const Folder = require('../models/Folder');
 const File = require('../models/File');
+const Comment = require('../models/Comment');
+const Notification = require('../models/Notification');
 
 const deleteFiles = require('../utils//deleteFiles');
 
@@ -261,6 +263,7 @@ module.exports.createFile = async (req, res, next) => {
           size: req.file.size
         },
         downloads: 0,
+        commentsCount: 0,
         moderated: false
       })
 
@@ -294,6 +297,7 @@ module.exports.deleteFile = async (req, res, next) => {
 
     await file.delete()
 
+    await Comment.deleteMany({ fileId })
     await Folder.updateOne({ _id: Mongoose.Types.ObjectId(file.folderId) }, { $inc: { filesCount: -1 } })
 
     res.json({ message: 'File successfully deleted' })
@@ -409,6 +413,160 @@ module.exports.download = async (req, res, next) => {
     res.json(file)
 
     req.io.to('file:' + fileId).emit('fileDownloaded', file)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getComments = async (req, res, next) => {
+  try {
+    const { fileId, limit = 10, page = 1, pagination = true } = req.query
+
+    if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const comments = await Comment.paginate({ fileId }, { page, limit, populate, pagination: JSON.parse(pagination) })
+
+    res.json(comments)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.createComment = async (req, res, next) => {
+  try {
+    const { fileId, commentedTo, body } = req.body
+
+    if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
+    if (body.trim() === '') return next(createError.BadRequest('Comment body must not be empty'))
+
+    const now = new Date().toISOString()
+
+    const file = await File.findById(fileId)
+
+    const newComment = new Comment({
+      fileId,
+      commentedTo,
+      body: body.substring(0, 1000),
+      createdAt: now,
+      author: req.payload.id
+    })
+
+    const comment = await newComment.save()
+
+    await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { $inc: { commentsCount: 1 } })
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const populatedComment = await Comment.findById(comment._id).populate(populate)
+
+    res.json(populatedComment)
+
+    req.io.to('file:' + fileId).emit('commentCreated', populatedComment)
+
+    let type = 'commentToFile'
+    let to = null
+    if (commentedTo === fileId || !commentedTo) {
+      type = 'commentToFile'
+      to = file.author
+    } else {
+      const commentTo = await Comment.findById(commentedTo)
+      type = 'commentToComment'
+      to = commentTo.author
+    }
+
+    if (req.payload.id !== file.author.toString()) {
+      const newNotification = new Notification({
+        type,
+        to,
+        from: req.payload.id,
+        pageId: fileId,
+        title: file.title,
+        body: body.substring(0, 1000),
+        createdAt: new Date().toISOString(),
+        read: false
+      })
+      const notification = await newNotification.save()
+
+      const populate = [{
+        path: 'to',
+        select: '_id name displayName onlineAt picture role'
+      }, {
+        path: 'from',
+        select: '_id name displayName onlineAt picture role'
+      }]
+      const populatedNotification = await Notification.findById(notification._id).populate(populate)
+
+      req.io.to('notification:' + to).emit('newNotification', populatedNotification)
+    }
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.deleteComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.body
+    const admin = req.payload.role === 'admin'
+
+    if (!commentId) return next(createError.BadRequest('commentId must not be empty'))
+
+    const comment = await Comment.findById(commentId)
+
+    if (req.payload.id === comment.author.toString() || admin) {
+      await comment.delete()
+
+      await File.updateOne({ _id: Mongoose.Types.ObjectId(comment.fileId) }, { $inc: { commentsCount: -1 } })
+
+      res.json({ message: 'Comment successfully deleted' })
+
+      req.io.to('file:' + comment.fileId).emit('commentDeleted', { id: commentId })
+    } else {
+      return next(createError.Unauthorized('Action not allowed'))
+    }
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.likeComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.body
+
+    if (!commentId) return next(createError.BadRequest('commentId must not be empty'))
+
+    const comment = await Comment.findById(commentId)
+
+    if (comment.likes.find(like => like.toString() === req.payload.id)) {
+      comment.likes = comment.likes.filter(like => like.toString() !== req.payload.id) // unlike
+    } else {
+      comment.likes.push(req.payload.id) // like
+    }
+    await comment.save()
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const likedComment = await Comment.findById(commentId).populate(populate)
+
+    res.json(likedComment)
+
+    req.io.to('file:' + comment.fileId).emit('commentLiked', likeComment)
   } catch(err) {
     next(createError.InternalServerError(err))
   }

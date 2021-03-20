@@ -7,15 +7,6 @@ const fileObjectSchema = new Schema({
   size: String
 })
 
-const commentSchema = new Schema({
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  body: String,
-  createdAt: String
-})
-
 const fileSchema = new Schema({
   folderId: Schema.Types.ObjectId,
   title: String,
@@ -31,7 +22,7 @@ const fileSchema = new Schema({
     ref: 'User'
   }],
   downloads: Number,
-  comments: [commentSchema],
+  commentsCount: Number,
   moderated: Boolean
 })
 fileSchema.plugin(mongoosePaginate)

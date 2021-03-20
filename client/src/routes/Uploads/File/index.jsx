@@ -12,17 +12,21 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 import FileContent from './FileContent';
+import Comments from './Comments';
 
 const File = ({ history, match }) => {
-  const { user, token, setPostType, setModalOpen, lang } = useContext(StoreContext)
+  const { user, token, setPostType, setFabVisible, setModalOpen, lang } = useContext(StoreContext)
   const [init, setInit] = useState(true)
   const { fileId } = match.params
 
   useEffect(() => {
-    init && setPostType({
-      type: 'upload',
-      id: null
-    })
+    if (init) {
+      setFabVisible(false)
+      setPostType({
+        type: 'upload',
+        id: null
+      })
+    }
     setInit(false)
   }, [init])
 
@@ -32,6 +36,7 @@ const File = ({ history, match }) => {
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
   const [onModeration, setOnModeration] = useState(false)
+  const [commentsSubscribed, setCommentsSubscribed] = useState({})
 
   useEffect(() => {
     const fileTitle = file.title || Strings.file[lang]
@@ -84,6 +89,15 @@ const File = ({ history, match }) => {
     Socket.on('fileDownloaded', (data) => {
       setFile(data)
     })
+    Socket.on('commentCreated', (data) => {
+      setCommentsSubscribed({ type: 'commentCreated', payload: data })
+    })
+    Socket.on('commentDeleted', (data) => {
+      setCommentsSubscribed({ type: 'commentDeleted', payload: data })
+    })
+    Socket.on('commentLiked', (data) => {
+      setCommentsSubscribed({ type: 'commentLiked', payload: data })
+    })
   }, [])
 
   const deleteFile = () => {
@@ -134,6 +148,17 @@ const File = ({ history, match }) => {
               lang={lang}
               deleteFile={deleteFile}
               editFile={editFile}
+            />
+
+            <br />
+
+            <Comments
+              lang={lang}
+              user={user}
+              token={token}
+              fileId={file._id}
+              subcribed={commentsSubscribed}
+              clearSubcribe={setCommentsSubscribed}
             />
           </Fragment>
         ) : <Loader color="#64707d" />
