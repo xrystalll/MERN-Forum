@@ -86,9 +86,9 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
   }
 
   const editClick = () => {
-    const admin = user.role === 'admin' ? true : false
+    const moder = user.role >= 2 ? true : false
     let postType
-    if (type === 'thread' && admin) {
+    if (type === 'thread' && moder) {
       postType = 'adminThreadEdit'
     } else if (type === 'answer') {
       postType = 'answerEdit'
@@ -215,7 +215,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
 
   const onClose = () => {
     if (type !== 'answer') {
-      const editApi = user.role === 'admin' ? 'adminedit' : 'edit'
+      const editApi = user.role >= 2 ? 'adminedit' : 'edit'
 
       const formData = new FormData()
       formData.append('postData', JSON.stringify({
@@ -312,8 +312,10 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
                   {full && (
                     <Fragment>
                       {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
-                      {data.author.role === 'admin' ? (
+                      {data.author.role === 3 ? (
                         <span className="user_status">admin</span>
+                      ) : data.author.role === 2 ? (
+                        <span className="user_status">moder</span>
                       ) : (
                         <Fragment>
                           {type === 'thread' && <span className="user_status">owner</span>}
@@ -336,7 +338,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
 
             {full && user && (
               <Dropdown>
-                {user.role === 'admin' && (
+                {user.role >= 2 && (
                   <Fragment>
                     {type !== 'answer' && (
                       <div
@@ -361,7 +363,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
                       </div>
                     )}
                     <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
-                    {user.id !== data.author._id && data.author.role !== 'admin' && (
+                    {user.id !== data.author._id && data.author.role === 1 && (
                       <div
                         onClick={onBan}
                         className="dropdown_item"
@@ -374,11 +376,11 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
                     )}
                   </Fragment>
                 )}
-                {user.id === data.author._id || user.role === 'admin'
+                {user.id === data.author._id || user.role >= 2
                   ? <div onClick={editClick} className="dropdown_item">{Strings.edit[lang]}</div>
                   : null
                 }
-                {type !== 'answer' && user.id === data.author._id && user.role !== 'admin' && (
+                {type !== 'answer' && user.id === data.author._id && user.role === 1 && (
                   <div
                     onClick={onClose}
                     className="dropdown_item"
@@ -578,7 +580,8 @@ const UserCard = ({ data }) => {
                 <div className="user_info">
                   <div className="user_info_top">
                     {data.displayName}
-                    {data.role === 'admin' && <span className="user_status">admin</span>}
+                    {data.role === 3 && <span className="user_status">admin</span>}
+                    {data.role === 2 && <span className="user_status">moder</span>}
                   </div>
                   <div className="head_text">{dateFormat(data.onlineAt)}</div>
                 </div>
@@ -735,7 +738,8 @@ const NotificationCard = ({ data }) => {
               <div className="card_info">
                 <Link to={'/user/' + data.from.name} className="head_text bold">
                   {data.from.displayName}
-                  {data.from.role === 'admin' && <span className="user_status">admin</span>}
+                  {data.from.role === 3 && <span className="user_status">admin</span>}
+                  {data.from.role === 2 && <span className="user_status">moder</span>}
                 </Link>
                 <span className="bullet">•</span>
                 <span className="head_text">

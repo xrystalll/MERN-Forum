@@ -55,7 +55,7 @@ export const AdminsOnlyRoute = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={(props) => (user && user.role === 'admin' ? <Component {...props} /> : <Redirect to="/" />)}
+      render={(props) => (user && user.role >= 2 ? <Component {...props} /> : <Redirect to="/" />)}
     />
   )
 }

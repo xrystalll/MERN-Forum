@@ -110,7 +110,8 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                 <div className="card_info">
                   <Link to={'/user/' + data.author.name} className="head_text bold">
                     {data.author.displayName}
-                    {data.author.role === 'admin' && <span className="user_status">admin</span>}
+                    {data.author.role === 3 && <span className="user_status">admin</span>}
+                    {data.author.role === 2 && <span className="user_status">moder</span>}
                   </Link>
                   <span className="bullet">•</span>
                   <span className="head_text">
@@ -124,10 +125,10 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                   <div onClick={() => copyLink(BACKEND + data.file.url)} className="dropdown_item">
                     {Strings.copyFileLink[lang]}
                   </div>
-                  {user.role === 'admin' && (
+                  {user.role >= 2 && (
                     <div onClick={() => deleteFile()} className="dropdown_item">{Strings.delete[lang]}</div>
                   )}
-                  {user.id === data.author._id || user.role === 'admin' ? (
+                  {user.id === data.author._id || user.role >= 2 ? (
                     <div onClick={() => editFile()} className="dropdown_item">{Strings.edit[lang]}</div>
                   ) : null}
                 </Dropdown>

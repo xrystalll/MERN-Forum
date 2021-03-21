@@ -77,7 +77,8 @@ const Profile = ({ userName }) => {
                     <div className="profile_head_right">
                       <div className="profile_username">
                         {userData.displayName}
-                        {userData.role === 'admin' && <span className="user_status">admin</span>}
+                        {userData.role === 3 && <span className="user_status">admin</span>}
+                        {userData.role === 2 && <span className="user_status">moder</span>}
                       </div>
                       <div>
                         {new Date() - new Date(userData.onlineAt) < 5 * 60000

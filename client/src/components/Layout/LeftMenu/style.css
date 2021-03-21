@@ -51,3 +51,17 @@
   border-radius: 50%;
   padding: 0;
 }
+
+.with_notif {
+  position: relative;
+}
+.with_notif::after {
+  content: '';
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+}

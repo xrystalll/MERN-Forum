@@ -206,6 +206,13 @@ ul {
   flex: 1 auto;
   min-width: 0;
 }
+.card_body.row {
+  display: flex;
+  align-items: center;
+}
+.row .form_block {
+  width: 100%;
+}
 
 .card_outside_title {
   margin: .3rem .2rem;
@@ -782,7 +789,21 @@ a.head_text:hover {
 
 .comments_form {
   margin-bottom: 1.5rem !important;
+  width: 100%;
   max-width: initial;
+  margin: 0;
+}
+@media (max-width: 650px) {
+  .comments_form.float {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 0 !important;
+    background-color: var(--secondary-bg-tint-focus);
+    width: 100%;
+    padding: .4rem .5rem 0;
+    z-index: 1;
+  }
 }
 
 .input_area {

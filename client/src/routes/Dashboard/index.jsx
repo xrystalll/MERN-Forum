@@ -11,6 +11,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import { SlidesContainer, SlideItem } from 'components/Slider';
 
 import Boards from './Boards';
+import Admins from './Admins';
 import Reports from './Reports';
 import Bans from './Bans';
 import Folders from './Folders';
@@ -18,7 +19,7 @@ import Files from './Files';
 import './style.css';
 
 const Dashboard = () => {
-  const { setFabVisible, lang } = useContext(StoreContext)
+  const { user, setFabVisible, lang } = useContext(StoreContext)
   document.title = 'Forum | ' + Strings.adminDashboard[lang]
   const { path } = useRouteMatch()
   const [stats, setStats] = useState([])
@@ -47,10 +48,11 @@ const Dashboard = () => {
   return (
     <Section>
       <Switch>
-        <Route path={path + '/boards'} exact component={Boards} />
+        {user.role === 3 && <Route path={path + '/boards'} exact component={Boards} />}
+        {user.role === 3 && <Route path={path + '/admins'} exact component={Admins} />}
         <Route path={path + '/reports'} component={Reports} />
         <Route path={path + '/bans'} component={Bans} />
-        <Route path={path + '/folders'} component={Folders} />
+        {user.role === 3 && <Route path={path + '/folders'} component={Folders} />}
         <Route path={path + '/files'} component={Files} />
         <Route path={path} exact>
           <Breadcrumbs current={Strings.dashboard[lang]} links={[
@@ -68,15 +70,19 @@ const Dashboard = () => {
           ) : null}
 
           <div className="admin__nav">
-            <NavLink to={path + '/boards'} className="admin__nav_item">
-              <i className="bx bx-category" />
-              {Strings.boards[lang]}
-            </NavLink>
+            {user.role === 3 && (
+              <NavLink to={path + '/boards'} className="admin__nav_item">
+                <i className="bx bx-category" />
+                {Strings.boards[lang]}
+              </NavLink>
+            )}
 
-            <NavLink to={path + '/admins'} className="admin__nav_item">
-              <i className="bx bx-group" />
-              {Strings.admins[lang]}
-            </NavLink>
+            {user.role === 3 && (
+              <NavLink to={path + '/admins'} className="admin__nav_item">
+                <i className="bx bx-group" />
+                {Strings.admins[lang]}
+              </NavLink>
+            )}
 
             <NavLink
               to={path + '/reports'}
@@ -91,10 +97,12 @@ const Dashboard = () => {
               {Strings.bans[lang]}
             </NavLink>
 
-            <NavLink to={path + '/folders'} className="admin__nav_item">
-              <i className="bx bx-folder" />
-              {Strings.uploadsFolders[lang]}
-            </NavLink>
+            {user.role === 3 && (
+              <NavLink to={path + '/folders'} className="admin__nav_item">
+                <i className="bx bx-folder" />
+                {Strings.uploadsFolders[lang]}
+              </NavLink>
+            )}
 
             <NavLink
               to={path + '/files'}

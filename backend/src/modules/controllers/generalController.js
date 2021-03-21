@@ -49,7 +49,7 @@ module.exports.getUsers = async (req, res, next) => {
       date.setMinutes(date.getMinutes() - 5)
       users = await User.paginate({ onlineAt: { $gte: date.toISOString() } }, { sort: { onlineAt: -1 }, page, limit, select })
     } else if (sort === 'admin') {
-      users = await User.paginate({ role: 'admin' }, { sort: { onlineAt: -1 }, page, limit, select })
+      users = await User.paginate({ role: { $gte: 2 } }, { sort: { onlineAt: -1 }, page, limit, select })
     } else if (sort === 'old') {
       users = await User.paginate({}, { sort: { createdAt: 1 }, page, limit, select })
     } else {
@@ -67,7 +67,7 @@ module.exports.getAdmins = async (req, res, next) => {
     const { limit = 10, page = 1 } = req.query
 
     const select = '_id name displayName createdAt onlineAt picture role'
-    const admins = await User.paginate({ role: 'admin' }, { sort: { createdAt: -1 }, page, limit, select })
+    const admins = await User.paginate({ role: { $gte: 2 } }, { sort: { createdAt: -1 }, page, limit, select })
 
     res.json(admins)
   } catch(err) {
@@ -159,9 +159,9 @@ module.exports.getBan = async (req, res, next) => {
 module.exports.createBan = async (req, res, next) => {
   try {
     const { userId, reason, body = '', expiresAt } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
     if (reason.trim() === '') return next(createError.BadRequest('Reason must not be empty'))
     if (!expiresAt) return next(createError.BadRequest('expiresAt must not be empty'))
@@ -190,9 +190,9 @@ module.exports.createBan = async (req, res, next) => {
 module.exports.unBan = async (req, res, next) => {
   try {
     const { userId } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
     await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { ban: null })

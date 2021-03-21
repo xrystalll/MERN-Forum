@@ -121,10 +121,11 @@ const CommentItem = ({ data, setCommentedTo }) => {
 
                   <Fragment>
                     {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
-                    {data.author.role === 'admin' && <span className="user_status">admin</span>}
+                    {data.author.role === 3 && <span className="user_status">admin</span>}
+                    {data.author.role === 2 && <span className="user_status">moder</span>}
                   </Fragment>
                 </Link>
-                <span className="bullet">•</span>
+                <span className="bullet">-</span>
                 <span className="head_text">
                   <time>{dateFormat(data.createdAt)}</time>
                 </span>
@@ -132,11 +133,11 @@ const CommentItem = ({ data, setCommentedTo }) => {
             </div>
 
             {user && (
-              user.role === 'admin' || user.id === data.author._id ? (
+              user.role >= 2 || user.id === data.author._id ? (
                 <Dropdown>
-                  {user.role === 'admin' && (
+                  {user.role >= 2 && (
                     <Fragment>
-                      {user.id !== data.author._id && data.author.role !== 'admin' && (
+                      {user.id !== data.author._id && data.author.role === 1 && (
                         <div
                           onClick={onBan}
                           className="dropdown_item"
@@ -149,7 +150,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
                       )}
                     </Fragment>
                   )}
-                  {user.id === data.author._id || user.role === 'admin'
+                  {user.id === data.author._id || user.role >= 2
                     ? <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
                     : null
                   }

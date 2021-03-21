@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import { useForm } from 'hooks/useForm';
 
+import Socket from 'support/Socket';
 import { Strings } from 'support/Constants';
 
 import Dropdown from './Dropdown';
@@ -17,6 +18,13 @@ const Header = ({ setMenuState }) => {
   const searchField = useRef()
   const history = useHistory()
   const [searchActive, setSearchActive] = useState(false)
+  const [adminNotification, setAdminNotification] = useState(false)
+
+  useEffect(() => {
+    Socket.on('newAdminNotification', (data) => {
+      setAdminNotification(true)
+    })
+  }, [])
 
   useEffect(() => {
     if (searchActive) {
@@ -42,12 +50,17 @@ const Header = ({ setMenuState }) => {
     query: ''
   })
 
+  const openNav = () => {
+    setAdminNotification(false)
+    setMenuState()
+  }
+
   return (
     <header className="app_head">
       <div className="head_inner">
         <div className="head_left">
-          <div className="open_nav" onClick={() => setMenuState()}>
-            <i className="bx bx-menu" />
+          <div className="open_nav" onClick={openNav}>
+            <i className={adminNotification ? 'bx bx-menu with_notif' : 'bx bx-menu'} />
           </div>
           <h1 className="app_name">Forum</h1>
         </div>

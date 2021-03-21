@@ -70,6 +70,7 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
       return setErrors({ body: Strings.enterContent[lang] })
     }
 
+    setErrors({})
     setCommentedTo({ text: '', id: null })
     reset()
     createComment()
@@ -108,8 +109,8 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
       <SectionHeader title={Strings.comments[lang]} />
 
       {user && (
-        <form className="form_inner comments_form" onSubmit={onSubmit}>
-          <FormCardItem>
+        <form className="form_inner comments_form float" onSubmit={onSubmit}>
+          <FormCardItem row>
             <div className={errors.body ? 'form_block error' : 'form_block' }>
               <Input
                 name="body"
@@ -119,6 +120,10 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
                 placeholder={Strings.enterYourComment[lang]}
               />
             </div>
+
+            <button className="btn send_btn">
+              <i className="bx bxs-send" />
+            </button>
           </FormCardItem>
         </form>
       )}

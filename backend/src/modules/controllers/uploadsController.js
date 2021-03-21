@@ -74,7 +74,7 @@ module.exports.getFolder = async (req, res, next) => {
 module.exports.createFolder = async (req, res, next) => {
   try {
     const { name, title, body, position } = req.body
-    const admin = req.payload.role === 'admin'
+    const admin = req.payload.role === 3
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
     if (name.trim() === '') return next(createError.BadRequest('Folder name must not be empty'))
@@ -106,7 +106,7 @@ module.exports.createFolder = async (req, res, next) => {
 module.exports.deleteFolder = async (req, res, next) => {
   try {
     const { folderId } = req.body
-    const admin = req.payload.role === 'admin'
+    const admin = req.payload.role === 3
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
     if (!folderId) return next(createError.BadRequest('folderId must not be empty'))
@@ -123,7 +123,7 @@ module.exports.deleteFolder = async (req, res, next) => {
 module.exports.editFolder = async (req, res, next) => {
   try {
     const { folderId, name, title, body, position } = req.body
-    const admin = req.payload.role === 'admin'
+    const admin = req.payload.role === 3
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
     if (!folderId) return next(createError.BadRequest('folderId must not be empty'))
@@ -153,9 +153,9 @@ module.exports.editFolder = async (req, res, next) => {
 module.exports.getAdminAllFiles = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort } = req.query
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
 
     const populate = [{
       path: 'author',
@@ -283,9 +283,9 @@ module.exports.createFile = async (req, res, next) => {
 module.exports.deleteFile = async (req, res, next) => {
   try {
     const { fileId } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
 
     const file = await File.findById(fileId)
@@ -311,7 +311,7 @@ module.exports.deleteFile = async (req, res, next) => {
 module.exports.editFile = async (req, res, next) => {
   try {
     const { fileId, title, body } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
     if (title.trim() === '') return next(createError.BadRequest('File title must not be empty'))
@@ -319,7 +319,7 @@ module.exports.editFile = async (req, res, next) => {
 
     const file = await File.findById(fileId)
 
-    if (req.payload.id === file.author.toString() || admin) {
+    if (req.payload.id === file.author.toString() || moder) {
       await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, {
         title: title.trim().substring(0, 100),
         body: body.substring(0, 1000)
@@ -380,9 +380,9 @@ module.exports.likeFile = async (req, res, next) => {
 module.exports.moderateFile = async (req, res, next) => {
   try {
     const { fileId } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
 
     await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { moderated: true })
@@ -518,13 +518,13 @@ module.exports.createComment = async (req, res, next) => {
 module.exports.deleteComment = async (req, res, next) => {
   try {
     const { commentId } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
     if (!commentId) return next(createError.BadRequest('commentId must not be empty'))
 
     const comment = await Comment.findById(commentId)
 
-    if (req.payload.id === comment.author.toString() || admin) {
+    if (req.payload.id === comment.author.toString() || moder) {
       await comment.delete()
 
       await File.updateOne({ _id: Mongoose.Types.ObjectId(comment.fileId) }, { $inc: { commentsCount: -1 } })

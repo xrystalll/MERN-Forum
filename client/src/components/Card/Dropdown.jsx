@@ -25,9 +25,11 @@ const Dropdown = ({ children }) => {
       >
         <i className="bx bx-dots-horizontal-rounded" />
       </div>
-      <div className="dropdown_content">
-        {children}
-      </div>
+      {dropdownOpen && (
+        <div className="dropdown_content">
+          {children}
+        </div>
+      )}
     </div>
   )
 }

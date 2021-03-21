@@ -95,3 +95,11 @@
 .buttons_group .btn:not(:first-child) {
   margin-left: .5rem;
 }
+
+.btn.send_btn {
+  margin: 0 0 0 .5rem;
+  border-radius: var(--border-radius);
+}
+.btn.send_btn i {
+  margin: 0;
+}

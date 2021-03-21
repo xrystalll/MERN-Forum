@@ -15,9 +15,9 @@ const LeftMenu = ({ open, setMenuOpen }) => {
   const menuOpen = open ? 'left_bar open' : 'left_bar'
 
   useEffect(() => {
-    if (user?.role === 'admin') joinToRoom('adminNotification')
+    if (user?.role >= 2) joinToRoom('adminNotification')
     return () => {
-      if (user?.role === 'admin') leaveFromRoom('adminNotification')
+      if (user?.role >= 2) leaveFromRoom('adminNotification')
     }
   }, [user?.role])
 
@@ -44,7 +44,7 @@ const LeftMenu = ({ open, setMenuOpen }) => {
         <ul className="nav_links">
           {user && (
             <Fragment>
-              {user.role === 'admin' && (
+              {user.role >= 2 && (
                 <li className="nav_item">
                   <NavLink to="/dashboard" onClick={dashboardClick}>
                     <span className="nav_text">{Strings.dashboard[lang]}</span>

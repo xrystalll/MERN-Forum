@@ -78,7 +78,7 @@ const File = ({ history, match }) => {
 
   useEffect(() => {
     Socket.on('fileDeleted', (data) => {
-      history.push('/uploads/' + folder.name)
+      history.push('/uploads/')
     })
     Socket.on('fileEdited', (data) => {
       setFile(data)
@@ -112,7 +112,7 @@ const File = ({ history, match }) => {
       .then(response => response.json())
       .then(data => {
         if (data.message) {
-          history.push('/uploads/' + folder.name)
+          toast.success(data.message)
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => toast.error(err.message))

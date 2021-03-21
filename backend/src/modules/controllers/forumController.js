@@ -85,7 +85,7 @@ module.exports.getBoard = async (req, res, next) => {
 module.exports.createBoard = async (req, res, next) => {
   try {
     const { name, title, body, position } = req.body
-    const admin = req.payload.role === 'admin'
+    const admin = req.payload.role === 3
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
     if (name.trim() === '') return next(createError.BadRequest('Board name must not be empty'))
@@ -118,7 +118,7 @@ module.exports.createBoard = async (req, res, next) => {
 module.exports.deleteBoard = async (req, res, next) => {
   try {
     const { boardId } = req.body
-    const admin = req.payload.role === 'admin'
+    const admin = req.payload.role === 3
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
     if (!boardId) return next(createError.BadRequest('boardId must not be empty'))
@@ -135,7 +135,7 @@ module.exports.deleteBoard = async (req, res, next) => {
 module.exports.editBoard = async (req, res, next) => {
   try {
     const { boardId, name, title, body, position } = req.body
-    const admin = req.payload.role === 'admin'
+    const admin = req.payload.role === 3
 
     if (!admin) return next(createError.Unauthorized('Action not allowed'))
     if (!boardId) return next(createError.BadRequest('boardId must not be empty'))
@@ -279,9 +279,9 @@ module.exports.createThread = async (req, res, next) => {
 module.exports.deleteThread = async (req, res, next) => {
   try {
     const { threadId } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
     const thread = await Thread.findById(threadId)
@@ -388,9 +388,9 @@ module.exports.adminEditThread = async (req, res, next) => {
       if (err) return next(createError.BadRequest(err.message))
 
       const { threadId, title, body, pined, closed } = JSON.parse(req.body.postData)
-      const admin = req.payload.role === 'admin'
+      const moder = req.payload.role >= 2
 
-      if (!admin) return next(createError.Unauthorized('Action not allowed'))
+      if (!moder) return next(createError.Unauthorized('Action not allowed'))
       if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
       if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
@@ -598,9 +598,9 @@ module.exports.createAnswer = async (req, res, next) => {
 module.exports.deleteAnswer = async (req, res, next) => {
   try {
     const { answerId } = req.body
-    const admin = req.payload.role === 'admin'
+    const moder = req.payload.role >= 2
 
-    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
 
     const answer = await Answer.findById(answerId)
@@ -635,54 +635,57 @@ module.exports.editAnswer = async (req, res, next) => {
       if (err) return next(createError.BadRequest(err.message))
 
       const { answerId, body } = JSON.parse(req.body.postData)
+      const moder = req.payload.role >= 2
 
       if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Answer body must not be empty'))
 
       const answer = await Answer.findById(answerId)
 
-      if (req.payload.id !== answer.author.toString()) return next(createError.Unauthorized('Action not allowed'))
+      if (req.payload.id === answer.author.toString() || moder) {
+        if (req.files.length && answer.attach && answer.attach.length) {
+          const files = answer.attach.reduce((array, item) => [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+          ], [])
 
-      if (req.files.length && answer.attach && answer.attach.length) {
-        const files = answer.attach.reduce((array, item) => [
-          ...array,
-          path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-        ], [])
+          deleteFiles(files, (err) => {
+            if (err) console.error(err)
+          })
+        }
 
-        deleteFiles(files, (err) => {
-          if (err) console.error(err)
+        let files = answer.attach
+        if (req.files.length) {
+          files = req.files.reduce((array, item) => [...array, {
+            file: `/forum/${item.filename}`,
+            type: item.mimetype,
+            size: item.size
+          }], [])
+        }
+
+        await Answer.updateOne({ _id: Mongoose.Types.ObjectId(answerId) }, {
+          body: body.substring(0, 1000),
+          edited: {
+            createdAt: new Date().toISOString()
+          },
+          attach: files
         })
+
+        const populate = [{
+          path: 'author',
+          select: '_id name displayName onlineAt picture role ban'
+        }, {
+          path: 'likes',
+          select: '_id name displayName picture'
+        }]
+        const editedAnswer = await Answer.findById(answerId).populate(populate)
+
+        res.json(editedAnswer)
+
+        req.io.to('thread:' + answer.threadId).emit('answerEdited', editedAnswer)
+      } else {
+        return next(createError.Unauthorized('Action not allowed'))
       }
-
-      let files = answer.attach
-      if (req.files.length) {
-        files = req.files.reduce((array, item) => [...array, {
-          file: `/forum/${item.filename}`,
-          type: item.mimetype,
-          size: item.size
-        }], [])
-      }
-
-      await Answer.updateOne({ _id: Mongoose.Types.ObjectId(answerId) }, {
-        body: body.substring(0, 1000),
-        edited: {
-          createdAt: new Date().toISOString()
-        },
-        attach: files
-      })
-
-      const populate = [{
-        path: 'author',
-        select: '_id name displayName onlineAt picture role ban'
-      }, {
-        path: 'likes',
-        select: '_id name displayName picture'
-      }]
-      const editedAnswer = await Answer.findById(answerId).populate(populate)
-
-      res.json(editedAnswer)
-
-      req.io.to('thread:' + answer.threadId).emit('answerEdited', editedAnswer)
     })
   } catch(err) {
     next(createError.InternalServerError(err))

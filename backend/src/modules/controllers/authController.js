@@ -38,7 +38,7 @@ const register = async (req, res, next) => {
       password: result.password,
       createdAt: new Date().toISOString(),
       onlineAt: new Date().toISOString(),
-      role: 'user',
+      role: 1,
       ip: JSON.stringify(req.ip),
       ua: req.headers['user-agent']
     })
