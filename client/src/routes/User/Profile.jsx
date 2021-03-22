@@ -1,4 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
@@ -7,16 +9,21 @@ import { dateFormat } from 'support/Utils';
 
 import Breadcrumbs from 'components/Breadcrumbs';
 import { BanInfoCard } from 'components/Card';
+import Dropdown from 'components/Card/Dropdown';
 import { LinkButton } from 'components/Button';
+import UserRole from 'components/UserRole';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Profile = ({ userName }) => {
-  const { user, token, lang } = useContext(StoreContext)
+  const { user, token, lang, setModalOpen, setPostType } = useContext(StoreContext)
+  const history = useHistory()
 
   const [userData, setUserData] = useState({})
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
+  const [banned, setBanned] = useState(false)
+  const [moder, setModer] = useState(false)
 
   useEffect(() => {
     const profileName = userData.displayName || userName
@@ -38,6 +45,8 @@ const Profile = ({ userName }) => {
 
         if (!response.error) {
           setUserData(response)
+          setBanned(!!response.ban)
+          setModer(response.role === 2)
           setLoading(false)
           setNoData(false)
         } else throw Error(response.error?.message || 'Error')
@@ -50,6 +59,49 @@ const Profile = ({ userName }) => {
     fetchUser()
   }, [userData, userName])
 
+  const onAdmin = (userId) => {
+    if (moder) {
+      return
+      // unmod
+    } else {
+      return
+      // set mod
+    }
+  }
+
+  const onBan = (userId) => {
+    if (banned) {
+      fetch(BACKEND + '/api/ban/delete', {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.error) {
+            setBanned(false)
+          } else throw Error(data.error?.message || 'Error')
+        })
+        .catch(err => toast.error(err.message))
+    } else {
+      setPostType({
+        type: 'ban',
+        id: userId,
+        someData: {
+          body: ''
+        }
+      })
+      setModalOpen(true)
+    }
+  }
+
+  const deleteUser = (userId) => {
+    history.push('/users')
+  }
+
   return (
     <Fragment>
       <Breadcrumbs current={userData.displayName || userName} links={[
@@ -60,7 +112,7 @@ const Profile = ({ userName }) => {
       {!noData ? (
         !loading ? (
           <Fragment>
-            {userData.ban && (
+            {banned && (
               <BanInfoCard data={userData.ban} />
             )}
 
@@ -77,8 +129,7 @@ const Profile = ({ userName }) => {
                     <div className="profile_head_right">
                       <div className="profile_username">
                         {userData.displayName}
-                        {userData.role === 3 && <span className="user_status">admin</span>}
-                        {userData.role === 2 && <span className="user_status">moder</span>}
+                        <UserRole role={userData.role} />
                       </div>
                       <div>
                         {new Date() - new Date(userData.onlineAt) < 5 * 60000
@@ -97,6 +148,24 @@ const Profile = ({ userName }) => {
                         </div>
                       )}
                     </div>
+
+                    {user.role >= 2 && user.id !== userData._id ? (
+                      <Dropdown>
+                        {user.role === 3 && (
+                          <Fragment>
+                            <div onClick={() => onAdmin(userData._id)} className="dropdown_item">
+                              {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
+                            </div>
+                            <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>
+                          </Fragment>
+                        )}
+                        {user.role > userData.role && (
+                          <div onClick={() => onBan(userData._id)} className="dropdown_item">
+                            {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
+                          </div>
+                        )}
+                      </Dropdown>
+                    ) : null}
                   </div>
                 </div>
               </div>

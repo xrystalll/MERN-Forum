@@ -9,6 +9,7 @@ import { counter, declOfNum, dateFormat } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
+import UserRole from 'components/UserRole';
 
 import Dropdown from './Dropdown';
 
@@ -312,10 +313,8 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
                   {full && (
                     <Fragment>
                       {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
-                      {data.author.role === 3 ? (
-                        <span className="user_status">admin</span>
-                      ) : data.author.role === 2 ? (
-                        <span className="user_status">moder</span>
+                      {data.author.role >= 2 ? (
+                        <UserRole role={data.author.role} />
                       ) : (
                         <Fragment>
                           {type === 'thread' && <span className="user_status">owner</span>}
@@ -580,8 +579,7 @@ const UserCard = ({ data }) => {
                 <div className="user_info">
                   <div className="user_info_top">
                     {data.displayName}
-                    {data.role === 3 && <span className="user_status">admin</span>}
-                    {data.role === 2 && <span className="user_status">moder</span>}
+                    <UserRole role={data.role} />
                   </div>
                   <div className="head_text">{dateFormat(data.onlineAt)}</div>
                 </div>
@@ -738,8 +736,7 @@ const NotificationCard = ({ data }) => {
               <div className="card_info">
                 <Link to={'/user/' + data.from.name} className="head_text bold">
                   {data.from.displayName}
-                  {data.from.role === 3 && <span className="user_status">admin</span>}
-                  {data.from.role === 2 && <span className="user_status">moder</span>}
+                  <UserRole role={data.from.role} />
                 </Link>
                 <span className="bullet">•</span>
                 <span className="head_text">

@@ -976,6 +976,16 @@ const Strings = {
     en: 'Enter your comment',
     jp: 'コメントを入力してください'
   },
+  'appointAsAModerator': {
+    ru: 'Назначить модератором',
+    en: 'Appoint as a moderator',
+    jp: 'モデレーターとして任命する'
+  },
+  'removeModerator': {
+    ru: 'Снять модератора',
+    en: 'Remove moderator',
+    jp: 'モデレーターを削除する'
+  },
 }
 
 export { BACKEND, Strings };

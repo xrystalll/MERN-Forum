@@ -9,6 +9,7 @@ import { BACKEND, Strings } from 'support/Constants';
 import Markdown from 'components/Markdown';
 import Dropdown from 'components/Card/Dropdown';
 import { Button } from 'components/Button';
+import UserRole from 'components/UserRole';
 
 const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const history = useHistory()
@@ -110,8 +111,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                 <div className="card_info">
                   <Link to={'/user/' + data.author.name} className="head_text bold">
                     {data.author.displayName}
-                    {data.author.role === 3 && <span className="user_status">admin</span>}
-                    {data.author.role === 2 && <span className="user_status">moder</span>}
+                    <UserRole role={data.author.role} />
                   </Link>
                   <span className="bullet">•</span>
                   <span className="head_text">

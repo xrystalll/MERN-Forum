@@ -261,6 +261,7 @@ ul {
   font-weight: 500;
 }
 .card_block {
+  position: relative;
   background-color: var(--secondary-bg);
   color: var(--main-text);
   padding: .25rem;
@@ -406,6 +407,23 @@ a.head_text:hover {
   padding: .1rem .3rem;
   margin-left: .4rem;
   user-select: none;
+}
+.user_status.adm {
+  background-color: var(--main-danger-color);
+}
+.user_status.mod {
+  background-color: var(--main-success-color);
+}
+.user_status.ic {
+  padding: 0 .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user_status.ic svg {
+  fill: currentColor;
+  width: 18px;
+  height: 18px;
 }
 
 .dropdown {
