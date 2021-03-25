@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
-import { counter, declOfNum, dateFormat } from 'support/Utils';
+import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
@@ -23,6 +23,13 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
   const [imageOpen, setImageOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(preview ? true : false)
   const regexp = /(?:\.([^.]+))?$/
+
+  if (data.author === null) {
+    data.author = deletedUser
+  }
+  if (threadData && threadData.author === null) {
+    data.author = deletedUser
+  }
 
   useEffect(() => {
     if (type === 'thread' && data.closed) {
@@ -362,7 +369,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
                       </div>
                     )}
                     <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
-                    {user.id !== data.author._id && data.author.role === 1 && (
+                    {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
                       <div
                         onClick={onBan}
                         className="dropdown_item"
@@ -449,7 +456,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
           <footer className="card_foot">
             {full ? (
               <Fragment>
-                {user && user.id !== data.author._id && (
+                {data.author.name !== 'deleted' && user && user.id !== data.author._id && (
                   <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
                     <i className="bx bx-redo" />
                     <span>{Strings.answer[lang]}</span>
@@ -595,6 +602,10 @@ const UserCard = ({ data }) => {
 const BannedCard = ({ data, unBan }) => {
   const { lang } = useContext(StoreContext)
 
+  if (data.ban.admin === null) {
+    data.ban.admin = deletedUser
+  }
+
   return (
     <div className="card_item">
       <div className="card_body">
@@ -613,7 +624,7 @@ const BannedCard = ({ data, unBan }) => {
                   <div className="user_info_top">
                     {data.displayName}
                   </div>
-                  <div className="head_text">{dateFormat(data.ban.createdAt)}</div>
+                  <div className="head_text">{dateFormat(data.ban?.createdAt)}</div>
                 </div>
               </Link>
 
@@ -626,13 +637,19 @@ const BannedCard = ({ data, unBan }) => {
           </div>
 
           <div className="card_content">
-            <p>{Strings.reason[lang]}: {data.ban.reason}</p>
-            <p>{Strings.banExpires[lang]}: {dateFormat(data.ban.expiresAt)}</p>
+            <p>
+              <span className="secondary_text">{Strings.reason[lang]}:</span>
+              {data.ban?.reason}
+            </p>
+            <p>
+              <span className="secondary_text">{Strings.banExpires[lang]}:</span>
+              {dateFormat(data.ban?.expiresAt)}
+            </p>
           </div>
 
           <footer className="card_foot">
             <div className="act_btn foot_btn disable">
-              <span className="card_count">Admin: {data.ban.admin.displayName}</span>
+              <span className="card_count">Admin: {data.ban?.admin?.displayName}</span>
             </div>
           </footer>
         </div>
@@ -643,6 +660,10 @@ const BannedCard = ({ data, unBan }) => {
 
 const BannedAll = ({ data }) => {
   const { lang } = useContext(StoreContext)
+
+  if (data.admin === null) {
+    data.admin = deletedUser
+  }
 
   return (
     <div className="card_item">
@@ -669,13 +690,19 @@ const BannedAll = ({ data }) => {
           </div>
 
           <div className="card_content">
-            <p>{Strings.reason[lang]}: {data.reason}</p>
-            <p>{Strings.banExpires[lang]}: {dateFormat(data.expiresAt)}</p>
+            <p>
+              <span className="secondary_text">{Strings.reason[lang]}:</span>
+              {data.reason}
+            </p>
+            <p>
+              <span className="secondary_text">{Strings.banExpires[lang]}:</span>
+              {dateFormat(data.expiresAt)}
+            </p>
           </div>
 
           <footer className="card_foot">
             <div className="act_btn foot_btn disable">
-              <span className="card_count">Admin: {data.admin.displayName}</span>
+              <span className="card_count">Admin: {data.admin?.displayName}</span>
             </div>
           </footer>
         </div>
@@ -686,6 +713,10 @@ const BannedAll = ({ data }) => {
 
 const BanInfoCard = ({ data, owner }) => {
   const { lang } = useContext(StoreContext)
+
+  if (data.admin === null) {
+    data.admin = deletedUser
+  }
 
   return (
     <div className="card_item">
@@ -705,8 +736,14 @@ const BanInfoCard = ({ data, owner }) => {
           </div>
 
           <div className="card_content">
-            <p>{Strings.reason[lang]}: {data.reason}</p>
-            <p>{Strings.banExpires[lang]}: {dateFormat(data.expiresAt)}</p>
+            <p>
+              <span className="secondary_text">{Strings.reason[lang]}:</span>
+              {data.reason}
+            </p>
+            <p>
+              <span className="secondary_text">{Strings.banExpires[lang]}:</span>
+              {dateFormat(data.expiresAt)}
+            </p>
           </div>
         </div>
       </div>
@@ -715,6 +752,10 @@ const BanInfoCard = ({ data, owner }) => {
 }
 
 const NotificationCard = ({ data }) => {
+  if (data.from === null) {
+    data.from = deletedUser
+  }
+
   let pagePath = '/thread/' + data.threadId
   if (data.type === 'answerToThread' || data.type === 'answerToAnswer') {
     pagePath = '/thread/' + data.pageId
@@ -786,6 +827,10 @@ const FolderCard = ({ data }) => {
 const FileCard = ({ data, deleteFile }) => {
   const { lang } = useContext(StoreContext)
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
+
+  if (data.author === null) {
+    data.author = deletedUser
+  }
 
   return (
     <div className="card_item file_card">

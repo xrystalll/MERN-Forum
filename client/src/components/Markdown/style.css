@@ -77,7 +77,8 @@
   border-radius: var(--border-radius-inner);
   width: 100%;
   max-width: 350px;
-  margin: .3rem 0;
+  float: left;
+  margin: .3rem 1.2rem .3rem 0;
   cursor: pointer;
   user-select: none;
 }

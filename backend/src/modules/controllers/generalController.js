@@ -311,3 +311,38 @@ module.exports.search = async (req, res, next) => {
     next(createError.InternalServerError(err))
   }
 }
+
+module.exports.editRole = async (req, res, next) => {
+  try {
+    const { userId, role = 1 } = req.body
+    const admin = req.payload.role === 3
+
+    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!role || !Number.isInteger(role) || role < 1) return next(createError.BadRequest('Role must be number'))
+    if (!role > 2) return next(createError.BadRequest('Max role number: 2'))
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { role })
+
+    res.json({ message: 'User role updated' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.deleteUser = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+    const admin = req.payload.role === 3
+
+    if (!admin) return next(createError.Unauthorized('Action not allowed'))
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    const user = await User.findById(userId)
+    user.delete()
+
+    res.json({ message: 'User successfully deleted' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}

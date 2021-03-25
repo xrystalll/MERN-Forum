@@ -59,14 +59,28 @@ const Profile = ({ userName }) => {
     fetchUser()
   }, [userData, userName])
 
-  const onAdmin = (userId) => {
-    if (moder) {
-      return
-      // unmod
-    } else {
-      return
-      // set mod
-    }
+  const editRole = (userId) => {
+    const role = moder ? 1 : 2
+
+    fetch(BACKEND + '/api/role/edit', {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId, role })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          setUserData(prev => {
+            prev.role = role
+            return prev
+          })
+          setModer(!moder)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
   }
 
   const onBan = (userId) => {
@@ -99,7 +113,21 @@ const Profile = ({ userName }) => {
   }
 
   const deleteUser = (userId) => {
-    history.push('/users')
+    fetch(BACKEND + '/api/user/delete', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          history.push('/users')
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
   }
 
   return (
@@ -153,7 +181,7 @@ const Profile = ({ userName }) => {
                       <Dropdown>
                         {user.role === 3 && (
                           <Fragment>
-                            <div onClick={() => onAdmin(userData._id)} className="dropdown_item">
+                            <div onClick={() => editRole(userData._id)} className="dropdown_item">
                               {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
                             </div>
                             <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>

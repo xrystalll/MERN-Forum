@@ -11,11 +11,6 @@ const register = async (req, res, next) => {
   try {
     const result = await registerSchema.validateAsync(req.body)
 
-    const emailDoesExist = await User.findOne({ email: result.email })
-    if (emailDoesExist) {
-      throw createError.Conflict('E-mail is already been registered')
-    }
-
     let name = result.username.toLowerCase().replace(/\s/g, '')
     if (/[а-яА-ЯЁё]/.test(name)) {
       name = toLatin(name)
@@ -24,9 +19,19 @@ const register = async (req, res, next) => {
       name = toRomaji(name)
     }
 
+    const forbiddenNames = ['admin', 'administrator', 'админ', 'администратор', 'moder', 'moderator', 'модер', 'модератор', 'deleted', 'user', 'юзер', 'test', 'тест', 'qwerty', 'йцукен', '12345', '123456789', '1234567890']
+    if (forbiddenNames.find(i => i === name)) {
+      throw createError.Conflict('Username is prohibited')
+    }
+
     const userNamedoesExist = await User.findOne({ name })
     if (userNamedoesExist) {
       throw createError.Conflict('Username is already been registered')
+    }
+
+    const emailDoesExist = await User.findOne({ email: result.email })
+    if (emailDoesExist) {
+      throw createError.Conflict('E-mail is already been registered')
     }
 
     let displayName = result.username.replace(/\s/g, '')

@@ -15,7 +15,19 @@ export const declOfNum = (number, titles) => {
 }
 
 export const dateFormat = (date) => {
-  return moment(date).locale(localStorage.getItem('lang') || 'en').calendar(null, { lastWeek: 'DD MMM, hh:mm', sameElse: 'DD MMM YYYY, hh:mm' })
+  return moment(date)
+    .locale(localStorage.getItem('lang') || 'en')
+    .calendar(null, {
+      nextWeek: 'DD MMM, hh:mm',
+      lastWeek: 'DD MMM, hh:mm',
+      sameElse: (m) => {
+        if (m._d.getFullYear() === new Date().getFullYear()) {
+          return 'DD MMM, hh:mm'
+        } else {
+          return 'DD MMM YY, hh:mm'
+        }
+      }
+    })
 }
 
 export const formatBytes = (bytes, decimals) => {
@@ -26,4 +38,12 @@ export const formatBytes = (bytes, decimals) => {
   const sizes = ['bytes', 'Kb', 'Mb', 'Gb']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}
+
+export const deletedUser = {
+  "_id": (Math.random() * 1000).toFixed(),
+  "name": "deleted",
+  "displayName": "DELETED",
+  "onlineAt": "1970-01-01T00:00:00.000Z",
+  "role": 1
 }

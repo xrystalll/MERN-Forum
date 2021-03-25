@@ -12,12 +12,22 @@
   position: sticky;
   top: 4.5rem;
   height: max-content;
-  max-height: 100vh;
+  max-height: calc(100vh - 72px);
   overflow-y: auto;
   overflow-x: hidden;
 }
 .content {
-  width: 62%;
+  width: 63%;
+}
+.rigth_bar {
+  width: 15%;
+  top: 5.2rem;
+  position: sticky;
+  z-index: 7;
+  margin: .7rem .6rem;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
 }
 @media (max-width: 780px) {
   .open_nav {
@@ -41,7 +51,7 @@
   .content, .main_nav {
     width: 100% !important;
   }
-  .fab {
+  .rigth_bar {
     margin: 0 !important;
     position: fixed !important;
     top: initial !important;
@@ -52,29 +62,20 @@
 
 
 .fab {
-  width: 15%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
-  top: 5.2rem;
-  margin: .7rem .6rem;
   background-color: var(--accent-color);
   color: var(--main-text-light);
   height: 48px;
-  padding: 0 .8rem 0 1rem;
   border-radius: 50px;
   transition: var(--transition-background);
   box-shadow: 0 2px 8px -3px rgb(0 0 0 / 80%);
   cursor: pointer;
   user-select: none;
-  z-index: 7;
 }
 .fab:hover {
   background-color: var(--accent-color-tint)
-}
-.fab > * {
-  pointer-events: none;
 }
 .fab span {
   margin-right: .8rem;
@@ -82,14 +83,23 @@
 .fab i {
   font-size: 20px;
 }
+.fab.secondary {
+  background-color: var(--secondary-bg-tint);
+  box-shadow: initial;
+  margin-top: auto;
+}
+
 @media (max-width: 1050px) {
   .content {
-    width: 57%;
+    width: 58%;
   }
-  .fab {
+  .rigth_bar {
     top: 4.9rem;
     margin: .4rem .6rem;
     padding: 0;
+    width: initial;
+  }
+  .fab {
     width: 56px;
     height: 56px;
   }

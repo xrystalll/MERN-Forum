@@ -3,7 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
-import { counter, declOfNum, dateFormat, formatBytes } from 'support/Utils';
+import { counter, declOfNum, dateFormat, formatBytes, deletedUser } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
@@ -20,6 +20,10 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const [imageOpen, setImageOpen] = useState(false)
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
   const regexp = /(?:\.([^.]+))?$/
+
+  if (data.author === null) {
+    data.author = deletedUser
+  }
 
   const imageView = (url) => {
     setImage(url)

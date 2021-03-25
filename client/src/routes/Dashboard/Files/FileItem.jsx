@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { dateFormat } from 'support/Utils';
+import { dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
@@ -12,6 +12,10 @@ const FileItem = ({ data, moderate, lang }) => {
 
   const onModerate = ({ type }) => {
     moderate(type, data._id)
+  }
+
+  if (data.author === null) {
+    data.author = deletedUser
   }
 
   return (

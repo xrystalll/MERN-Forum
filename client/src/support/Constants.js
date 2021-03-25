@@ -67,7 +67,7 @@ const Strings = {
     jp: 'プロフィール'
   },
   'lastSeen': {
-    ru: 'Был в онлайн',
+    ru: 'Был онлайн',
     en: 'Last seen',
     jp: '最後に見た'
   },

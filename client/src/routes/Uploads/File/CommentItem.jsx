@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
-import { counter, declOfNum, dateFormat } from 'support/Utils';
+import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
@@ -17,6 +17,10 @@ const CommentItem = ({ data, setCommentedTo }) => {
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
+
+  if (data.author === null) {
+    data.author = deletedUser
+  }
 
   const likeComment = () => {
     fetch(BACKEND + '/api/file/comment/like', {
@@ -137,7 +141,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
                 <Dropdown>
                   {user.role >= 2 && (
                     <Fragment>
-                      {user.id !== data.author._id && data.author.role === 1 && (
+                      {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
                         <div onClick={onBan} className="dropdown_item">
                           {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
                         </div>
@@ -158,7 +162,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
           </div>
 
           <footer className="card_foot">
-            {user && user.id !== data.author._id && (
+            {data.author.name !== 'deleted' && user && user.id !== data.author._id && (
               <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
                 <i className="bx bx-redo" />
                 <span>{Strings.answer[lang]}</span>
