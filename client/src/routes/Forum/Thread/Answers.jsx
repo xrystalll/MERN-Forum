@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { BACKEND, Strings } from 'support/Constants';
-import Socket from 'support/Socket';
 
 import { Card } from 'components/Card';
 import Loader from 'components/Loader';

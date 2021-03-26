@@ -106,6 +106,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                   className="card_left"
                   src={BACKEND + data.file.url}
                   onClick={() => imageView(BACKEND + data.file.url)}
+                  alt="Image preview"
                 />
               )}
 

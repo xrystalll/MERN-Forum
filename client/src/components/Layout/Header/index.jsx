@@ -14,7 +14,7 @@ import Notifications from './Notifications';
 import './style.css';
 
 const Header = ({ setMenuState }) => {
-  const { user, token, lang } = useContext(StoreContext)
+  const { user, lang } = useContext(StoreContext)
   const searchField = useRef()
   const history = useHistory()
   const [searchActive, setSearchActive] = useState(false)

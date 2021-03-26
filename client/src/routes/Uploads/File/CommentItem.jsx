@@ -12,7 +12,7 @@ import Dropdown from 'components/Card/Dropdown';
 import UserRole from 'components/UserRole';
 
 const CommentItem = ({ data, setCommentedTo }) => {
-  const { user, token, setModalOpen, setPostType, setFabVisible, lang } = useContext(StoreContext)
+  const { user, token, setModalOpen, setPostType, lang } = useContext(StoreContext)
   const history = useHistory()
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
@@ -53,10 +53,6 @@ const CommentItem = ({ data, setCommentedTo }) => {
     } else {
       history.push('/signup')
     }
-  }
-
-  const editClick = () => {
-    return
   }
 
   const answerTo = (toId, displayName) => {

@@ -1,10 +1,9 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import { StoreContext } from 'store/Store';
 
 import { BACKEND, Strings } from 'support/Constants';
-import { dateFormat } from 'support/Utils';
 
 import { Section, SectionHeader } from 'components/Section';
 import { BanInfoCard } from 'components/Card';

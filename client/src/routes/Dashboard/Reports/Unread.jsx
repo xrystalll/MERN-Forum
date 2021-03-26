@@ -1,11 +1,10 @@
 import { Fragment, useContext } from 'react';
-import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
 import { useMoreFetch } from 'hooks/useMoreFetch';
 
-import { BACKEND, Strings } from 'support/Constants';
+import { Strings } from 'support/Constants';
 
 import { NotificationCard } from 'components/Card';
 import Loader from 'components/Loader';

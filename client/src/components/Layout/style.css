@@ -11,8 +11,7 @@
   width: 252px;
   position: sticky;
   top: 4.5rem;
-  height: max-content;
-  max-height: calc(100vh - 72px);
+  height: calc(100vh - 72px);
   overflow-y: auto;
   overflow-x: hidden;
 }

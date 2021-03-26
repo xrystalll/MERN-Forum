@@ -32,7 +32,7 @@ const upload = multer({
   limits: { fileSize: 1048576 * 8 } // 8Mb
 }).single('picture')
 
-const getProfile = async (req, res, next) => {
+module.exports.getProfile = async (req, res, next) => {
   try {
     const select = '_id name displayName email createdAt onlineAt picture role ban'
     const user = await User.findOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, select)
@@ -43,7 +43,7 @@ const getProfile = async (req, res, next) => {
   }
 }
 
-const uploadUserPicture = (req, res, next) => {
+module.exports.uploadUserPicture = (req, res, next) => {
   try {
     upload(req, res, (err) => {
       if (err) return next(createError.BadRequest(err.message))
@@ -72,7 +72,7 @@ const uploadUserPicture = (req, res, next) => {
   }
 }
 
-const setOnline = async (req, res, next) => {
+module.exports.setOnline = async (req, res, next) => {
   try {
     await User.updateOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, { onlineAt: new Date().toISOString() })
     res.json({ success: true })
@@ -81,7 +81,7 @@ const setOnline = async (req, res, next) => {
   }
 }
 
-const getNotifications = async (req, res, next) => {
+module.exports.getNotifications = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort } = req.query
 
@@ -111,7 +111,7 @@ const getNotifications = async (req, res, next) => {
   }
 }
 
-const deleteNotifications = async (req, res, next) => {
+module.exports.deleteNotifications = async (req, res, next) => {
   try {
     await Notification.deleteMany({ to: req.payload.id, read: true })
 
@@ -120,5 +120,3 @@ const deleteNotifications = async (req, res, next) => {
     next(createError.InternalServerError(err))
   }
 }
-
-module.exports = { getProfile, uploadUserPicture, setOnline, getNotifications, deleteNotifications }

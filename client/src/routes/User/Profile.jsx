@@ -29,9 +29,7 @@ const Profile = ({ userName }) => {
     const profileName = userData.displayName || userName
     document.title = `Forum | ${Strings.profile[lang]} ${profileName}`
 
-    if (!loading) {
-      if (userData.name === userName) return
-    }
+    if (userData.name === userName) return
 
     const fetchUser = async () => {
       try {
@@ -45,6 +43,7 @@ const Profile = ({ userName }) => {
 
         if (!response.error) {
           setUserData(response)
+          console.log(!!response.ban)
           setBanned(!!response.ban)
           setModer(response.role === 2)
           setLoading(false)

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';

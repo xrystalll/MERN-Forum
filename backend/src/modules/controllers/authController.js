@@ -19,7 +19,7 @@ const register = async (req, res, next) => {
       name = toRomaji(name)
     }
 
-    const forbiddenNames = ['admin', 'administrator', 'админ', 'администратор', 'moder', 'moderator', 'модер', 'модератор', 'deleted', 'user', 'юзер', 'test', 'тест', 'qwerty', 'йцукен', '12345', '123456789', '1234567890']
+    const forbiddenNames = ['admin', 'administrator', 'moder', 'moderator', 'deleted', 'user', 'test', 'qwerty', '12345', '123456789', '1234567890']
     if (forbiddenNames.find(i => i === name)) {
       throw createError.Conflict('Username is prohibited')
     }
@@ -44,7 +44,7 @@ const register = async (req, res, next) => {
       createdAt: new Date().toISOString(),
       onlineAt: new Date().toISOString(),
       role: 1,
-      ip: JSON.stringify(req.ip),
+      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
       ua: req.headers['user-agent']
     })
     const savedUser = await user.save()
@@ -103,7 +103,7 @@ const login = async (req, res, next) => {
     const accessToken = await signAccessToken(user)
 
     await User.updateOne({ _id: user._id }, {
-      ip: JSON.stringify(req.ip),
+      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
       ua: req.headers['user-agent']
     })
 

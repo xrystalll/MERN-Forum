@@ -129,6 +129,9 @@ a {
 a.flex_margin {
   margin: 0 .4rem;
 }
+img {
+  user-select: none;
+}
 br {
   user-select: none;
 }

@@ -91,7 +91,6 @@ const Modal = ({ open, close }) => {
   })
 
   const [files, setFiles] = useState([])
-  const [uploading, setUploading] = useState(false)
   const [clearFiles, setClearFiles] = useState(false)
 
   const getFile = (files) => {

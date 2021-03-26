@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { useForm } from 'hooks/useForm';
 
 import { BACKEND, Strings } from 'support/Constants';
-import Socket from 'support/Socket';
 
 import { SectionHeader } from 'components/Section';
 import FormCardItem from 'components/Card/FormCardItem';

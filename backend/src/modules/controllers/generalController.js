@@ -7,6 +7,8 @@ const Thread = require('../models/Thread');
 const Answer = require('../models/Answer');
 const Ban = require('../models/Ban');
 const Report = require('../models/Report');
+const File = require('../models/File');
+const Comment = require('../models/Comment');
 
 module.exports.getStats = async (req, res, next) => {
   try {
@@ -200,6 +202,30 @@ module.exports.unBan = async (req, res, next) => {
     res.json('User unbanned')
 
     req.io.to('banned:' + userId).emit('unban', { message: 'Unbanned' })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getUserStats = async (req, res, next) => {
+  try {
+    const { userId } = req.query
+
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    const threads = Thread.find({ author: Mongoose.Types.ObjectId(userId) })
+    const answers = Answer.find({ author: Mongoose.Types.ObjectId(userId) })
+    const bans = Ban.find({ user: Mongoose.Types.ObjectId(userId) })
+    const files = File.find({ author: Mongoose.Types.ObjectId(userId) })
+    const comments = Comment.find({ author: Mongoose.Types.ObjectId(userId) })
+
+    res.json({
+      threadsCount: threads.length,
+      abswersCount: answers.length,
+      bansCount: bans.length,
+      filesCount: files.length,
+      fileCommentsCount: comments.length
+    })
   } catch(err) {
     next(createError.InternalServerError(err))
   }

@@ -752,6 +752,9 @@ const BanInfoCard = ({ data, owner }) => {
 }
 
 const NotificationCard = ({ data }) => {
+  const { lang } = useContext(StoreContext)
+  const [collapsed, setCollapsed] = useState(true)
+
   if (data.from === null) {
     data.from = deletedUser
   }
@@ -788,8 +791,14 @@ const NotificationCard = ({ data }) => {
           </header>
 
           <div className="card_content markdown">
-            <Markdown source={data.body} />
+            <Markdown source={collapsed && data.body.length > 200 ? data.body.slice(0, 200) + '...' : data.body} />
           </div>
+
+          {data.body.length > 200 && (
+            <div className="text_show_more" onClick={() => setCollapsed(!collapsed)}>
+              {collapsed ? Strings.showMore[lang] : Strings.showLess[lang]}
+            </div>
+          )}
         </div>
       </div>
     </div>
