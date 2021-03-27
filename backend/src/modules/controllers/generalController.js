@@ -81,6 +81,8 @@ module.exports.getUser = async (req, res, next) => {
   try {
     const { userName } = req.query
 
+    if (!userName) return next(createError.BadRequest('userName must not be empty'))
+
     const select = '_id name displayName createdAt onlineAt picture role ban'
     const populate = {
       path: 'ban',
@@ -137,9 +139,32 @@ module.exports.getBans = async (req, res, next) => {
   }
 }
 
+module.exports.getUserBans = async (req, res, next) => {
+  try {
+    const { userId, limit = 10, page = 1 } = req.query
+
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    const populate = [{
+      path: 'user',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'admin',
+      select: '_id name displayName onlineAt picture role'
+    }]
+    const bans = await Ban.paginate({ user: userId }, { sort: { createdAt: -1 }, page, limit, populate })
+
+    res.json(bans)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
 module.exports.getBan = async (req, res, next) => {
   try {
     const { userId } = req.query
+
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
     const select = '_id name displayName createdAt onlineAt picture role ban'
     const populate = {
@@ -213,15 +238,15 @@ module.exports.getUserStats = async (req, res, next) => {
 
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
-    const threads = Thread.find({ author: Mongoose.Types.ObjectId(userId) })
-    const answers = Answer.find({ author: Mongoose.Types.ObjectId(userId) })
-    const bans = Ban.find({ user: Mongoose.Types.ObjectId(userId) })
-    const files = File.find({ author: Mongoose.Types.ObjectId(userId) })
-    const comments = Comment.find({ author: Mongoose.Types.ObjectId(userId) })
+    const threads = await Thread.find({ author: Mongoose.Types.ObjectId(userId) })
+    const answers = await Answer.find({ author: Mongoose.Types.ObjectId(userId) })
+    const bans = await Ban.find({ user: Mongoose.Types.ObjectId(userId) })
+    const files = await File.find({ author: Mongoose.Types.ObjectId(userId) })
+    const comments = await Comment.find({ author: Mongoose.Types.ObjectId(userId) })
 
     res.json({
       threadsCount: threads.length,
-      abswersCount: answers.length,
+      answersCount: answers.length,
       bansCount: bans.length,
       filesCount: files.length,
       fileCommentsCount: comments.length
@@ -231,9 +256,54 @@ module.exports.getUserStats = async (req, res, next) => {
   }
 }
 
+module.exports.getUserThreads = async (req, res, next) => {
+  try {
+    const { userId, limit = 10, page = 1 } = req.query
+
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const threads = await Thread.paginate({ author: userId }, { sort: { createdAt: -1 }, page, limit, populate })
+
+    res.json(threads)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getUserAnswers = async (req, res, next) => {
+  try {
+    const { userId, limit = 10, page = 1 } = req.query
+
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const answers = await Answer.paginate({ author: userId }, { sort: { createdAt: -1 }, page, limit, populate })
+
+    res.json(answers)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
 module.exports.getReports = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort } = req.query
+    const moder = req.payload.role >= 2
+
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
 
     const populate = {
       path: 'from',
@@ -292,6 +362,10 @@ module.exports.createReport = async (req, res, next) => {
 
 module.exports.deleteReports = async (req, res, next) => {
   try {
+    const moder = req.payload.role >= 2
+
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
+
     await Report.deleteMany({ read: true })
 
     res.json({ message: 'Reports successfully deleted' })

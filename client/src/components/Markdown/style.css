@@ -2,6 +2,13 @@
 .markdown {
   font-weight: 400;
 }
+.markdown::after {
+  content: '';
+  clear: both;
+  visibility: hidden;
+  display: block;
+  height: 0;
+}
 .markdown em {
   font-style: italic;
 }
@@ -76,7 +83,7 @@
   display: flex;
   border-radius: var(--border-radius-inner);
   width: 100%;
-  max-width: 350px;
+  max-width: 280px;
   float: left;
   margin: .3rem 1.2rem .3rem 0;
   cursor: pointer;

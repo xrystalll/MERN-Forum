@@ -14,6 +14,9 @@ router.get('/admins', GeneralController.getAdmins)
 
 router.get('/user', verifyAccessToken, GeneralController.getUser)
 router.get('/user/stats', verifyAccessToken, GeneralController.getUserStats)
+router.get('/user/threads', verifyAccessToken, GeneralController.getUserThreads)
+router.get('/user/answers', verifyAccessToken, GeneralController.getUserAnswers)
+router.get('/user/bans', verifyAccessToken, GeneralController.getUserBans)
 router.delete('/user/delete', verifyAccessToken, GeneralController.deleteUser)
 
 router.get('/bans', GeneralController.getBans)

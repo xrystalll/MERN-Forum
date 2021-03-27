@@ -221,6 +221,11 @@ const Strings = {
     en: 'Unable to display threads',
     jp: 'スレッドを表示できません'
   },
+  'unableToDisplayAnswers': {
+    ru: 'Невозможно отобразить ответы',
+    en: 'Unable to display answers',
+    jp: '答えを表示できません'
+  },
   'adminDashboard': {
     ru: 'Панель администратора',
     en: 'Admin dashboard',
@@ -985,6 +990,11 @@ const Strings = {
     ru: 'Снять модератора',
     en: 'Remove moderator',
     jp: 'モデレーターを削除する'
+  },
+  'unableToDisplayProfileInfo': {
+    ru: 'Невозможно отобразить информацию профиля',
+    en: 'Unable to display profile info',
+    jp: 'プロファイル情報を表示できません'
   },
 }
 

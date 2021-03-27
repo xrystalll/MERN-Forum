@@ -223,6 +223,7 @@ ul {
   user-select: none;
 }
 .card_outside_title.with_hint {
+  position: relative;
   display: flex;
   align-items: center;
   width: max-content;
@@ -231,7 +232,6 @@ ul {
 .title_hint {
   display: flex;
   margin-left: .5rem;
-  position: relative;
 }
 .title_hint i {
   color: var(--actions-color);
@@ -240,8 +240,8 @@ ul {
 .hint_popover {
   display: none;
   position: absolute;
-  top: 1.1rem;
-  right: -4px;
+  top: 1.5rem;
+  left: 0;
   font-size: .8rem;
   background-color: rgb(0 0 0 / .8);
   color: var(--secondary-text-light);

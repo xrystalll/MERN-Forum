@@ -511,7 +511,7 @@ const Card = ({ data, threadData, full = false, preview = false, type }) => {
                   </span>
                 </div>
               ) : (
-                <Link to={'/thread/' + data.threadId} className="text_show_more">{Strings.open[lang]} {Strings.thread1[lang]}</Link>
+                <Link to={'/thread/' + data.threadId} className="act_btn foot_btn">{Strings.open[lang]} {Strings.thread1[lang]}</Link>
               )
             )}
           </footer>

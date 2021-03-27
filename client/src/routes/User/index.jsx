@@ -22,7 +22,7 @@ const User = ({ match }) => {
     <Section>
       <Switch>
         <Route path={path + '/settings'} exact component={Settings} />
-        <Route path={path} exact>
+        <Route path={path}>
           <Profile userName={userName} />
         </Route>
       </Switch>

@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -15,15 +15,25 @@ import UserRole from 'components/UserRole';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
+import Stats from './Stats';
+import Threads from './Threads';
+import Answers from './Answers';
+import Bans from './Bans';
+
 const Profile = ({ userName }) => {
   const { user, token, lang, setModalOpen, setPostType } = useContext(StoreContext)
   const history = useHistory()
+  const { url } = useRouteMatch()
 
   const [userData, setUserData] = useState({})
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
   const [banned, setBanned] = useState(false)
   const [moder, setModer] = useState(false)
+
+  if (userData.displayName) {
+    document.title = `Forum | ${Strings.profile[lang]} ${userData.displayName}`
+  }
 
   useEffect(() => {
     const profileName = userData.displayName || userName
@@ -33,8 +43,8 @@ const Profile = ({ userName }) => {
 
     const fetchUser = async () => {
       try {
-        const isProfileApi = user.name === userName ? '/profile' : `/user?userName=${userName}`
-        const data = await fetch(`${BACKEND}/api${isProfileApi}`, {
+        const userMethod = user.name === userName ? '/profile' : `/user?userName=${userName}`
+        const data = await fetch(`${BACKEND}/api${userMethod}`, {
           headers: {
             Authorization: 'Bearer ' + token
           }
@@ -43,7 +53,6 @@ const Profile = ({ userName }) => {
 
         if (!response.error) {
           setUserData(response)
-          console.log(!!response.ban)
           setBanned(!!response.ban)
           setModer(response.role === 2)
           setLoading(false)
@@ -131,73 +140,86 @@ const Profile = ({ userName }) => {
 
   return (
     <Fragment>
-      <Breadcrumbs current={userData.displayName || userName} links={[
-        { title: Strings.home[lang], link: '/' },
-        { title: Strings.users[lang], link: '/users' }
-      ]} />
-
       {!noData ? (
         !loading ? (
-          <Fragment>
-            {banned && (
-              <BanInfoCard data={userData.ban} />
-            )}
+          <Switch>
+            <Route path={url + '/threads'}>
+              <Threads userData={userData} />
+            </Route>
+            <Route path={url + '/answers'}>
+              <Answers userData={userData} />
+            </Route>
+            <Route path={url + '/bans'}>
+              <Bans userData={userData} />
+            </Route>
+            <Route path={url} exact>
+              <Breadcrumbs current={userData.displayName} links={[
+                { title: Strings.home[lang], link: '/' },
+                { title: Strings.users[lang], link: '/users' }
+              ]} />
 
-            <div className="card_item">
-              <div className="card_body">
-                <div className="card_block">
-                  <div className="profile_head">
-                    {userData.picture ? (
-                      <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
-                    ) : (
-                      <div className="profile_picture">{userData.displayName.charAt(0)}</div>
-                    )}
+              {banned && (
+                <BanInfoCard data={userData.ban} />
+              )}
 
-                    <div className="profile_head_right">
-                      <div className="profile_username">
-                        {userData.displayName}
-                        <UserRole role={userData.role} />
-                      </div>
-                      <div>
-                        {new Date() - new Date(userData.onlineAt) < 5 * 60000
-                          ? 'online'
-                          : Strings.lastSeen[lang] + ' ' + dateFormat(userData.onlineAt)
-                        }
-                      </div>
-
-                      {user.id === userData._id && (
-                        <div className="profile_head_actions">
-                          <LinkButton
-                            link={'/user/' + userData.name + '/settings'}
-                            className="hollow"
-                            text={Strings.settings[lang]}
-                          />
-                        </div>
+              <div className="card_item">
+                <div className="card_body">
+                  <div className="card_block">
+                    <div className="profile_head">
+                      {userData.picture ? (
+                        <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
+                      ) : (
+                        <div className="profile_picture">{userData.displayName.charAt(0)}</div>
                       )}
-                    </div>
 
-                    {user.role >= 2 && user.id !== userData._id ? (
-                      <Dropdown>
-                        {user.role === 3 && (
-                          <Fragment>
-                            <div onClick={() => editRole(userData._id)} className="dropdown_item">
-                              {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
-                            </div>
-                            <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>
-                          </Fragment>
-                        )}
-                        {user.role > userData.role && (
-                          <div onClick={() => onBan(userData._id)} className="dropdown_item">
-                            {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
+                      <div className="profile_head_right">
+                        <div className="profile_username">
+                          {userData.displayName}
+                          <UserRole role={userData.role} />
+                        </div>
+                        <div>
+                          {new Date() - new Date(userData.onlineAt) < 5 * 60000
+                            ? 'online'
+                            : Strings.lastSeen[lang] + ' ' + dateFormat(userData.onlineAt)
+                          }
+                        </div>
+
+                        {user.id === userData._id && (
+                          <div className="profile_head_actions">
+                            <LinkButton
+                              link={'/user/' + userData.name + '/settings'}
+                              className="hollow"
+                              text={Strings.settings[lang]}
+                            />
                           </div>
                         )}
-                      </Dropdown>
-                    ) : null}
+                      </div>
+
+                      {user.role >= 2 && user.id !== userData._id ? (
+                        <Dropdown>
+                          {user.role === 3 && (
+                            <Fragment>
+                              <div onClick={() => editRole(userData._id)} className="dropdown_item">
+                                {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
+                              </div>
+                              <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>
+                            </Fragment>
+                          )}
+                          {user.role > userData.role && (
+                            <div onClick={() => onBan(userData._id)} className="dropdown_item">
+                              {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
+                            </div>
+                          )}
+                        </Dropdown>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Fragment>
+
+              <Stats userData={userData} lang={lang} token={token} />
+            </Route>
+          </Switch>
         ) : <Loader color="#64707d" />
       ) : (
         <Errorer message={Strings.unableToDisplayUserProfile[lang]} />
