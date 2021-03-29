@@ -50,7 +50,7 @@ const Banned = ({ history }) => {
       }, 1000)
     }
     return () => {
-      timer && clearTimeout(timer)
+      timer && clearInterval(timer)
     }
   }, [banInfo])
 

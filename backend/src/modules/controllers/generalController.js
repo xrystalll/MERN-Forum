@@ -1,4 +1,4 @@
-const Mongoose = require('mongoose');
+const { Types } = require('mongoose');
 const createError = require('http-errors');
 
 const User = require('../models/User');
@@ -96,7 +96,7 @@ module.exports.getUser = async (req, res, next) => {
 
     if (user.ban) {
       if (user.ban.expiresAt < new Date().toISOString()) {
-        await User.updateOne({ _id: Mongoose.Types.ObjectId(user._id) }, { ban: null })
+        await User.updateOne({ _id: Types.ObjectId(user._id) }, { ban: null })
       }
     }
 
@@ -175,7 +175,7 @@ module.exports.getBan = async (req, res, next) => {
         select: '_id name displayName onlineAt picture role'
       }
     }
-    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(userId) }, select).populate(populate)
+    const user = await User.findOne({ _id: Types.ObjectId(userId) }, select).populate(populate)
 
     res.json(user)
   } catch(err) {
@@ -204,7 +204,7 @@ module.exports.createBan = async (req, res, next) => {
 
     const ban = await newBan.save()
 
-    await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { ban: ban._id })
+    await User.updateOne({ _id: Types.ObjectId(userId) }, { ban: ban._id })
 
     res.json(ban)
 
@@ -222,7 +222,7 @@ module.exports.unBan = async (req, res, next) => {
     if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
-    await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { ban: null })
+    await User.updateOne({ _id: Types.ObjectId(userId) }, { ban: null })
 
     res.json('User unbanned')
 
@@ -238,11 +238,11 @@ module.exports.getUserStats = async (req, res, next) => {
 
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
-    const threads = await Thread.find({ author: Mongoose.Types.ObjectId(userId) })
-    const answers = await Answer.find({ author: Mongoose.Types.ObjectId(userId) })
-    const bans = await Ban.find({ user: Mongoose.Types.ObjectId(userId) })
-    const files = await File.find({ author: Mongoose.Types.ObjectId(userId) })
-    const comments = await Comment.find({ author: Mongoose.Types.ObjectId(userId) })
+    const threads = await Thread.find({ author: Types.ObjectId(userId) })
+    const answers = await Answer.find({ author: Types.ObjectId(userId) })
+    const bans = await Ban.find({ user: Types.ObjectId(userId) })
+    const files = await File.find({ author: Types.ObjectId(userId) })
+    const comments = await Comment.find({ author: Types.ObjectId(userId) })
 
     res.json({
       threadsCount: threads.length,
@@ -330,7 +330,7 @@ module.exports.createReport = async (req, res, next) => {
     if (!postId) return next(createError.BadRequest('postId must not be empty'))
     if (body.trim() === '') return next(createError.BadRequest('Report body must not be empty'))
 
-    const reportExist = await Report.find({ postId: Mongoose.Types.ObjectId(postId) })
+    const reportExist = await Report.find({ postId: Types.ObjectId(postId) })
     if (reportExist.length) return next(createError.BadRequest('Report to the post already has'))
 
     const thread = await Thread.findById(threadId)
@@ -422,7 +422,7 @@ module.exports.editRole = async (req, res, next) => {
     if (!role > 2) return next(createError.BadRequest('Max role number: 2'))
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
-    await User.updateOne({ _id: Mongoose.Types.ObjectId(userId) }, { role })
+    await User.updateOne({ _id: Types.ObjectId(userId) }, { role })
 
     res.json({ message: 'User role updated' })
   } catch(err) {

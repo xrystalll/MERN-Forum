@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Mongoose = require('mongoose');
+const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 const sharp = require('sharp');
@@ -35,7 +35,7 @@ const upload = multer({
 module.exports.getProfile = async (req, res, next) => {
   try {
     const select = '_id name displayName email createdAt onlineAt picture role ban'
-    const user = await User.findOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, select)
+    const user = await User.findOne({ _id: Types.ObjectId(req.payload.id) }, select)
 
     res.json(user)
   } catch(err) {
@@ -56,7 +56,7 @@ module.exports.uploadUserPicture = (req, res, next) => {
             fs.writeFileSync(req.file.path, data)
             const picture = { picture: `/users/${req.file.filename}` }
 
-            await User.updateOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, picture)
+            await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, picture)
 
             res.json(picture)
           })
@@ -74,7 +74,7 @@ module.exports.uploadUserPicture = (req, res, next) => {
 
 module.exports.setOnline = async (req, res, next) => {
   try {
-    await User.updateOne({ _id: Mongoose.Types.ObjectId(req.payload.id) }, { onlineAt: new Date().toISOString() })
+    await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, { onlineAt: new Date().toISOString() })
     res.json({ success: true })
   } catch(err) {
     next(createError.InternalServerError(err))

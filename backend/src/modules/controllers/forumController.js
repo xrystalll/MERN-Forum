@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Mongoose = require('mongoose');
+const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 
@@ -148,7 +148,7 @@ module.exports.editBoard = async (req, res, next) => {
     const nameExist = await Board.findOne({ name: nameUrl })
     if (nameExist) return next(createError.Conflict('Board with this short name is already been created'))
 
-    await Board.updateOne({ _id: Mongoose.Types.ObjectId(boardId) }, {
+    await Board.updateOne({ _id: Types.ObjectId(boardId) }, {
       name: nameUrl,
       title: title.trim().substring(0, 21),
       body: body.substring(0, 100),
@@ -267,7 +267,7 @@ module.exports.createThread = async (req, res, next) => {
 
       const thread = await newThread.save()
 
-      await Board.updateOne({ _id: Mongoose.Types.ObjectId(boardId) }, { $inc: { threadsCount: 1 }, newestThread: now })
+      await Board.updateOne({ _id: Types.ObjectId(boardId) }, { $inc: { threadsCount: 1 }, newestThread: now })
 
       res.json(thread)
     })
@@ -300,7 +300,7 @@ module.exports.deleteThread = async (req, res, next) => {
     await thread.delete()
 
     const deletedAnswers = await Answer.deleteMany({ threadId })
-    await Board.updateOne({ _id: Mongoose.Types.ObjectId(thread.boardId) }, {
+    await Board.updateOne({ _id: Types.ObjectId(thread.boardId) }, {
       $inc: {
         threadsCount: -1,
         answersCount: -deletedAnswers.deletedCount
@@ -362,7 +362,7 @@ module.exports.editThread = async (req, res, next) => {
         }
       }
 
-      await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, obj)
+      await Thread.updateOne({ _id: Types.ObjectId(threadId) }, obj)
 
       const populate = [{
         path: 'author',
@@ -430,7 +430,7 @@ module.exports.adminEditThread = async (req, res, next) => {
         }
       }
 
-      await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, obj)
+      await Thread.updateOne({ _id: Types.ObjectId(threadId) }, obj)
 
       const populate = [{
         path: 'author',
@@ -538,8 +538,8 @@ module.exports.createAnswer = async (req, res, next) => {
 
       const answer = await newAnswer.save()
 
-      await Board.updateOne({ _id: Mongoose.Types.ObjectId(thread.boardId) }, { $inc: { answersCount: 1 }, newestAnswer: now })
-      await Thread.updateOne({ _id: Mongoose.Types.ObjectId(threadId) }, { $inc: { answersCount: 1 }, newestAnswer: now })
+      await Board.updateOne({ _id: Types.ObjectId(thread.boardId) }, { $inc: { answersCount: 1 }, newestAnswer: now })
+      await Thread.updateOne({ _id: Types.ObjectId(threadId) }, { $inc: { answersCount: 1 }, newestAnswer: now })
 
       const populate = [{
         path: 'author',
@@ -618,8 +618,8 @@ module.exports.deleteAnswer = async (req, res, next) => {
 
     await answer.delete()
 
-    await Board.updateOne({ _id: Mongoose.Types.ObjectId(answer.boardId) }, { $inc: { answersCount: -1 } })
-    await Thread.updateOne({ _id: Mongoose.Types.ObjectId(answer.threadId) }, { $inc: { answersCount: -1 } })
+    await Board.updateOne({ _id: Types.ObjectId(answer.boardId) }, { $inc: { answersCount: -1 } })
+    await Thread.updateOne({ _id: Types.ObjectId(answer.threadId) }, { $inc: { answersCount: -1 } })
 
     res.json({ message: 'Answer successfully deleted' })
 
@@ -663,7 +663,7 @@ module.exports.editAnswer = async (req, res, next) => {
           }], [])
         }
 
-        await Answer.updateOne({ _id: Mongoose.Types.ObjectId(answerId) }, {
+        await Answer.updateOne({ _id: Types.ObjectId(answerId) }, {
           body: body.substring(0, 1000),
           edited: {
             createdAt: new Date().toISOString()

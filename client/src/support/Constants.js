@@ -996,6 +996,16 @@ const Strings = {
     en: 'Unable to display profile info',
     jp: 'プロファイル情報を表示できません'
   },
+  'noMessagesYet': {
+    ru: 'Пока нет сообщений',
+    en: 'No messages yet',
+    jp: 'まだメッセージはありません'
+  },
+  'unableToDisplayMessages': {
+    ru: 'Невозможно отобразить сообщения',
+    en: 'Unable to display messages',
+    jp: 'メッセージを表示できません'
+  },
 }
 
 export { BACKEND, Strings };

@@ -14,11 +14,11 @@ const Notifications = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
-    if (user.id) joinToRoom('notification:' + user.id)
+    if (user?.id) joinToRoom('notification:' + user.id, { token })
     return () => {
-      if (user.id) leaveFromRoom('notification:' + user.id)
+      if (user?.id) leaveFromRoom('notification:' + user.id)
     }
-  }, [user.id])
+  }, [user?.id])
 
   useEffect(() => {
     Socket.on('notificationsCount', (data) => {

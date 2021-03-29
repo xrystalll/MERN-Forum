@@ -1,4 +1,4 @@
-const Mongoose = require('mongoose');
+const { Types } = require('mongoose');
 const createError = require('http-errors');
 const { isJapanese, toRomaji } = require('wanakana');
 
@@ -90,7 +90,7 @@ const login = async (req, res, next) => {
 
     if (user.ban) {
       if (user.ban.expiresAt < new Date().toISOString()) {
-        await User.updateOne({ _id: Mongoose.Types.ObjectId(user._id) }, { ban: null })
+        await User.updateOne({ _id: Types.ObjectId(user._id) }, { ban: null })
       } else {
         return res.json({
           ban: {

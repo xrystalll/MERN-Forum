@@ -22,6 +22,7 @@ import Dashboard from 'routes/Dashboard';
 import Folders from 'routes/Uploads/Folders';
 import Folder from 'routes/Uploads/Folder';
 import File from 'routes/Uploads/File';
+import Messages from 'routes/Messages';
 import { NotFound } from 'routes/Error';
 
 const App = () => {
@@ -51,6 +52,7 @@ const App = () => {
             <GeneralRoute exact path="/uploads" component={Folders} />
             <GeneralRoute path="/uploads/:folderName" component={Folder} />
             <GeneralRoute path="/file/:fileId" component={File} />
+            <UsersOnlyRoute path="/messages" component={Messages} />
             <Route path="/banned" component={Banned} />
             <Route path="*" component={NotFound} status={404} />
           </Switch>

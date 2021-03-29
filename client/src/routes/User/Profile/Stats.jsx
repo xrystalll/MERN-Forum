@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { BACKEND, Strings } from 'support/Constants';
 
+import { CardBody } from 'components/Card';
+
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
@@ -40,26 +42,22 @@ const Stats = ({ userData, lang, token }) => {
 
   return !noData ? (
     !loading ? (
-      <div className="card_item">
-        <div className="card_body">
-          <div className="card_block">
-            <div className="profile_stats_grid">
-              <Link to={'/user/' + userData.name + '/threads'} className="profile_stats_item">
-                <span className="secondary_text">{Strings.threads[lang]}</span>
-                {userStats.threadsCount}
-              </Link>
-              <Link to={'/user/' + userData.name + '/answers'} className="profile_stats_item">
-                <span className="secondary_text">{Strings.answers[lang]}</span>
-                {userStats.answersCount}
-              </Link>
-              <Link to={'/user/' + userData.name + '/bans'} className="profile_stats_item">
-                <span className="secondary_text">{Strings.bans[lang]}</span>
-                {userStats.bansCount}
-              </Link>
-            </div>
-          </div>
+      <CardBody>
+        <div className="profile_stats_grid">
+          <Link to={'/user/' + userData.name + '/threads'} className="profile_stats_item">
+            <span className="secondary_text">{Strings.threads[lang]}</span>
+            {userStats.threadsCount}
+          </Link>
+          <Link to={'/user/' + userData.name + '/answers'} className="profile_stats_item">
+            <span className="secondary_text">{Strings.answers[lang]}</span>
+            {userStats.answersCount}
+          </Link>
+          <Link to={'/user/' + userData.name + '/bans'} className="profile_stats_item">
+            <span className="secondary_text">{Strings.bans[lang]}</span>
+            {userStats.bansCount}
+          </Link>
         </div>
-      </div>
+      </CardBody>
     ) : <Loader className="more_loader" color="#64707d" />
   ) : (
     <Errorer message={Strings.unableToDisplayProfileInfo[lang]} />

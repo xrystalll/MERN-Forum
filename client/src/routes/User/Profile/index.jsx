@@ -8,7 +8,7 @@ import { BACKEND, Strings } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Breadcrumbs from 'components/Breadcrumbs';
-import { BanInfoCard } from 'components/Card';
+import { CardBody, BanInfoCard } from 'components/Card';
 import Dropdown from 'components/Card/Dropdown';
 import { LinkButton } from 'components/Button';
 import UserRole from 'components/UserRole';
@@ -162,67 +162,70 @@ const Profile = ({ userName }) => {
                 <BanInfoCard data={userData.ban} />
               )}
 
-              <div className="card_item">
-                <div className="card_body">
-                  <div className="card_block">
-                    <div className="profile_head">
-                      {userData.picture ? (
-                        <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
-                      ) : (
-                        <div className="profile_picture">{userData.displayName.charAt(0)}</div>
-                      )}
+              <CardBody>
+                <div className="profile_head">
+                  {userData.picture ? (
+                    <div className="profile_picture" style={{ backgroundImage: `url(${BACKEND + userData.picture})` }} />
+                  ) : (
+                    <div className="profile_picture">{userData.displayName.charAt(0)}</div>
+                  )}
 
-                      <div className="profile_head_right">
-                        <div className="profile_username">
-                          {userData.displayName}
-                          <UserRole role={userData.role} />
-                        </div>
-                        <div>
-                          {new Date() - new Date(userData.onlineAt) < 5 * 60000
-                            ? 'online'
-                            : Strings.lastSeen[lang] + ' ' + dateFormat(userData.onlineAt)
-                          }
-                        </div>
-
-                        {user.id === userData._id && (
-                          <div className="profile_head_actions">
-                            <LinkButton
-                              link={'/user/' + userData.name + '/settings'}
-                              className="hollow"
-                              text={Strings.settings[lang]}
-                            />
-                          </div>
-                        )}
-                      </div>
-
-                      {user.role >= 2 && user.id !== userData._id ? (
-                        <Dropdown>
-                          {user.role === 3 && (
-                            <Fragment>
-                              <div onClick={() => editRole(userData._id)} className="dropdown_item">
-                                {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
-                              </div>
-                              <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>
-                            </Fragment>
-                          )}
-                          {user.role > userData.role && (
-                            <div onClick={() => onBan(userData._id)} className="dropdown_item">
-                              {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
-                            </div>
-                          )}
-                        </Dropdown>
-                      ) : null}
+                  <div className="profile_head_right">
+                    <div className="profile_username">
+                      {userData.displayName}
+                      <UserRole role={userData.role} />
                     </div>
+                    <div>
+                      {new Date() - new Date(userData.onlineAt) < 5 * 60000
+                        ? 'online'
+                        : Strings.lastSeen[lang] + ' ' + dateFormat(userData.onlineAt)
+                      }
+                    </div>
+
+                    {user.id === userData._id && (
+                      <div className="profile_head_actions">
+                        <LinkButton
+                          link={'/user/' + userData.name + '/settings'}
+                          className="hollow"
+                          text={Strings.settings[lang]}
+                        />
+                      </div>
+                    )}
                   </div>
+
+                  {user.role >= 2 && user.id !== userData._id ? (
+                    <Dropdown>
+                      {user.role === 3 && (
+                        <Fragment>
+                          <div onClick={() => editRole(userData._id)} className="dropdown_item">
+                            {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
+                          </div>
+                          <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>
+                        </Fragment>
+                      )}
+                      {user.role > userData.role && (
+                        <div onClick={() => onBan(userData._id)} className="dropdown_item">
+                          {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
+                        </div>
+                      )}
+                    </Dropdown>
+                  ) : null}
                 </div>
-              </div>
+              </CardBody>
 
               <Stats userData={userData} lang={lang} token={token} />
             </Route>
           </Switch>
         ) : <Loader color="#64707d" />
       ) : (
-        <Errorer message={Strings.unableToDisplayUserProfile[lang]} />
+        <Fragment>
+          <Breadcrumbs current={Strings.error[lang]} links={[
+            { title: Strings.home[lang], link: '/' },
+            { title: Strings.users[lang], link: '/users' }
+          ]} />
+
+          <Errorer message={Strings.unableToDisplayUserProfile[lang]} />
+        </Fragment>
       )}
     </Fragment>
   )

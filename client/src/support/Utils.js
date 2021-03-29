@@ -15,8 +15,13 @@ export const declOfNum = (number, titles) => {
 }
 
 export const dateFormat = (date) => {
+  const langs = ['ru', 'en', 'jp']
+  const langFromLS = langs.find(i => i === localStorage.getItem('lang'))
+  const langFromNL = langs.find(i => i === window.navigator.language)
+  const lang = langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
+
   return moment(date)
-    .locale(localStorage.getItem('lang') || 'en')
+    .locale(lang)
     .calendar(null, {
       nextWeek: 'DD MMM, hh:mm',
       lastWeek: 'DD MMM, hh:mm',

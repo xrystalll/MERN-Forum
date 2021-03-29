@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Mongoose = require('mongoose');
+const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 
@@ -136,7 +136,7 @@ module.exports.editFolder = async (req, res, next) => {
     const nameExist = await Folder.findOne({ name: nameUrl })
     if (nameExist) return next(createError.Conflict('Folder with this short name is already been created'))
 
-    await Folder.updateOne({ _id: Mongoose.Types.ObjectId(folderId) }, {
+    await Folder.updateOne({ _id: Types.ObjectId(folderId) }, {
       name: nameUrl,
       title: title.trim().substring(0, 21),
       body: body.substring(0, 100),
@@ -269,7 +269,7 @@ module.exports.createFile = async (req, res, next) => {
 
       const file = await newFile.save()
 
-      await Folder.updateOne({ _id: Mongoose.Types.ObjectId(folderId) }, { $inc: { filesCount: 1 } })
+      await Folder.updateOne({ _id: Types.ObjectId(folderId) }, { $inc: { filesCount: 1 } })
 
       res.json(file)
 
@@ -298,7 +298,7 @@ module.exports.deleteFile = async (req, res, next) => {
     await file.delete()
 
     await Comment.deleteMany({ fileId })
-    await Folder.updateOne({ _id: Mongoose.Types.ObjectId(file.folderId) }, { $inc: { filesCount: -1 } })
+    await Folder.updateOne({ _id: Types.ObjectId(file.folderId) }, { $inc: { filesCount: -1 } })
 
     res.json({ message: 'File successfully deleted' })
 
@@ -320,7 +320,7 @@ module.exports.editFile = async (req, res, next) => {
     const file = await File.findById(fileId)
 
     if (req.payload.id === file.author.toString() || moder) {
-      await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, {
+      await File.updateOne({ _id: Types.ObjectId(fileId) }, {
         title: title.trim().substring(0, 100),
         body: body.substring(0, 1000)
       })
@@ -385,7 +385,7 @@ module.exports.moderateFile = async (req, res, next) => {
     if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
 
-    await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { moderated: true })
+    await File.updateOne({ _id: Types.ObjectId(fileId) }, { moderated: true })
 
     res.json({ message: 'File successfully moderated' })
   } catch(err) {
@@ -399,7 +399,7 @@ module.exports.download = async (req, res, next) => {
 
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
 
-    await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { $inc: { downloads: 1 } })
+    await File.updateOne({ _id: Types.ObjectId(fileId) }, { $inc: { downloads: 1 } })
 
     const populate = [{
       path: 'author',
@@ -460,7 +460,7 @@ module.exports.createComment = async (req, res, next) => {
 
     const comment = await newComment.save()
 
-    await File.updateOne({ _id: Mongoose.Types.ObjectId(fileId) }, { $inc: { commentsCount: 1 } })
+    await File.updateOne({ _id: Types.ObjectId(fileId) }, { $inc: { commentsCount: 1 } })
 
     const populate = [{
       path: 'author',
@@ -527,7 +527,7 @@ module.exports.deleteComment = async (req, res, next) => {
     if (req.payload.id === comment.author.toString() || moder) {
       await comment.delete()
 
-      await File.updateOne({ _id: Mongoose.Types.ObjectId(comment.fileId) }, { $inc: { commentsCount: -1 } })
+      await File.updateOne({ _id: Types.ObjectId(comment.fileId) }, { $inc: { commentsCount: -1 } })
 
       res.json({ message: 'Comment successfully deleted' })
 

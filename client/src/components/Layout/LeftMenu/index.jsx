@@ -9,19 +9,29 @@ import { counter } from 'support/Utils';
 import './style.css';
 
 const LeftMenu = ({ open, setMenuOpen }) => {
-  const { user, lang } = useContext(StoreContext)
-  const [messages] = useState(0)
+  const { user, token, lang } = useContext(StoreContext)
+  const [messages, setMessages] = useState(0)
   const [adminNotification, setAdminNotification] = useState(false)
   const menuOpen = open ? 'left_bar open' : 'left_bar'
 
   useEffect(() => {
-    if (user?.role >= 2) joinToRoom('adminNotification')
+    if (user?.id) joinToRoom('pmCount:' + user.id, { token })
+    return () => {
+      if (user?.id) leaveFromRoom('pmCount:' + user.id)
+    }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (user?.role >= 2) joinToRoom('adminNotification', { token })
     return () => {
       if (user?.role >= 2) leaveFromRoom('adminNotification')
     }
   }, [user?.role])
 
   useEffect(() => {
+    Socket.on('messagesCount', (data) => {
+      setMessages(data.count)
+    })
     Socket.on('newAdminNotification', (data) => {
       if (data.type === 'report') {
         localStorage.setItem('reports', true)

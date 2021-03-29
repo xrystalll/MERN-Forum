@@ -6,6 +6,7 @@ const GeneralController = require('../modules/controllers/generalController');
 const ProfileController = require('../modules/controllers/profileController');
 const ForumController = require('../modules/controllers/forumController');
 const UploadsController = require('../modules/controllers/uploadsController');
+const MessagesController = require('../modules/controllers/messagesController');
 
 router.get('/search', GeneralController.search)
 router.get('/stats', GeneralController.getStats)
@@ -79,5 +80,7 @@ router.get('/file/comments', UploadsController.getComments)
 router.post('/file/comment/create', verifyAccessToken, UploadsController.createComment)
 router.delete('/file/comment/delete', verifyAccessToken, UploadsController.deleteComment)
 router.put('/file/comment/like', verifyAccessToken, UploadsController.likeComment)
+
+router.get('/dialogues', verifyAccessToken, MessagesController.getDialogues)
 
 module.exports = router

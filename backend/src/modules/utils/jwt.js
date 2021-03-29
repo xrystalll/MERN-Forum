@@ -15,7 +15,7 @@ const signAccessToken = (user) => {
     }
     JWT.sign(payload, process.env.SECRET, { expiresIn: '24h' }, (err, token) => {
       if (err) {
-        console.log(err.message)
+        console.error(err.message)
         return reject(createError.InternalServerError())
       }
       return resolve(token)
@@ -39,4 +39,16 @@ const verifyAccessToken = (req, res, next) => {
   })
 }
 
-module.exports = { signAccessToken, verifyAccessToken }
+const verifyAccessTokenIO = (token) => {
+  if (!token) return createError.Unauthorized()
+
+  return JWT.verify(token, process.env.SECRET, (err, payload) => {
+    if (err) {
+      const message = err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message
+      return createError.Unauthorized(message)
+    }
+    return payload
+  })
+}
+
+module.exports = { signAccessToken, verifyAccessToken, verifyAccessTokenIO }

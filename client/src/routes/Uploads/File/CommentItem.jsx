@@ -8,6 +8,7 @@ import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
+import { CardBody } from 'components/Card';
 import Dropdown from 'components/Card/Dropdown';
 import UserRole from 'components/UserRole';
 
@@ -111,91 +112,87 @@ const CommentItem = ({ data, setCommentedTo }) => {
   }
 
   return (
-    <div className="card_item">
-      <div className="card_body">
-        <div className="card_block">
-          <header className="card_head">
-            <div className="card_head_inner">
-              <div className="card_info">
-                <Link to={'/user/' + data.author.name} className="head_text bold">
-                  {data.author.displayName}
+    <CardBody>
+      <header className="card_head">
+        <div className="card_head_inner">
+          <div className="card_info">
+            <Link to={'/user/' + data.author.name} className="head_text bold">
+              {data.author.displayName}
 
-                  <Fragment>
-                    {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
-                    <UserRole role={data.author.role} />
-                  </Fragment>
-                </Link>
-                <span className="bullet">-</span>
-                <span className="head_text">
-                  <time>{dateFormat(data.createdAt)}</time>
-                </span>
-              </div>
-            </div>
-
-            {user && (
-              user.role >= 2 || user.id === data.author._id ? (
-                <Dropdown>
-                  {user.role >= 2 && (
-                    <Fragment>
-                      {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
-                        <div onClick={onBan} className="dropdown_item">
-                          {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
-                        </div>
-                      )}
-                    </Fragment>
-                  )}
-                  {user.id === data.author._id || user.role >= 2
-                    ? <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
-                    : null
-                  }
-                </Dropdown>
-              ) : null
-            )}
-          </header>
-
-          <div className="card_content markdown">
-            <Markdown source={data.body} />
+              <Fragment>
+                {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
+                <UserRole role={data.author.role} />
+              </Fragment>
+            </Link>
+            <span className="bullet">-</span>
+            <span className="head_text">
+              <time>{dateFormat(data.createdAt)}</time>
+            </span>
           </div>
+        </div>
 
-          <footer className="card_foot">
-            {data.author.name !== 'deleted' && user && user.id !== data.author._id && (
-              <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
-                <i className="bx bx-redo" />
-                <span>{Strings.answer[lang]}</span>
-              </div>
-            )}
-
-            <div className="act_btn foot_btn likes" onClick={onLike}>
-              <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
-              {likes.length ? (
+        {user && (
+          user.role >= 2 || user.id === data.author._id ? (
+            <Dropdown>
+              {user.role >= 2 && (
                 <Fragment>
-                  <span className="card_count">{counter(likes.length)}</span>
-                  <span className="hidden">
-                    {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
-                  </span>
-                  {user && (
-                    <div className="likes_list" ref={likesList}>
-                      {likes.slice(0, 4).map((item, index) => (
-                        <Link
-                          key={index}
-                          to={'/user/' + item.name}
-                          className="head_profile"
-                          title={item.displayName}
-                          style={{ backgroundImage: `url(${item.picture ? BACKEND + item.picture : ''})` }}
-                        >
-                          {!item.picture && item.displayName.charAt(0)}
-                        </Link>
-                      ))}
-                      {likes.length > 4 && <span>and {likes.length - 4} more</span>}
+                  {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
+                    <div onClick={onBan} className="dropdown_item">
+                      {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
                     </div>
                   )}
                 </Fragment>
-              ) : null}
-            </div>
-          </footer>
-        </div>
+              )}
+              {user.id === data.author._id || user.role >= 2
+                ? <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
+                : null
+              }
+            </Dropdown>
+          ) : null
+        )}
+      </header>
+
+      <div className="card_content markdown">
+        <Markdown source={data.body} />
       </div>
-    </div>
+
+      <footer className="card_foot">
+        {data.author.name !== 'deleted' && user && user.id !== data.author._id && (
+          <div className="act_btn foot_btn" onClick={() => answerTo(data._id, data.author.displayName)}>
+            <i className="bx bx-redo" />
+            <span>{Strings.answer[lang]}</span>
+          </div>
+        )}
+
+        <div className="act_btn foot_btn likes" onClick={onLike}>
+          <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
+          {likes.length ? (
+            <Fragment>
+              <span className="card_count">{counter(likes.length)}</span>
+              <span className="hidden">
+                {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
+              </span>
+              {user && (
+                <div className="likes_list" ref={likesList}>
+                  {likes.slice(0, 4).map((item, index) => (
+                    <Link
+                      key={index}
+                      to={'/user/' + item.name}
+                      className="head_profile"
+                      title={item.displayName}
+                      style={{ backgroundImage: `url(${item.picture ? BACKEND + item.picture : ''})` }}
+                    >
+                      {!item.picture && item.displayName.charAt(0)}
+                    </Link>
+                  ))}
+                  {likes.length > 4 && <span>and {likes.length - 4} more</span>}
+                </div>
+              )}
+            </Fragment>
+          ) : null}
+        </div>
+      </footer>
+    </CardBody>
   )
 }
 
