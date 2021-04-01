@@ -3,7 +3,9 @@ const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 
+const User = require('../models/User');
 const Dialogue = require('../models/Dialogue');
+const Message = require('../models/Message');
 
 const deleteFiles = require('../utils//deleteFiles');
 
@@ -46,7 +48,7 @@ module.exports.getDialogues = async (req, res, next) => {
     }, {
       path: 'lastMessage'
     }]
-    const messages = await Dialogue.paginate({
+    const dialogues = await Dialogue.paginate({
       $or: [{
         to: Types.ObjectId(req.payload.id)
       }, {
@@ -58,6 +60,57 @@ module.exports.getDialogues = async (req, res, next) => {
       limit,
       populate
     })
+
+    if (dialogues.length) {
+      if (req.payload.id !== dialogues[0].to) return next(createError.Unauthorized('Action not allowed'))
+    }
+
+    res.json(dialogues)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getDialogue = async (req, res, next) => {
+  try {
+    const { userName } = req.query
+
+    if (!userName) return next(createError.BadRequest('userName must not be empty'))
+
+    const user = await User.findOne({ name: userName })
+
+    const dialogue = await Dialogue.findOne({
+      $or: [{
+        to: Types.ObjectId(user._id)
+      }, {
+        from: Types.ObjectId(user._id)
+      }]
+    })
+
+    // if (req.payload.id !== dialogue.to.toString() || req.payload.id !== dialogue.from.toString()) {
+    //   return next(createError.Unauthorized('Action not allowed'))
+    // }
+
+    res.json(dialogue)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getMessages = async (req, res, next) => {
+  try {
+    const { dialogueId, limit = 10, page = 1 } = req.query
+
+    if (!dialogueId) return next(createError.BadRequest('dialogueId must not be empty'))
+
+    const populate = [{
+      path: 'from',
+      select: '_id name displayName onlineAt picture role'
+    }, {
+      path: 'to',
+      select: '_id name displayName onlineAt picture role'
+    }]
+    const messages = await Message.paginate({ dialogueId }, { sort: { createdAt: -1 }, page, limit, populate })
 
     res.json(messages)
   } catch(err) {

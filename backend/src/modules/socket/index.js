@@ -1,15 +1,17 @@
-const sockeIO = require('socket.io');
+const socketIO = require('socket.io');
 const { Types } = require('mongoose');
+const createError = require('http-errors');
 
 const Notification = require('../models/Notification');
 const Report = require('../models/Report');
 const File = require('../models/File');
 const Message = require('../models/Message');
+const Dialogue = require('../models/Dialogue');
 
 const { verifyAccessTokenIO } = require('../utils/jwt');
 
 module.exports = (server) => {
-  const io = sockeIO(server, {
+  const io = socketIO(server, {
     cors: {
       origin: process.env.CLIENT,
     }
@@ -64,15 +66,46 @@ module.exports = (server) => {
       }
 
       if (/pm:/.test(data.room)) {
-        if (!jwtData || jwtData.id !== data.room.replace('pm:', '')) {
+        if (!jwtData || jwtData.id !== data.payload.userId) {
           io.to(data.room).emit('error', createError.Unauthorized())
           socket.leave(data.room)
           return
         }
 
-        const { page, limit } = data.payload
-        const from = data.room.split(':')[1]
-        const to = data.room.split(':')[2]
+        io.to(data.room).emit('joinedToPM')
+      }
+    })
+
+    socket.on('leave', (data) => {
+      socket.leave(data.room)
+    })
+
+    socket.on('createMessage', async (data) => {
+      const { token, dialogueId, body, to } = data
+
+      let jwtData = null
+      if (token) {
+        jwtData = verifyAccessTokenIO(token)
+      }
+      if (!jwtData) {
+        io.to('pm:' + dialogueId).emit('error', createError.Unauthorized())
+        socket.leave('pm:' + dialogueId)
+        return
+      }
+
+      try {
+        const newMessage = new Message({
+          dialogueId,
+          body,
+          createdAt: new Date().toISOString(),
+          from: jwtData.id,
+          to,
+          read: false
+        })
+
+        const message = await newMessage.save()
+        await Dialogue.updateOne({ _id: Types.ObjectId(dialogueId) }, { lastMessage: message._id })
+
         const populate = [{
           path: 'from',
           select: '_id name displayName onlineAt picture role'
@@ -80,18 +113,11 @@ module.exports = (server) => {
           path: 'to',
           select: '_id name displayName onlineAt picture role'
         }]
-        const messages = await Message.paginate({ from: Types.ObjectId(from), to: Types.ObjectId(to) }, {
-          sort: { createdAt: -1 },
-          page,
-          limit,
-          populate
-        })
-        io.to(data.room).emit('messages', messages)
+        const populatedMessage = await Message.findById(message._id).populate(populate)
+        io.to('pm:' + dialogueId).emit('newMessage', populatedMessage)
+      } catch(err) {
+        io.to('pm:' + dialogueId).emit('error', err)
       }
-    })
-
-    socket.on('leave', (data) => {
-      socket.leave(data.room)
     })
   })
 

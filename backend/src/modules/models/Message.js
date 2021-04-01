@@ -8,6 +8,7 @@ const fileSchema = new Schema({
 })
 
 const messageSchema = new Schema({
+  dialogueId: Schema.Types.ObjectId,
   body: String,
   createdAt: String,
   from: {

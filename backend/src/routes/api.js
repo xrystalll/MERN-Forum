@@ -82,5 +82,8 @@ router.delete('/file/comment/delete', verifyAccessToken, UploadsController.delet
 router.put('/file/comment/like', verifyAccessToken, UploadsController.likeComment)
 
 router.get('/dialogues', verifyAccessToken, MessagesController.getDialogues)
+router.get('/dialogue', verifyAccessToken, MessagesController.getDialogue)
+
+router.get('/messages', verifyAccessToken, MessagesController.getMessages)
 
 module.exports = router

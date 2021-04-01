@@ -1,8 +1,16 @@
+import { useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-const CustomScrollbar = ({ className, children, onScroll }) => {
+const CustomScrollbar = ({ className, children, onScroll, toBottom = false }) => {
+  const scrollbars = useRef()
+
+  useEffect(() => {
+    if (toBottom) scrollbars.current.scrollToBottom()
+  }, [toBottom])
+  
   return (
     <Scrollbars
+      ref={scrollbars}
       autoHide
       renderTrackHorizontal={props => <div {...props} className="track-horizontal" />}
       renderTrackVertical={props => <div {...props} className="track-vertical" />}

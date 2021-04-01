@@ -100,7 +100,7 @@ body.noscroll {
   bottom: 3px;
   top: 3px;
   border-radius: 4px;
-  z-index: 11;
+  z-index: 1;
 }
 .track-horizontal {
   display: none;
@@ -111,8 +111,6 @@ body.noscroll {
     right: 2px;
     bottom: 2px;
     top: 2px;
-    border-radius: 4px;
-    z-index: 11;
   }
 }
 .thumb-vertical, .thumb-horizontal {
@@ -129,17 +127,11 @@ a {
 a.flex_margin {
   margin: 0 .4rem;
 }
-img {
-  user-select: none;
-}
-br {
+img, br {
   user-select: none;
 }
 ul {
   list-style: none;
-}
-.anchor {
-  visibility: hidden;
 }
 
 #root {
@@ -187,7 +179,7 @@ ul {
   word-break: break-word;
 }
 
-
+/* Card */
 .thread_pin, .thread_lock {
   margin-right: .4rem;
   color: var(--secondary-text);
@@ -677,7 +669,7 @@ a.head_text:hover {
   line-height: 1.2;
 }
 
-
+/* Modal */
 .modal {
   display: none;
   position: fixed;
