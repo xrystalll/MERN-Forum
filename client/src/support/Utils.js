@@ -25,6 +25,7 @@ export const dateFormat = (date, short = false) => {
       .locale(lang)
       .calendar(null, {
         sameDay: 'hh:mm',
+        lastDay: 'DD MMM, hh:mm',
         nextDay: 'DD MMM, hh:mm',
         nextWeek: 'DD MMM, hh:mm',
         lastWeek: 'DD MMM, hh:mm',

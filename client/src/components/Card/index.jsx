@@ -884,26 +884,32 @@ export const FileCard = ({ data, deleteFile }) => {
 }
 
 export const DialoqueCard = ({ data }) => {
+  const { user, lang } = useContext(StoreContext)
+  let key = 'from'
+  if (user.id === data.from._id) {
+    key = 'to'
+  }
+
   return (
     <div className="card_item">
       <div className="card_body">
         <div className={data.lastMessage.read ? 'card_block' : 'card_block noread'}>
           <header className="card_head user_head">
             <div className="card_head_inner">
-              <Link to={'/messages/' + data.from.name} className="card_title user_title">
-                {data.from.picture ? (
-                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.from.picture})` }} />
+              <Link to={'/messages/' + data[key].name} className="card_title user_title">
+                {data[key].picture ? (
+                  <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data[key].picture})` }} />
                 ) : (
                   <div className="head_profile">
-                    {data.from.displayName.charAt(0)}
+                    {data[key].displayName.charAt(0)}
                   </div>
                 )}
                 <div className="user_info">
                   <div className="user_info_top">
-                    {data.from.displayName}
-                    <UserRole role={data.from.role} />
+                    {data[key].displayName}
+                    <UserRole role={data[key].role} />
                   </div>
-                  <div className="head_text">{data.lastMessage.body}</div>
+                  <div className="head_text">{data.lastMessage.from === user.id && `${Strings.you[lang]}: `}{data.lastMessage.body}</div>
                 </div>
               </Link>
             </div>

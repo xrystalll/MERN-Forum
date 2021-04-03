@@ -6,7 +6,7 @@ const MessageItem = ({ data, user }) => {
   const my = user.id === data.from._id
 
   return (
-    <div className={`message_item${my ? ' my' : ''} markdown`}>
+    <div className={`message_item${my ? ' my' : ''} markdown`} id={'msg_' +data._id}>
       <div className="message_content">
         <Markdown source={data.body} />
       </div>

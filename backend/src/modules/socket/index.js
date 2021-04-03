@@ -28,7 +28,7 @@ module.exports = (server) => {
 
       if (/notification:/.test(data.room)) {
         if (!jwtData || jwtData.id !== data.room.replace('notification:', '')) {
-          io.to(data.room).emit('error', createError.Unauthorized())
+          socket.emit('error', createError.Unauthorized())
           socket.leave(data.room)
           return
         }
@@ -39,7 +39,7 @@ module.exports = (server) => {
 
       if (data.room === 'adminNotification') {
         if (!jwtData || jwtData.role < 2) {
-          io.to(data.room).emit('error', createError.Unauthorized())
+          socket.emit('error', createError.Unauthorized())
           socket.leave(data.room)
           return
         }
@@ -56,7 +56,7 @@ module.exports = (server) => {
 
       if (/pmCount:/.test(data.room)) {
         if (!jwtData || jwtData.id !== data.room.replace('pmCount:', '')) {
-          io.to(data.room).emit('error', createError.Unauthorized())
+          socket.emit('error', createError.Unauthorized())
           socket.leave(data.room)
           return
         }
@@ -67,12 +67,10 @@ module.exports = (server) => {
 
       if (/pm:/.test(data.room)) {
         if (!jwtData || jwtData.id !== data.payload.userId) {
-          io.to(data.room).emit('error', createError.Unauthorized())
+          socket.emit('error', createError.Unauthorized())
           socket.leave(data.room)
           return
         }
-
-        io.to(data.room).emit('joinedToPM')
       }
     })
 
@@ -88,14 +86,27 @@ module.exports = (server) => {
         jwtData = verifyAccessTokenIO(token)
       }
       if (!jwtData) {
-        io.to('pm:' + dialogueId).emit('error', createError.Unauthorized())
+        socket.emit('error', createError.Unauthorized())
         socket.leave('pm:' + dialogueId)
         return
       }
 
       try {
+        let dId = dialogueId
+        if (!dialogueId) {
+          const newDialogue = new Dialogue({
+            from: jwtData.id,
+            to
+          })
+
+          const dialogue = await newDialogue.save()
+          dId = dialogue._id
+
+          socket.emit('joinToDialogue', dialogue)
+        }
+
         const newMessage = new Message({
-          dialogueId,
+          dialogueId: dId,
           body,
           createdAt: new Date().toISOString(),
           from: jwtData.id,
@@ -104,7 +115,7 @@ module.exports = (server) => {
         })
 
         const message = await newMessage.save()
-        await Dialogue.updateOne({ _id: Types.ObjectId(dialogueId) }, { lastMessage: message._id })
+        await Dialogue.updateOne({ _id: Types.ObjectId(dId) }, { lastMessage: message._id })
 
         const populate = [{
           path: 'from',
@@ -114,7 +125,30 @@ module.exports = (server) => {
           select: '_id name displayName onlineAt picture role'
         }]
         const populatedMessage = await Message.findById(message._id).populate(populate)
-        io.to('pm:' + dialogueId).emit('newMessage', populatedMessage)
+
+        io.to('pm:' + dId).emit('newMessage', populatedMessage)
+      } catch(err) {
+        io.to('pm:' + dId).emit('error', err)
+      }
+    })
+
+    socket.on('readMessages', async (data) => {
+      const { token, dialogueId, from } = data
+
+      let jwtData = null
+      if (token) {
+        jwtData = verifyAccessTokenIO(token)
+      }
+      if (!jwtData) {
+        socket.emit('error', createError.Unauthorized())
+        socket.leave('pm:' + dialogueId)
+        return
+      }
+
+      try {
+        await Message.updateMany({ dialogueId: Types.ObjectId(dialogueId), from }, { read: true })
+
+        socket.to('pm:' + dialogueId).emit('messagesRead')
       } catch(err) {
         io.to('pm:' + dialogueId).emit('error', err)
       }

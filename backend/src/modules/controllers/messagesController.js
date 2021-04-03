@@ -46,6 +46,9 @@ module.exports.getDialogues = async (req, res, next) => {
       path: 'from',
       select: '_id name displayName onlineAt picture role'
     }, {
+      path: 'to',
+      select: '_id name displayName onlineAt picture role'
+    }, {
       path: 'lastMessage'
     }]
     const dialogues = await Dialogue.paginate({
@@ -81,8 +84,10 @@ module.exports.getDialogue = async (req, res, next) => {
 
     const dialogue = await Dialogue.findOne({
       $or: [{
-        to: Types.ObjectId(user._id)
+        to: Types.ObjectId(user._id),
+        from: Types.ObjectId(req.payload.id)
       }, {
+        to: Types.ObjectId(req.payload.id),
         from: Types.ObjectId(user._id)
       }]
     })

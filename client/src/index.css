@@ -651,6 +651,17 @@ a.head_text:hover {
   display: flex;
   align-items: center;
 }
+.user_title .card_back {
+  color: var(--main-text);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-right: .5rem;
+  cursor: pointer;
+}
 .user_title .head_profile {
   margin-right: 1rem;
 }
@@ -667,6 +678,7 @@ a.head_text:hover {
   display: flex;
   align-items: center;
   line-height: 1.2;
+  color: var(--secondary-text);
 }
 
 /* Modal */

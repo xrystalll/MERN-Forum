@@ -1006,6 +1006,16 @@ const Strings = {
     en: 'Unable to display messages',
     jp: 'メッセージを表示できません'
   },
+  'message': {
+    ru: 'Сообщение',
+    en: 'Message',
+    jp: 'メッセージ'
+  },
+  'you': {
+    ru: 'Вы',
+    en: 'You',
+    jp: '君は'
+  },
 }
 
 export { BACKEND, Strings };

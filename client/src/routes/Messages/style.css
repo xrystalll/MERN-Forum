@@ -1,9 +1,18 @@
 .messages_wrapper {
-  height: 75vh;
+  height: calc(100vh - 198px);
 }
-.messages_wrapper .comments_form.float {
+.messages_wrapper .comments_form {
   position: relative;
   background-color: initial;
+  padding: 0;
+  margin: .5rem 0 !important;
+}
+.messages_wrapper .comments_form .card_item {
+  margin: 0;
+}
+
+.messages_wrapper .user_head {
+  padding: 0;
 }
 
 .messages_wrapper .empty-results, .messages_wrapper .content_loader {
@@ -42,7 +51,7 @@
 }
 .message_info i {
   color: var(--accent-color);
-  font-size: 18px;
+  font-size: 16px;
   position: relative;
   top: -1px;
   margin-left: .3rem;

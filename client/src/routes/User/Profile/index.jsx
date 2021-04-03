@@ -182,12 +182,20 @@ const Profile = ({ userName }) => {
                       }
                     </div>
 
-                    {user.id === userData._id && (
+                    {user.id === userData._id ? (
                       <div className="profile_head_actions">
                         <LinkButton
                           link={'/user/' + userData.name + '/settings'}
                           className="hollow"
                           text={Strings.settings[lang]}
+                        />
+                      </div>
+                    ) : (
+                      <div className="profile_head_actions">
+                        <LinkButton
+                          link={'/messages/' + userData.name}
+                          className="hollow"
+                          text={Strings.message[lang]}
                         />
                       </div>
                     )}
