@@ -34,6 +34,7 @@ module.exports = (server) => {
         }
 
         const notifications = await Notification.find({ to: Types.ObjectId(jwtData.id), read: false })
+
         io.to(data.room).emit('notificationsCount', { count: notifications.length })
       }
 
@@ -48,6 +49,7 @@ module.exports = (server) => {
         if (reports.length) {
           io.to(data.room).emit('newAdminNotification', { type: 'report' })
         }
+
         const files = await File.find({ moderated: false })
         if (files.length) {
           io.to(data.room).emit('newAdminNotification', { type: 'file' })
@@ -61,8 +63,25 @@ module.exports = (server) => {
           return
         }
 
-        const messages = await Message.find({ to: Types.ObjectId(jwtData.id), read: false })
-        io.to(data.room).emit('messagesCount', { count: messages.length })
+        const dialogues = await Dialogue.find({
+          $or: [{
+            to: Types.ObjectId(jwtData.id)
+          }, {
+            from: Types.ObjectId(jwtData.id)
+          }]
+        }).populate({ path: 'lastMessage' })
+
+        const noRead = dialogues.filter(item => !item.lastMessage.read && item.lastMessage.to.toString() === jwtData.id)
+
+        io.to(data.room).emit('messagesCount', { count: noRead.length })
+      }
+
+      if (/dialogues:/.test(data.room)) {
+        if (!jwtData || jwtData.id !== data.room.replace('dialogues:', '')) {
+          socket.emit('error', createError.Unauthorized())
+          socket.leave(data.room)
+          return
+        }
       }
 
       if (/pm:/.test(data.room)) {
@@ -92,8 +111,11 @@ module.exports = (server) => {
       }
 
       try {
+        let isNewDialogue = false
         let dId = dialogueId
         if (!dialogueId) {
+          isNewDialogue = true
+
           const newDialogue = new Dialogue({
             from: jwtData.id,
             to
@@ -105,17 +127,19 @@ module.exports = (server) => {
           socket.emit('joinToDialogue', dialogue)
         }
 
+        const now = new Date().toISOString()
+
         const newMessage = new Message({
           dialogueId: dId,
           body,
-          createdAt: new Date().toISOString(),
+          createdAt: now,
           from: jwtData.id,
           to,
           read: false
         })
 
         const message = await newMessage.save()
-        await Dialogue.updateOne({ _id: Types.ObjectId(dId) }, { lastMessage: message._id })
+        await Dialogue.updateOne({ _id: Types.ObjectId(dId) }, { lastMessage: message._id, updatedAt: now })
 
         const populate = [{
           path: 'from',
@@ -127,6 +151,35 @@ module.exports = (server) => {
         const populatedMessage = await Message.findById(message._id).populate(populate)
 
         io.to('pm:' + dId).emit('newMessage', populatedMessage)
+
+        const populatedDialogue = [{
+          path: 'from',
+          select: '_id name displayName onlineAt picture role'
+        }, {
+          path: 'to',
+          select: '_id name displayName onlineAt picture role'
+        }, {
+          path: 'lastMessage'
+        }]
+        const newOrUpdatedDialogue = await Dialogue.findById(dId).populate(populatedDialogue)
+
+        if (isNewDialogue) {
+          io.to('dialogues:' + to).emit('newDialogue', newOrUpdatedDialogue)
+        } else {
+          io.to('dialogues:' + to).emit('updateDialogue', newOrUpdatedDialogue)
+        }
+
+        const dialogues = await Dialogue.find({
+          $or: [{
+            to: Types.ObjectId(jwtData.id)
+          }, {
+            from: Types.ObjectId(jwtData.id)
+          }]
+        }).populate({ path: 'lastMessage' })
+
+        const noRead = dialogues.filter(item => !item.lastMessage.read && item.lastMessage.to.toString() === to)
+
+        socket.to('pmCount:' + to).emit('messagesCount', { count: noRead.length })
       } catch(err) {
         io.to('pm:' + dId).emit('error', err)
       }
@@ -149,6 +202,18 @@ module.exports = (server) => {
         await Message.updateMany({ dialogueId: Types.ObjectId(dialogueId), from }, { read: true })
 
         socket.to('pm:' + dialogueId).emit('messagesRead')
+
+        const dialogues = await Dialogue.find({
+          $or: [{
+            to: Types.ObjectId(jwtData.id)
+          }, {
+            from: Types.ObjectId(jwtData.id)
+          }]
+        }).populate({ path: 'lastMessage' })
+
+        const noRead = dialogues.filter(item => !item.lastMessage.read && item.lastMessage.to.toString() === jwtData.id)
+
+        io.to('pmCount:' + jwtData.id).emit('messagesCount', { count: noRead.length })
       } catch(err) {
         io.to('pm:' + dialogueId).emit('error', err)
       }

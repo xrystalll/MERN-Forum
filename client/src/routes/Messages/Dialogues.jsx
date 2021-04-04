@@ -1,10 +1,11 @@
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useEffect } from 'react';
 
 import { StoreContext } from 'store/Store';
 
 import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { Strings } from 'support/Constants';
+import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import Breadcrumbs from 'components/Breadcrumbs';
 import { DialoqueCard } from 'components/Card';
@@ -12,9 +13,28 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Dialogues = () => {
-  const { lang } = useContext(StoreContext)
-  const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'dialogues', auth: true })
+  const { user, token, lang } = useContext(StoreContext)
+  const { loading, moreLoading, noData, items, setItems } = useMoreFetch({ method: 'dialogues', auth: true })
   document.title = 'Forum | ' + Strings.messages[lang]
+
+  useEffect(() => {
+    joinToRoom('dialogues:' + user.id, { token })
+    return () => {
+      leaveFromRoom('dialogues:' + user.id)
+    }
+  }, [])
+
+  useEffect(() => {
+    Socket.on('newDialogue', (data) => {
+      setItems(prev => [data, ...prev])
+    })
+    Socket.on('updateDialogue', (data) => {
+      let newArray = [...items]
+      newArray[newArray.findIndex(item => item._id === data._id)] = data
+
+      setItems(newArray)
+    })
+  }, [items])
 
   return (
     <Fragment>

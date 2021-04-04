@@ -14,44 +14,61 @@ export const declOfNum = (number, titles) => {
   return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]]
 }
 
-export const dateFormat = (date, short = false) => {
+export const dateFormat = (date, type) => {
   const langs = ['ru', 'en', 'jp']
   const langFromLS = langs.find(i => i === localStorage.getItem('lang'))
   const langFromNL = langs.find(i => i === window.navigator.language)
   const lang = langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
 
-  if (short) {
-    return moment(date)
-      .locale(lang)
-      .calendar(null, {
-        sameDay: 'hh:mm',
-        lastDay: 'DD MMM, hh:mm',
-        nextDay: 'DD MMM, hh:mm',
-        nextWeek: 'DD MMM, hh:mm',
-        lastWeek: 'DD MMM, hh:mm',
-        sameElse: (m) => {
-          if (m._d.getFullYear() === new Date().getFullYear()) {
-            return 'DD MMM, hh:mm'
-          } else {
-            return 'DD MMM YY, hh:mm'
-          }
+  let formatObj
+
+  if (type === 'short') {
+    formatObj = {
+      sameDay: 'hh:mm',
+      lastDay: 'DD MMM, hh:mm',
+      nextDay: 'DD MMM, hh:mm',
+      nextWeek: 'DD MMM, hh:mm',
+      lastWeek: 'DD MMM, hh:mm',
+      sameElse: (m) => {
+        if (m._d.getFullYear() === new Date().getFullYear()) {
+          return 'DD MMM, hh:mm'
+        } else {
+          return 'DD MMM YY, hh:mm'
         }
-      })
+      }
+    }
+  } else if (type === 'mini') {
+    formatObj = {
+      sameDay: 'hh:mm',
+      lastDay: 'DD MMM',
+      nextDay: 'DD MMM',
+      nextWeek: 'DD MMM',
+      lastWeek: 'DD MMM',
+      sameElse: (m) => {
+        if (m._d.getFullYear() === new Date().getFullYear()) {
+          return 'DD MMM'
+        } else {
+          return 'DD MMM YY'
+        }
+      }
+    }
   } else {
-    return moment(date)
-      .locale(lang)
-      .calendar(null, {
-        nextWeek: 'DD MMM, hh:mm',
-        lastWeek: 'DD MMM, hh:mm',
-        sameElse: (m) => {
-          if (m._d.getFullYear() === new Date().getFullYear()) {
-            return 'DD MMM, hh:mm'
-          } else {
-            return 'DD MMM YY, hh:mm'
-          }
+    formatObj = {
+      nextWeek: 'DD MMM, hh:mm',
+      lastWeek: 'DD MMM, hh:mm',
+      sameElse: (m) => {
+        if (m._d.getFullYear() === new Date().getFullYear()) {
+          return 'DD MMM, hh:mm'
+        } else {
+          return 'DD MMM YY, hh:mm'
         }
-      })
+      }
+    }
   }
+
+  return moment(date)
+    .locale(lang)
+    .calendar(null, formatObj)
 }
 
 export const formatBytes = (bytes, decimals) => {

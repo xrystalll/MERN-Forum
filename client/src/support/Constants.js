@@ -1016,6 +1016,11 @@ const Strings = {
     en: 'You',
     jp: '君は'
   },
+  'dialogueWith': {
+    ru: 'Диалог с',
+    en: 'Dialogue with',
+    jp: 'との対話'
+  },
 }
 
 export { BACKEND, Strings };

@@ -58,7 +58,7 @@ module.exports.getDialogues = async (req, res, next) => {
         from: Types.ObjectId(req.payload.id)
       }]
     }, {
-      sort: { createdAt: -1 },
+      sort: { updatedAt: -1 },
       page,
       limit,
       populate
@@ -91,10 +91,6 @@ module.exports.getDialogue = async (req, res, next) => {
         from: Types.ObjectId(user._id)
       }]
     })
-
-    // if (req.payload.id !== dialogue.to.toString() || req.payload.id !== dialogue.from.toString()) {
-    //   return next(createError.Unauthorized('Action not allowed'))
-    // }
 
     res.json(dialogue)
   } catch(err) {

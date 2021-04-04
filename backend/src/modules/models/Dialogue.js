@@ -13,7 +13,8 @@ const dialogueSchema = new Schema({
   lastMessage: {
     type: Schema.Types.ObjectId,
     ref: 'Message'
-  }
+  },
+  updatedAt: String
 })
 dialogueSchema.plugin(mongoosePaginate)
 

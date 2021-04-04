@@ -909,9 +909,12 @@ export const DialoqueCard = ({ data }) => {
                     {data[key].displayName}
                     <UserRole role={data[key].role} />
                   </div>
-                  <div className="head_text">{data.lastMessage.from === user.id && `${Strings.you[lang]}: `}{data.lastMessage.body}</div>
+                  <div className="head_text">
+                    {data.lastMessage.from === user.id && `${Strings.you[lang]}: `}{data.lastMessage.body}
+                  </div>
                 </div>
               </Link>
+              <span className="message_time">{dateFormat(data.lastMessage.createdAt, 'mini')}</span>
             </div>
           </header>
         </div>

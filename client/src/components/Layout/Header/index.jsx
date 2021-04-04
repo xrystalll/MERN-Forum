@@ -18,11 +18,14 @@ const Header = ({ setMenuState }) => {
   const searchField = useRef()
   const history = useHistory()
   const [searchActive, setSearchActive] = useState(false)
-  const [adminNotification, setAdminNotification] = useState(false)
+  const [notification, setNotification] = useState(false)
 
   useEffect(() => {
-    Socket.on('newAdminNotification', (data) => {
-      setAdminNotification(true)
+    Socket.on('newAdminNotification', () => {
+      setNotification(true)
+    })
+    Socket.on('messagesCount', (data) => {
+      data.count > 0 ? setNotification(true) : setNotification(false)
     })
   }, [])
 
@@ -51,7 +54,7 @@ const Header = ({ setMenuState }) => {
   })
 
   const openNav = () => {
-    setAdminNotification(false)
+    setNotification(false)
     setMenuState()
   }
 
@@ -60,7 +63,7 @@ const Header = ({ setMenuState }) => {
       <div className="head_inner">
         <div className="head_left">
           <div className="open_nav" onClick={openNav}>
-            <i className={adminNotification ? 'bx bx-menu with_notif' : 'bx bx-menu'} />
+            <i className={notification ? 'bx bx-menu with_notif' : 'bx bx-menu'} />
           </div>
           <h1 className="app_name">Forum</h1>
         </div>

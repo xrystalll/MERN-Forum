@@ -672,7 +672,16 @@ a.head_text:hover {
 .user_info {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  overflow: hidden;
   line-height: 1.8;
+}
+.user_info .head_text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 .user_info_top {
   display: flex;

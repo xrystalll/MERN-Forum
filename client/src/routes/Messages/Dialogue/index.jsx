@@ -55,7 +55,8 @@ const Dialogue = ({ match }) => {
   }, [])
 
   useEffect(() => {
-    document.title = 'Forum | ' + Strings.messages[lang]
+    const userTitle = toUser.displayName || userName
+    document.title = `Forum | ${Strings.dialogueWith[lang]} ${userTitle}`
 
     const fetchUser = async () => {
       try {
@@ -83,6 +84,8 @@ const Dialogue = ({ match }) => {
         })
         const response = await data.json()
 
+        if (!response) setLoading(false)
+
         if (!response.error) {
           setInit(false)
           setDialogueId(response._id)
@@ -96,7 +99,7 @@ const Dialogue = ({ match }) => {
       fetchUser()
       fetchDialogue()
     }
-  }, [init])
+  }, [init, toUser])
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -113,8 +116,7 @@ const Dialogue = ({ match }) => {
 
         if (!response.error) {
           const array = [...response.docs.reverse(), ...items]
-          const newArray = [...new Map(array.map(i => [i._id, i])).values()]
-          setItems(newArray)
+          setItems([...new Map(array.map(i => [i._id, i])).values()])
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -157,12 +159,12 @@ const Dialogue = ({ match }) => {
   }, [dialogueId, toUser])
 
   useEffect(() => {
-    if (!dialogueId) return
-
     Socket.on('joinToDialogue', (data) => {
-      setInit(false)
       setDialogueId(data._id)
     })
+
+    if (!dialogueId) return
+
     Socket.on('newMessage', (data) => {
       setItems(prev => [...prev, data])
       setNoData(false)
@@ -221,7 +223,7 @@ const Dialogue = ({ match }) => {
                   </div>
                 )}
                 <div className="user_info">
-                  <Link to={'/user/' + toUser.name}  className="user_info_top">
+                  <Link to={'/user/' + toUser.name} className="user_info_top">
                     {toUser.displayName}
                     <UserRole role={toUser.role} />
                   </Link>
@@ -234,7 +236,7 @@ const Dialogue = ({ match }) => {
 
         <CustomScrollbar className="view" onScroll={handleScroll} toBottom={toBottom}>
           {!noData ? (
-            !dialogueId || !loading ? (
+            !loading ? (
               items.length ? (
                 <Fragment>
                   {moreLoading && <Loader className="more_loader" color="#64707d" />}

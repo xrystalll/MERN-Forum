@@ -56,3 +56,11 @@
   top: -1px;
   margin-left: .3rem;
 }
+
+.message_time {
+  position: absolute;
+  right: .5rem;
+  top: 1.35rem;
+  color: var(--actions-color);
+  font-size: .7rem;
+}
