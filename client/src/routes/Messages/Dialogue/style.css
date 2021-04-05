@@ -1,18 +1,40 @@
-.messages_wrapper {
-  height: calc(100vh - 198px);
+.main_section.with_hested_scroll {
+  margin: 0;
 }
-.messages_wrapper .comments_form {
+.messages_wrapper {
+  height: calc(100vh - 180px);
+}
+.messages_wrapper .comments_form, .messages_wrapper .comments_form.float {
   position: relative;
   background-color: initial;
   padding: 0;
   margin: .5rem 0 !important;
 }
 .messages_wrapper .comments_form .card_item {
-  margin: 0;
+  margin: 0 1rem;
 }
 
 .messages_wrapper .user_head {
   padding: 0;
+  margin: 0 1rem .3rem;
+}
+.dot_loader::before {
+  content: '';
+  animation: dot_anim 1.2s infinite;
+}
+@keyframes dot_anim {
+  20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60% {
+    content: '...';
+  }
+  80% {
+    content: '';
+  }
 }
 
 .messages_wrapper .empty-results, .messages_wrapper .content_loader {
@@ -20,19 +42,59 @@
   margin: 0 auto;
 }
 
+.messages_list {
+  margin: 0 1rem;
+}
+
 .message_item {
+  width: 100%;
+}
+.message_actions {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: -2.5rem;
+  height: 100%;
+}
+.message_item.my .message_actions {
+  left: -2.5rem;
+  right: initial;
+}
+.message_item:hover .message_actions {
+  display: flex;
+}
+
+.message_action_item {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  transition: var(--transition-background);
+  padding: .5rem;
+  font-size: 16px;
+  cursor: pointer;
+}
+.message_action_item:hover {
+  background-color: var(--secondary-bg-tint-focus);
+}
+
+.message_body {
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: var(--secondary-bg);
+  transition: var(--transition-background);
   border-radius: var(--border-radius);
   border-bottom-left-radius: 0;
-  padding: .5rem .8rem;
+  padding: .4rem .5rem;
   width: max-content;
-  max-width: 320px;
+  max-width: 300px;
   min-width: 140px;
   margin: .8rem 0;
 }
-.message_item.my {
+.message_item.my .message_body {
   border-bottom-left-radius: var(--border-radius);
   border-bottom-right-radius: 0;
   margin-left: auto;
@@ -60,7 +122,7 @@
 .message_time {
   position: absolute;
   right: .5rem;
-  top: 1.35rem;
+  top: .6rem;
   color: var(--actions-color);
   font-size: .7rem;
 }

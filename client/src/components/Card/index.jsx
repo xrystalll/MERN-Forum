@@ -516,7 +516,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
             <div className="act_btn foot_btn disable">
               <i className="bx bx-message-square-detail" />
               <span className="card_count">{counter(data.answersCount)}</span>
-              <span className="hidden">
+              <span className="count_title">
                 {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
               </span>
             </div>
@@ -555,7 +555,7 @@ export const BoardCard = ({ data }) => {
         <div className="act_btn foot_btn disable">
           <i className="bx bx-news" />
           <span className="card_count">{counter(data.threadsCount)}</span>
-          <span className="hidden">
+          <span className="count_title">
             {declOfNum(data.threadsCount, [Strings.thread1[lang], Strings.thread2[lang], Strings.thread3[lang]])}
           </span>
         </div>
@@ -563,7 +563,7 @@ export const BoardCard = ({ data }) => {
         <div className="act_btn foot_btn disable">
           <i className="bx bx-message-square-detail" />
           <span className="card_count">{counter(data.answersCount)}</span>
-          <span className="hidden">
+          <span className="count_title">
             {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
           </span>
         </div>
@@ -808,7 +808,7 @@ export const FolderCard = ({ data }) => {
         <div className="act_btn foot_btn disable">
           <i className="bx bx-file-blank" />
           <span className="card_count">{counter(data.filesCount)}</span>
-          <span className="hidden">
+          <span className="count_title">
             {declOfNum(data.threadsCount, [Strings.file1[lang], Strings.file2[lang], Strings.file3[lang]])}
           </span>
         </div>

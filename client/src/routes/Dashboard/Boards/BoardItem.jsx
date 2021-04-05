@@ -89,7 +89,7 @@ const BoardItem = ({ lang, data, editBoard, deleteBoard, fetchErrors, setFetchEr
             <div className="act_btn foot_btn disable">
               <i className="bx bx-news" />
               <span className="card_count">{counter(data.threadsCount)}</span>
-              <span className="hidden">
+              <span className="count_title">
                 {declOfNum(data.threadsCount, [Strings.thread1[lang], Strings.thread2[lang], Strings.thread3[lang]])}
               </span>
             </div>
@@ -97,7 +97,7 @@ const BoardItem = ({ lang, data, editBoard, deleteBoard, fetchErrors, setFetchEr
             <div className="act_btn foot_btn disable">
               <i className="bx bx-message-square-detail" />
               <span className="card_count">{counter(data.answersCount)}</span>
-              <span className="hidden">
+              <span className="count_title">
                 {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
               </span>
             </div>

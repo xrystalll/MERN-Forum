@@ -1,4 +1,4 @@
-const Input = ({ type = 'text', name, value, placeholder = '', required = false, maxLength, onChange }) => {
+const Input = ({ type = 'text', name, value, placeholder = '', required = false, maxLength, onChange, onFocus, onBlur }) => {
   return (
     <input
       className="input_area"
@@ -9,6 +9,8 @@ const Input = ({ type = 'text', name, value, placeholder = '', required = false,
       maxLength={maxLength}
       required={required}
       onChange={onChange}
+      onFocus={onFocus}
+      onBlur={onBlur}
     />
   )
 }

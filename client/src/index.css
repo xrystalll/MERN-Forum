@@ -604,7 +604,7 @@ a.head_text:hover {
 .under_foot i {
   font-size: 15px;
 }
-.card_count, .hidden {
+.card_count, .hidden, .count_title {
   margin-left: .3rem;
 }
 .hidden {

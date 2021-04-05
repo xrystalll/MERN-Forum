@@ -89,7 +89,7 @@ const FolderItem = ({ lang, data, editFolder, deleteFolder, fetchErrors, setFetc
             <div className="act_btn foot_btn disable">
               <i className="bx bx-file-blank" />
               <span className="card_count">{counter(data.filesCount)}</span>
-              <span className="hidden">
+              <span className="count_title">
                 {declOfNum(data.filesCount, [Strings.file1[lang], Strings.file2[lang], Strings.file3[lang]])}
               </span>
             </div>

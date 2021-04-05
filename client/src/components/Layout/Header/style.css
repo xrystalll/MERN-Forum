@@ -78,6 +78,7 @@
   width: 32px;
   height: 32px;
   background-color: var(--secondary-bg-tint);
+  transition: var(--transition-background);
   background-size: cover;
   border-radius: 50%;
   display: flex;

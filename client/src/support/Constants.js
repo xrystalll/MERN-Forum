@@ -1021,6 +1021,16 @@ const Strings = {
     en: 'Dialogue with',
     jp: 'との対話'
   },
+  'enterYourMessage': {
+    ru: 'Введите сообщение',
+    en: 'Enter your message',
+    jp: 'メッセージを入力してください'
+  },
+  'isTyping': {
+    ru: 'печатает',
+    en: 'is typing',
+    jp: '入力中'
+  },
 }
 
 export { BACKEND, Strings };

@@ -131,7 +131,7 @@ module.exports = (server) => {
 
         const newMessage = new Message({
           dialogueId: dId,
-          body,
+          body: body.substring(0, 1000),
           createdAt: now,
           from: jwtData.id,
           to,
@@ -217,6 +217,38 @@ module.exports = (server) => {
       } catch(err) {
         io.to('pm:' + dialogueId).emit('error', err)
       }
+    })
+
+    socket.on('startType', (data) => {
+      const { token, dialogueId } = data
+
+      let jwtData = null
+      if (token) {
+        jwtData = verifyAccessTokenIO(token)
+      }
+      if (!jwtData) {
+        socket.emit('error', createError.Unauthorized())
+        socket.leave('pm:' + dialogueId)
+        return
+      }
+
+      socket.to('pm:' + dialogueId).emit('startTyping', { userName: jwtData.displayName })
+    })
+
+    socket.on('stopType', (data) => {
+      const { token, dialogueId } = data
+
+      let jwtData = null
+      if (token) {
+        jwtData = verifyAccessTokenIO(token)
+      }
+      if (!jwtData) {
+        socket.emit('error', createError.Unauthorized())
+        socket.leave('pm:' + dialogueId)
+        return
+      }
+
+      socket.to('pm:' + dialogueId).emit('stopTyping', { userName: jwtData.displayName })
     })
   })
 

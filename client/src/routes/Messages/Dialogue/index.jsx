@@ -39,6 +39,7 @@ const Dialogue = ({ match }) => {
   const [toBottom, setToBottom] = useState(true)
   const [fetchMessagesInit, setFetchMessagesInit] = useState(true)
   const [firstMsg, setFirstMsg] = useState('')
+  const [typing, setTyping] = useState(false)
 
   useEffect(() => {
     if (dialogueId) joinToRoom('pm:' + dialogueId, { token, userId: user.id })
@@ -48,8 +49,10 @@ const Dialogue = ({ match }) => {
   }, [dialogueId])
 
   useEffect(() => {
+    document.querySelector('.main_section').classList.add('with_hested_scroll')
     document.querySelector('.general_footer').style.display = 'none'
     return () => {
+      document.querySelector('.main_section').classList.remove('with_hested_scroll')
       document.querySelector('.general_footer').style.display = ''
     }
   }, [])
@@ -99,7 +102,7 @@ const Dialogue = ({ match }) => {
       fetchUser()
       fetchDialogue()
     }
-  }, [init, toUser])
+  }, [init, toUser, lang])
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -175,7 +178,7 @@ const Dialogue = ({ match }) => {
       }
     })
     Socket.on('messageDeleted', (data) => {
-      setItems(prev => prev.filter(item => item._id !== data._id))
+      setItems(prev => prev.filter(item => item._id !== data.id))
     })
     Socket.on('messagesRead', () => {
       setItems(prev => {
@@ -189,6 +192,12 @@ const Dialogue = ({ match }) => {
         )
       })
     })
+    Socket.on('startTyping', (data) => {
+      setTyping(true)
+    })
+    Socket.on('stopTyping', (data) => {
+      setTyping(false)
+    })
   }, [dialogueId])
 
   const sendMessageCallback = () => {
@@ -199,11 +208,24 @@ const Dialogue = ({ match }) => {
     setErrors({})
     reset()
     Socket.emit('createMessage', { token, dialogueId, body: values.body, to: toUser._id })
+    Socket.emit('stopType', { token, dialogueId })
   }
 
   const { onChange, onSubmit, values, reset } = useForm(sendMessageCallback, {
     body: ''
   })
+
+  useEffect(() => {
+    if (values.body.length > 0) {
+      Socket.emit('startType', { token, dialogueId })
+    } else {
+      Socket.emit('stopType', { token, dialogueId })
+    }
+  }, [values.body])
+
+  const onBlur = () => {
+    Socket.emit('stopType', { token, dialogueId })
+  }
 
   return (
     <Fragment>
@@ -227,7 +249,18 @@ const Dialogue = ({ match }) => {
                     {toUser.displayName}
                     <UserRole role={toUser.role} />
                   </Link>
-                  <div className="head_text">{dateFormat(toUser.onlineAt)}</div>
+                  <div className="head_text">
+                    {typing ? (
+                      <Fragment>
+                        {Strings.isTyping[lang]}
+                        <span className="dot_loader"></span>
+                      </Fragment>
+                    ) : (
+                      new Date() - new Date(toUser.onlineAt) < 5 * 60000
+                        ? 'online'
+                        : Strings.lastSeen[lang] + ' ' + dateFormat(toUser.onlineAt, 'short')
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -241,7 +274,7 @@ const Dialogue = ({ match }) => {
                 <Fragment>
                   {moreLoading && <Loader className="more_loader" color="#64707d" />}
 
-                  <div className="items_list">
+                  <div className="messages_list">
                     {items.map(item => (
                       <MessageItem key={item._id} data={item} user={user} />
                     ))}
@@ -260,9 +293,10 @@ const Dialogue = ({ match }) => {
               <Input
                 name="body"
                 value={values.body}
-                maxLength="300"
+                maxLength="1000"
                 onChange={onChange}
-                placeholder={Strings.enterYourComment[lang]}
+                onBlur={onBlur}
+                placeholder={Strings.enterYourMessage[lang]}
               />
             </div>
 

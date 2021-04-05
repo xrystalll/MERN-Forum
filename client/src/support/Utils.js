@@ -20,26 +20,28 @@ export const dateFormat = (date, type) => {
   const langFromNL = langs.find(i => i === window.navigator.language)
   const lang = langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
 
+  const timeFormat = lang === 'en' ? 'hh:mm A' : 'HH:mm'
+
   let formatObj
 
   if (type === 'short') {
     formatObj = {
-      sameDay: 'hh:mm',
-      lastDay: 'DD MMM, hh:mm',
-      nextDay: 'DD MMM, hh:mm',
-      nextWeek: 'DD MMM, hh:mm',
-      lastWeek: 'DD MMM, hh:mm',
+      sameDay: timeFormat,
+      lastDay: `DD MMM, ${timeFormat}`,
+      nextDay: `DD MMM, ${timeFormat}`,
+      nextWeek: `DD MMM, ${timeFormat}`,
+      lastWeek: `DD MMM, ${timeFormat}`,
       sameElse: (m) => {
         if (m._d.getFullYear() === new Date().getFullYear()) {
-          return 'DD MMM, hh:mm'
+          return `DD MMM, ${timeFormat}`
         } else {
-          return 'DD MMM YY, hh:mm'
+          return `DD MMM YY, ${timeFormat}`
         }
       }
     }
   } else if (type === 'mini') {
     formatObj = {
-      sameDay: 'hh:mm',
+      sameDay: timeFormat,
       lastDay: 'DD MMM',
       nextDay: 'DD MMM',
       nextWeek: 'DD MMM',
@@ -54,13 +56,13 @@ export const dateFormat = (date, type) => {
     }
   } else {
     formatObj = {
-      nextWeek: 'DD MMM, hh:mm',
-      lastWeek: 'DD MMM, hh:mm',
+      nextWeek: `DD MMM, ${timeFormat}`,
+      lastWeek: `DD MMM, ${timeFormat}`,
       sameElse: (m) => {
         if (m._d.getFullYear() === new Date().getFullYear()) {
-          return 'DD MMM, hh:mm'
+          return `DD MMM, ${timeFormat}`
         } else {
-          return 'DD MMM YY, hh:mm'
+          return `DD MMM YY, ${timeFormat}`
         }
       }
     }
@@ -82,9 +84,9 @@ export const formatBytes = (bytes, decimals) => {
 }
 
 export const deletedUser = {
-  "_id": (Math.random() * 1000).toFixed(),
-  "name": "deleted",
-  "displayName": "DELETED",
-  "onlineAt": "1970-01-01T00:00:00.000Z",
-  "role": 1
+  _id: (Math.random() * 1000).toFixed(),
+  name: 'deleted',
+  displayName: 'DELETED',
+  onlineAt: '1970-01-01T00:00:00.000Z',
+  role: 1
 }
