@@ -26,7 +26,7 @@ const Reports = ({ history, location: { pathname } }) => {
     }
 
     history.push(route)
-  }, [sort])
+  }, [sort, path, history])
 
   useEffect(() => {
     localStorage.removeItem('reports')

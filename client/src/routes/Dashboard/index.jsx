@@ -26,6 +26,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     setFabVisible(false)
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {

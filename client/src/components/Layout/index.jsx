@@ -26,6 +26,7 @@ const Layout = ({ children }) => {
     return () => {
       clearInterval(onlineIndicator)
     }
+    // eslint-disable-next-line
   }, [user])
 
   const updateLastSeen = () => {

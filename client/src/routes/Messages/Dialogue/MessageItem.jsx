@@ -1,12 +1,27 @@
+import { toast } from 'react-toastify';
+
+import { BACKEND } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Markdown from 'components/Markdown';
 
-const MessageItem = ({ data, user }) => {
+const MessageItem = ({ data, dialogueId, user, token }) => {
   const my = user.id === data.from._id
 
   const deleteMessage = () => {
-    console.log('delete', data._id)
+    fetch(BACKEND + '/api/message/delete', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ messageId: data._id, dialogueId  })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(err.message))
   }
 
   return (

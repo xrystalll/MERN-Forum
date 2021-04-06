@@ -14,11 +14,11 @@ const Notifications = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
-    if (user?.id) joinToRoom('notification:' + user.id, { token })
+    joinToRoom('notification:' + user.id, { token })
     return () => {
-      if (user?.id) leaveFromRoom('notification:' + user.id)
+      leaveFromRoom('notification:' + user.id)
     }
-  }, [user?.id])
+  }, [user.id, token])
 
   useEffect(() => {
     Socket.on('notificationsCount', (data) => {
@@ -36,7 +36,8 @@ const Notifications = () => {
         logout()
       }
     })
-  }, [])
+    // eslint-disable-next-line
+  }, [user.id])
 
   const openNotifications = () => {
     setDropdownOpen(!dropdownOpen)

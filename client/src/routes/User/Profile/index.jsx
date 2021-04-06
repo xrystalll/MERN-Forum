@@ -65,7 +65,7 @@ const Profile = ({ userName }) => {
     }
 
     fetchUser()
-  }, [userData, userName])
+  }, [userData, userName, user.name, token, lang])
 
   const editRole = (userId) => {
     const role = moder ? 1 : 2

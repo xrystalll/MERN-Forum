@@ -20,6 +20,7 @@ const Home = () => {
       })
     }
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   return (

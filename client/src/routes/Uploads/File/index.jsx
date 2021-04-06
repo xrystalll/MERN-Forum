@@ -28,6 +28,7 @@ const File = ({ history, match }) => {
       })
     }
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   const [fetchInit, setFetchInit] = useState(true)
@@ -67,7 +68,7 @@ const File = ({ history, match }) => {
     }
 
     fetchInit && fetchFile()
-  }, [fetchInit, file])
+  }, [fetchInit, file, fileId, lang])
 
   useEffect(() => {
     if (file._id) joinToRoom('file:' + file._id)
@@ -98,7 +99,7 @@ const File = ({ history, match }) => {
     Socket.on('commentLiked', (data) => {
       setCommentsSubscribed({ type: 'commentLiked', payload: data })
     })
-  }, [])
+  }, [history])
 
   const deleteFile = () => {
     fetch(BACKEND + '/api/file/delete', {

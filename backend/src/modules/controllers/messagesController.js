@@ -118,3 +118,29 @@ module.exports.getMessages = async (req, res, next) => {
     next(createError.InternalServerError(err))
   }
 }
+
+module.exports.deleteMessage = async (req, res, next) => {
+  try {
+    const { dialogueId, messageId } = req.body
+
+    if (!dialogueId) return next(createError.BadRequest('dialogueId must not be empty'))
+    if (!messageId) return next(createError.BadRequest('messageId must not be empty'))
+
+    const message = await Message.findById(messageId)
+    await message.delete()
+
+    const messages = await Message.find({ dialogueId: Types.ObjectId(dialogueId) }).sort({ createdAt: -1 })
+    if (messages.length) {
+      await Dialogue.updateOne({ _id: Types.ObjectId(dialogueId) }, { lastMessage: messages[0]._id, updatedAt: messages[0].createdAt })
+    } else {
+      const dialogue = await Dialogue.findById(dialogueId)
+      dialogue.delete()
+    }
+
+    res.json({ message: 'Message successfully deleted' })
+
+    req.io.to('pm:' + dialogueId).emit('messageDeleted', { id: messageId })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}

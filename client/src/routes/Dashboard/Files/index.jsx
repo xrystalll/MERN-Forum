@@ -26,7 +26,7 @@ const Files = ({ history, location: { pathname } }) => {
     }
 
     history.push(route)
-  }, [sort])
+  }, [sort, path, history])
 
   return (
     <Fragment>

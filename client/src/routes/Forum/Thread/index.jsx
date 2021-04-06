@@ -24,6 +24,7 @@ const Thread = ({ match }) => {
       id: threadId
     })
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   const [fetchInit, setFetchInit] = useState(true)
@@ -57,7 +58,7 @@ const Thread = ({ match }) => {
     }
 
     fetchInit && fetchThread()
-  }, [fetchInit, thread])
+  }, [fetchInit, thread, lang, threadId])
 
   useEffect(() => {
     if (thread._id) joinToRoom('thread:' + thread._id)
@@ -88,6 +89,7 @@ const Thread = ({ match }) => {
     Socket.on('answerLiked', (data) => {
       setAnswersSubscribed({ type: 'answerLiked', payload: data })
     })
+    // eslint-disable-next-line
   }, [])
 
   return (

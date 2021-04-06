@@ -29,6 +29,7 @@ const Users = ({ history, location: { pathname } }) => {
       })
     }
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const Users = ({ history, location: { pathname } }) => {
     }
 
     history.push(route)
-  }, [sort])
+  }, [sort, path, history])
 
   return (
     <Section>

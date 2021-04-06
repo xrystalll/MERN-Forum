@@ -38,6 +38,7 @@ const Stats = ({ userData, lang, token }) => {
     }
 
     init && fetchStats()
+    // eslint-disable-next-line
   }, [init])
 
   return !noData ? (

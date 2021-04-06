@@ -25,6 +25,7 @@ const Folder = ({ match }) => {
       type: 'upload',
       id: folder._id || null
     })
+    // eslint-disable-next-line
   }, [folder])
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const Folder = ({ match }) => {
     }
 
     init && fetchFolder()
-  }, [init, folder])
+  }, [init, folder, folderName, lang])
 
   return (
     <Section>

@@ -49,6 +49,7 @@ const DropdownMenu = ({ lang, setLang, user, logout, setDropdownOpen }) => {
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
+    // eslint-disable-next-line
   }, [])
 
   const handleClickOutside = ({ target }) => {

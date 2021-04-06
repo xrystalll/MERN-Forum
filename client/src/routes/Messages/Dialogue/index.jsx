@@ -11,7 +11,7 @@ import { dateFormat } from 'support/Utils';
 
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
-import Dropdown from 'components/Card/Dropdown';
+// import Dropdown from 'components/Card/Dropdown';
 import UserRole from 'components/UserRole';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
@@ -28,7 +28,7 @@ const Dialogue = ({ match }) => {
   const [init, setInit] = useState(true)
   const [dialogueId, setDialogueId] = useState(null)
   const [items, setItems] = useState([])
-  const limit = 10
+  const limit = 15
   const [page, setPage] = useState(1)
   const [nextPage, setNextPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -46,6 +46,7 @@ const Dialogue = ({ match }) => {
     return () => {
       if (dialogueId) leaveFromRoom('pm:' + dialogueId)
     }
+    // eslint-disable-next-line
   }, [dialogueId])
 
   useEffect(() => {
@@ -102,7 +103,7 @@ const Dialogue = ({ match }) => {
       fetchUser()
       fetchDialogue()
     }
-  }, [init, toUser, lang])
+  }, [init, toUser, userName, token, lang])
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -142,6 +143,7 @@ const Dialogue = ({ match }) => {
     }
 
     fetchMessages()
+    // eslint-disable-next-line
   }, [page, dialogueId])
 
   const handleScroll = ({ target }) => {
@@ -159,23 +161,17 @@ const Dialogue = ({ match }) => {
 
   useEffect(() => {
     if (dialogueId && toUser) Socket.emit('readMessages', { token, dialogueId, from: toUser._id })
+    // eslint-disable-next-line
   }, [dialogueId, toUser])
 
   useEffect(() => {
     Socket.on('joinToDialogue', (data) => {
       setDialogueId(data._id)
     })
-
-    if (!dialogueId) return
-
     Socket.on('newMessage', (data) => {
       setItems(prev => [...prev, data])
       setNoData(false)
       setToBottom((Math.random() * 100).toFixed())
-
-      if (data.from._id !== user.id) {
-        Socket.emit('readMessages', { token, dialogueId, from: toUser._id })
-      }
     })
     Socket.on('messageDeleted', (data) => {
       setItems(prev => prev.filter(item => item._id !== data.id))
@@ -198,6 +194,16 @@ const Dialogue = ({ match }) => {
     Socket.on('stopTyping', (data) => {
       setTyping(false)
     })
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    Socket.on('newMessage', (data) => {
+      if (data.from._id !== user.id) {
+        Socket.emit('readMessages', { token, dialogueId, from: toUser._id })
+      }
+    })
+    // eslint-disable-next-line
   }, [dialogueId])
 
   const sendMessageCallback = () => {
@@ -221,15 +227,29 @@ const Dialogue = ({ match }) => {
     } else {
       Socket.emit('stopType', { token, dialogueId })
     }
+    // eslint-disable-next-line
   }, [values.body])
 
   const onBlur = () => {
     Socket.emit('stopType', { token, dialogueId })
   }
 
+  const [chatHeight, setChatHeigth] = useState(window.innerHeight)
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  })
+
+  const handleResize = () => {
+    setChatHeigth(window.innerHeight)
+  }
+
   return (
     <Fragment>
-      <div className="messages_wrapper">
+      <div className="messages_wrapper" style={{ height: `calc(${chatHeight}px - 180px)` }}>
         {toUser.name && (
           <div className="card_head user_head">
             <div className="card_head_inner">
@@ -276,7 +296,7 @@ const Dialogue = ({ match }) => {
 
                   <div className="messages_list">
                     {items.map(item => (
-                      <MessageItem key={item._id} data={item} user={user} />
+                      <MessageItem key={item._id} data={item} dialogueId={dialogueId} user={user} token={token} />
                     ))}
                   </div>
                 </Fragment>

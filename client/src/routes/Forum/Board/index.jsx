@@ -29,6 +29,7 @@ const Board = ({ match }) => {
       type: 'thread',
       id: board._id || null
     })
+    // eslint-disable-next-line
   }, [board])
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const Board = ({ match }) => {
     }
 
     init && fetchBoard()
-  }, [init, board])
+  }, [init, board, boardName, lang])
 
   return (
     <Section>

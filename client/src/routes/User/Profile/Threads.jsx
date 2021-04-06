@@ -12,7 +12,7 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Threads = ({ userData }) => {
-  const { token, lang } = useContext(StoreContext)
+  const { lang } = useContext(StoreContext)
   document.title = 'Forum | ' + userData.displayName + ' / ' + Strings.threads[lang]
 
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'user/threads', params: { userId: userData._id }, auth: true })

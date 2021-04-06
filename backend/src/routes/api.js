@@ -85,5 +85,6 @@ router.get('/dialogues', verifyAccessToken, MessagesController.getDialogues)
 router.get('/dialogue', verifyAccessToken, MessagesController.getDialogue)
 
 router.get('/messages', verifyAccessToken, MessagesController.getMessages)
+router.delete('/message/delete', verifyAccessToken, MessagesController.deleteMessage)
 
 module.exports = router

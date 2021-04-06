@@ -71,7 +71,7 @@ module.exports = (server) => {
           }]
         }).populate({ path: 'lastMessage' })
 
-        const noRead = dialogues.filter(item => !item.lastMessage.read && item.lastMessage.to.toString() === jwtData.id)
+        const noRead = dialogues.filter(item => item.lastMessage && !item.lastMessage.read && item.lastMessage.to.toString() === jwtData.id)
 
         io.to(data.room).emit('messagesCount', { count: noRead.length })
       }
@@ -112,8 +112,10 @@ module.exports = (server) => {
 
       try {
         let isNewDialogue = false
-        let dId = dialogueId
-        if (!dialogueId) {
+        let dId
+        const dialogueExist = await Dialogue.findOne({ _id: Types.ObjectId(dialogueId) })
+
+        if (!dialogueExist) {
           isNewDialogue = true
 
           const newDialogue = new Dialogue({
@@ -125,6 +127,8 @@ module.exports = (server) => {
           dId = dialogue._id
 
           socket.emit('joinToDialogue', dialogue)
+        } else {
+          dId = dialogueExist._id
         }
 
         const now = new Date().toISOString()
@@ -177,11 +181,11 @@ module.exports = (server) => {
           }]
         }).populate({ path: 'lastMessage' })
 
-        const noRead = dialogues.filter(item => !item.lastMessage.read && item.lastMessage.to.toString() === to)
+        const noRead = dialogues.filter(item => item.lastMessage && !item.lastMessage.read && item.lastMessage.to.toString() === to)
 
         socket.to('pmCount:' + to).emit('messagesCount', { count: noRead.length })
       } catch(err) {
-        io.to('pm:' + dId).emit('error', err)
+        socket.emit('error', err)
       }
     })
 
@@ -211,7 +215,7 @@ module.exports = (server) => {
           }]
         }).populate({ path: 'lastMessage' })
 
-        const noRead = dialogues.filter(item => !item.lastMessage.read && item.lastMessage.to.toString() === jwtData.id)
+        const noRead = dialogues.filter(item => item.lastMessage && !item.lastMessage.read && item.lastMessage.to.toString() === jwtData.id)
 
         io.to('pmCount:' + jwtData.id).emit('messagesCount', { count: noRead.length })
       } catch(err) {

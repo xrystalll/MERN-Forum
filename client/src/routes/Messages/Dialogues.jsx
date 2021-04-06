@@ -22,6 +22,7 @@ const Dialogues = () => {
     return () => {
       leaveFromRoom('dialogues:' + user.id)
     }
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const Dialogues = () => {
 
       setItems(newArray)
     })
+    // eslint-disable-next-line
   }, [items])
 
   return (

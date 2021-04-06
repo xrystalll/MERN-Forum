@@ -19,14 +19,14 @@ const LeftMenu = ({ open, setMenuOpen }) => {
     return () => {
       if (user?.id) leaveFromRoom('pmCount:' + user.id)
     }
-  }, [user?.id])
+  }, [user?.id, token])
 
   useEffect(() => {
     if (user?.role >= 2) joinToRoom('adminNotification', { token })
     return () => {
       if (user?.role >= 2) leaveFromRoom('adminNotification')
     }
-  }, [user?.role])
+  }, [user?.role, token])
 
   useEffect(() => {
     Socket.on('messagesCount', (data) => {

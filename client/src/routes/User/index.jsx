@@ -16,6 +16,7 @@ const User = ({ match }) => {
 
   useEffect(() => {
     setFabVisible(false)
+    // eslint-disable-next-line
   }, [])
 
   return (

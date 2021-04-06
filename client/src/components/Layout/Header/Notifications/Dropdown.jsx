@@ -21,6 +21,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
+    // eslint-disable-next-line
   }, [])
 
   const handleClickOutside = ({ target }) => {
@@ -34,6 +35,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
 
   useEffect(() => {
     setInformer(false)
+    // eslint-disable-next-line
   }, [informer])
 
   const [notifications, setNotifications] = useState([])
@@ -88,6 +90,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
     }
 
     fetchNotifications()
+    // eslint-disable-next-line
   }, [page])
 
   const handleScroll = () => {

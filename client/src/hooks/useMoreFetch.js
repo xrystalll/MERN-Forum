@@ -72,6 +72,7 @@ export const useMoreFetch = ({ method, params, limit = 10, sort, auth = false })
     }
 
     fetchData()
+    // eslint-disable-next-line
   }, [page, run])
 
   useEffect(() => {

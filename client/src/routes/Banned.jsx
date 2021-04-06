@@ -37,7 +37,7 @@ const Banned = ({ history }) => {
     }
 
     fetchBan()
-  }, [userId])
+  }, [userId, lang, history])
 
   useEffect(() => {
     let timer
@@ -52,7 +52,7 @@ const Banned = ({ history }) => {
     return () => {
       timer && clearInterval(timer)
     }
-  }, [banInfo])
+  }, [banInfo, history])
 
   useEffect(() => {
     if (userId) joinToRoom('banned:' + userId)
@@ -66,7 +66,7 @@ const Banned = ({ history }) => {
       localStorage.removeItem('ban')
       history.push('/signin')
     })
-  }, [])
+  }, [history])
 
   return (
     <Section>

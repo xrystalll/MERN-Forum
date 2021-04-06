@@ -14,6 +14,7 @@ const Messages = () => {
 
   useEffect(() => {
     setFabVisible(false)
+    // eslint-disable-next-line
   }, [])
 
   return (

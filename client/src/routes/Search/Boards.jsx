@@ -18,7 +18,7 @@ const Boards = ({ lang, query, type }) => {
     } else {
       setInit(false)
     }
-  }, [query])
+  }, [init, query, refetch])
 
   return !noData ? (
     !loading ? (

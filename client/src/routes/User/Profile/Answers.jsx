@@ -12,7 +12,7 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Answers = ({ userData }) => {
-  const { token, lang } = useContext(StoreContext)
+  const { lang } = useContext(StoreContext)
   document.title = 'Forum | ' + userData.displayName + ' / ' + Strings.answers[lang]
 
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'user/answers', params: { userId: userData._id }, auth: true })

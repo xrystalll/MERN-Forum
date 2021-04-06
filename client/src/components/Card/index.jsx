@@ -50,6 +50,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
     if (type === 'thread' && !data.closed) {
       setFabVisible(true)
     }
+    // eslint-disable-next-line
   }, [data.closed])
 
   const imageTypes = ['image/jpeg', 'image/png', 'image/gif']

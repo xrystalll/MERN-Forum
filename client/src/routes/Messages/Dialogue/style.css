@@ -1,10 +1,11 @@
+/* Messages */
 .main_section.with_hested_scroll {
   margin: 0;
 }
 .messages_wrapper {
   height: calc(100vh - 180px);
 }
-.messages_wrapper .comments_form, .messages_wrapper .comments_form.float {
+.messages_wrapper .comments_form {
   position: relative;
   background-color: initial;
   padding: 0;
@@ -40,6 +41,17 @@
 .messages_wrapper .empty-results, .messages_wrapper .content_loader {
   height: 100%;
   margin: 0 auto;
+}
+.messages_wrapper .more_loader {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+.messages_wrapper .more_loader svg {
+  background: var(--secondary-bg-tint-focus);
+  transition: var(--transition-background);
+  border-radius: 50%;
 }
 
 .messages_list {
@@ -93,6 +105,11 @@
   max-width: 300px;
   min-width: 140px;
   margin: .8rem 0;
+}
+@media (min-width: 420px) {
+  .message_body {
+    max-width: 380px;
+  }
 }
 .message_item.my .message_body {
   border-bottom-left-radius: var(--border-radius);

@@ -22,6 +22,7 @@ const Settings = ({ match }) => {
     if (user.name !== userName) {
       history.push('/user/' + user.name + '/settings')
     }
+    // eslint-disable-next-line
   }, [])
 
   const [file, setFile] = useState([])

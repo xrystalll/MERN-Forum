@@ -29,6 +29,7 @@ const Boards = () => {
       })
     }
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   return (

@@ -30,6 +30,7 @@ const Answers = ({ lang, user, thread, subcribed, clearSubcribe }) => {
     }
 
     init && fetchAnswers()
+    // eslint-disable-next-line
   }, [init])
 
   useEffect(() => {
@@ -52,7 +53,7 @@ const Answers = ({ lang, user, thread, subcribed, clearSubcribe }) => {
     }
 
     clearSubcribe({})
-  }, [answers, subcribed])
+  }, [answers, subcribed, user, clearSubcribe])
 
   return !loading ? (
     answers.length ? (

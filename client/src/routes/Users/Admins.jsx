@@ -26,6 +26,7 @@ const Admins = () => {
       })
     }
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'admins' })

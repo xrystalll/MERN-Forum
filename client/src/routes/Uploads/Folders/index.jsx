@@ -23,6 +23,7 @@ const Folders = () => {
       })
     }
     setInit(false)
+    // eslint-disable-next-line
   }, [init])
 
   return (

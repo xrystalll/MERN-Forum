@@ -37,7 +37,8 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
     }
 
     init && fetchComments()
-  }, [init])
+    // eslint-disable-next-line
+  }, [init, fileId])
 
   useEffect(() => {
     if (!subcribed.type) return
@@ -59,7 +60,8 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
     }
 
     clearSubcribe({})
-  }, [comments, subcribed])
+    // eslint-disable-next-line
+  }, [comments, subcribed, user])
 
   const [commentedTo, setCommentedTo] = useState({ text: '', id: null })
   const [errors, setErrors] = useState({})
@@ -81,6 +83,7 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
 
   useEffect(() => {
     addValue({ name: 'body', value: commentedTo.text + values.body })
+    // eslint-disable-next-line
   }, [commentedTo.id])
 
   const createComment = () => {
