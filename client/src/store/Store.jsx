@@ -21,6 +21,7 @@ const langs = ['ru', 'en', 'jp']
 const langFromLS = langs.find(i => i === localStorage.getItem('lang'))
 const langFromNL = langs.find(i => i === window.navigator.language)
 const lang = langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
+document.querySelector('html').lang = lang
 
 const initialState = {
   user,
@@ -42,6 +43,7 @@ const Store = ({ children }) => {
 
   const setLang = (payload) => {
     localStorage.setItem('lang', payload)
+    document.querySelector('html').lang = payload
     dispatch({
       type: 'SET_LANG',
       payload

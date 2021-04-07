@@ -11,6 +11,7 @@ import Breadcrumbs from 'components/Breadcrumbs';
 import { Button } from 'components/Button';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
+
 import { BoardItem, NewBoardItem } from './BoardItem';
 import './style.css';
 

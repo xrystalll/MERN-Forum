@@ -18,7 +18,8 @@ const Threads = ({ lang, query, type }) => {
     } else {
       setInit(false)
     }
-  }, [init, query, refetch])
+    // eslint-disable-next-line
+  }, [query])
 
   return !noData ? (
     !loading ? (

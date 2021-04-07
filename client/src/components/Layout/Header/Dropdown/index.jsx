@@ -3,9 +3,11 @@ import { useHistory } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
 import { StoreContext } from 'store/Store';
+
 import { BACKEND, Strings } from 'support/Constants';
 
 import CustomScrollbar from 'components/CustomScrollbar';
+
 import './style.css';
 
 const DropdownItem = ({ onClick, data, setActiveMenu, goToMenu, leftIcon, rightIcon, header, children }) => {

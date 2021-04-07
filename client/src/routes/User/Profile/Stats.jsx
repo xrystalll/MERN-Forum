@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { BACKEND, Strings } from 'support/Constants';
 
 import { CardBody } from 'components/Card';
-
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 

@@ -17,7 +17,7 @@ const Online = ({ lang }) => {
         <Fragment>
           <div className="items_list">
             {items.map(item => (
-              <UserCard key={item._id} data={item} />
+              <UserCard key={item._id} data={item} online />
             ))}
           </div>
 

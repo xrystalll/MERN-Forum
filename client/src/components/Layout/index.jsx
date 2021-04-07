@@ -4,10 +4,11 @@ import { StoreContext } from 'store/Store';
 
 import { BACKEND, Strings } from 'support/Constants';
 
+import Modal from 'components/Modal';
+
 import Header from './Header';
 import LeftMenu from './LeftMenu';
 import Footer from './Footer';
-import Modal from 'components/Modal';
 import './style.css';
 
 const Layout = ({ children }) => {

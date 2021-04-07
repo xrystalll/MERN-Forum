@@ -6,6 +6,7 @@ import { StoreContext } from 'store/Store';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 import { Strings } from 'support/Constants';
 import { counter } from 'support/Utils';
+
 import './style.css';
 
 const LeftMenu = ({ open, setMenuOpen }) => {

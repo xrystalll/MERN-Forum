@@ -50,9 +50,11 @@ const Dialogue = ({ match }) => {
   }, [dialogueId])
 
   useEffect(() => {
+    document.body.classList.add('noscroll')
     document.querySelector('.main_section').classList.add('with_hested_scroll')
     document.querySelector('.general_footer').style.display = 'none'
     return () => {
+      document.body.classList.remove('noscroll')
       document.querySelector('.main_section').classList.remove('with_hested_scroll')
       document.querySelector('.general_footer').style.display = ''
     }

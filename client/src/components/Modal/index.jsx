@@ -1,20 +1,22 @@
 import { useEffect, useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import './datePicker.css';
 
 import { StoreContext } from 'store/Store';
+
 import { useForm } from 'hooks/useForm';
 
 import { BACKEND, Strings } from 'support/Constants';
 
-import ModalBody from './ModalBody';
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
 import TextareaForm from 'components/Form/TextareaForm';
 import FileUploadForm from 'components/Form/FileUploadForm';
 import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
+
+import ModalBody from './ModalBody';
+import './datePicker.css';
 
 const Modal = ({ open, close }) => {
   const history = useHistory()

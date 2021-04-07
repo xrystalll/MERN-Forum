@@ -1,13 +1,12 @@
 import { Fragment, useEffect, useContext, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
-import { useHistory } from 'react-router-dom';
 
 import { useForm } from 'hooks/useForm';
 
-import Socket from 'support/Socket';
 import { Strings } from 'support/Constants';
+import Socket from 'support/Socket';
 
 import Dropdown from './Dropdown';
 import Notifications from './Notifications';

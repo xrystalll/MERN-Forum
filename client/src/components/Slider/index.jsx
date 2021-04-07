@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { Strings } from 'support/Constants';
 import { counter, declOfNum } from 'support/Utils';
+
 import './style.css';
 
 const PopularBoardsContainer = ({ children }) => {

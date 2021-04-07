@@ -4,12 +4,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#161616" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link rel="preconnect" href="https://unpkg.com" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Forum" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://unpkg.com" rel="preconnect" />
+    <link href="%PUBLIC_URL%/manifest.json" rel="manifest" />
+    <link href="%PUBLIC_URL%/icons/ic-192.png" rel="icon" />
+    <link href="%PUBLIC_URL%/icons/ic-512.png" rel="apple-touch-icon" />
     <title>Forum</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      window.addEventListener('load', async () => {
+        if ('serviceWorker' in navigator) {
+          try {
+            await navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
+          } catch(err) {
+            console.error(err.message)
+          }
+        }
+      })
+    </script>
   </body>
 </html>

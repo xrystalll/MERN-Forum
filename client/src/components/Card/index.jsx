@@ -573,7 +573,7 @@ export const BoardCard = ({ data }) => {
   )
 }
 
-export const UserCard = ({ data }) => {
+export const UserCard = ({ data, online }) => {
   return (
     <CardBody>
       <Link to={'/user/' + data.name} className="card_head user_head">
@@ -591,7 +591,11 @@ export const UserCard = ({ data }) => {
                 {data.displayName}
                 <UserRole role={data.role} />
               </div>
-              <div className="head_text">{dateFormat(data.onlineAt)}</div>
+               {!online && (
+                <div className="head_text">
+                  {new Date() - new Date(data.onlineAt) < 5 * 60000 ? 'online' : dateFormat(data.onlineAt)}
+                </div>
+              )}
             </div>
           </div>
         </div>
