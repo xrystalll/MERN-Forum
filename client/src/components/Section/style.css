@@ -5,6 +5,9 @@
 .main_section:not(:first-child) {
   margin: 2rem 1rem 0;
 }
+.main_section:last-child {
+  margin-bottom: 6rem;
+}
 .section_header {
   margin-bottom: 1.1rem;
 }

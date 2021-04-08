@@ -14,6 +14,19 @@
 .messages_wrapper .comments_form .card_item {
   margin: 0 1rem;
 }
+.send_file {
+  font-size: 24px !important;
+  margin-right: .3rem;
+  padding: .3rem !important;
+}
+.send_file i {
+  transform: rotate(-45deg);
+}
+.comments_form .attach_list {
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+}
 
 .messages_wrapper .user_head {
   padding: 0;
@@ -47,11 +60,6 @@
   left: 0;
   right: 0;
   z-index: 1;
-}
-.messages_wrapper .more_loader svg {
-  background: var(--secondary-bg-tint-focus);
-  transition: var(--transition-background);
-  border-radius: 50%;
 }
 
 .messages_list {
@@ -106,6 +114,9 @@
   min-width: 140px;
   margin: .8rem 0;
 }
+.message_item.my .message_body {
+  background-color: var(--accent-color-vibrant);
+}
 @media (min-width: 420px) {
   .message_body {
     max-width: 380px;
@@ -142,4 +153,39 @@
   top: .6rem;
   color: var(--actions-color);
   font-size: .7rem;
+}
+
+.msg_file_grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  border-radius: var(--border-radius-inner);
+  overflow: hidden;
+  margin-bottom: .5rem;
+}
+.msg_file_grid.group {
+  grid-template-columns: repeat(2, 1fr);
+}
+.group > *:nth-child(2n) {
+  justify-self: end;
+}
+.group > *:nth-child(2n-1) {
+  justify-self: center;
+}
+.group > *:nth-child(2n-1):nth-last-of-type(1) {
+  grid-column: span 2;
+}
+.one .msg_file {
+  min-width: 280px;
+  height: 280px;
+}
+
+.msg_file {
+  width: 100%;
+  min-width: 140px;
+  height: 140px;
+  position: relative;
+  background-color: var(--secondary-bg-tint);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
 }

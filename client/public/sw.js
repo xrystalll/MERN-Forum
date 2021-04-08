@@ -18,8 +18,14 @@ self.addEventListener('activate', async (event) => {
 })
 
 self.addEventListener('fetch', (event) => {
-  event.respondWith(async () => {
-    const cached = await caches.match(event.request)
-    return cached ?? await fetch(event.request)
-  })
+  const url = new URL(event.request.url)
+
+  if (url.origin === location.origin) {
+    event.respondWith(cacheFirst(event.request))
+  }
 })
+
+const cacheFirst = async (request) => {
+  const cached = await caches.match(request)
+  return cached ?? await fetch(request)
+}

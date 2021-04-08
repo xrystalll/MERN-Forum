@@ -2,6 +2,8 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
+import Footer from 'components/Layout/Footer';
+
 import Boards from './Boards';
 import Threads from './Threads';
 import Uploads from './Uploads';
@@ -28,6 +30,7 @@ const Home = () => {
       <Boards lang={lang} />
       <Threads lang={lang} />
       <Uploads lang={lang} />
+      <Footer />
     </Fragment>
   )
 }

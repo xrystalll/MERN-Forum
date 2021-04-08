@@ -7,6 +7,7 @@ const sharp = require('sharp');
 
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const storage = require('../utils/storage');
 
 const checkFileType = (file, callback) => {
   const filetypes = /jpeg|jpg|png|gif/
@@ -15,15 +16,6 @@ const checkFileType = (file, callback) => {
 
   if (mimetype && extname) return callback(null, true)
   else callback('It\'s not image', false)
-}
-
-const storage = (dest, name) => {
-  return multer.diskStorage({
-    destination: path.join(__dirname, '..', '..', '..', 'public', dest),
-    filename: (req, file, callback) => {
-      callback(null, name + '_' + Date.now() + path.extname(file.originalname))
-    }
-  })
 }
 
 const upload = multer({

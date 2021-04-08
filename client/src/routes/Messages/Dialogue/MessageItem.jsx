@@ -1,3 +1,5 @@
+import { Fragment, useState } from 'react';
+import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { BACKEND } from 'support/Constants';
@@ -6,6 +8,16 @@ import { dateFormat } from 'support/Utils';
 import Markdown from 'components/Markdown';
 
 const MessageItem = ({ data, dialogueId, user, token }) => {
+  const [image, setImage] = useState('')
+  const [imageOpen, setImageOpen] = useState(false)
+
+  const imageView = (url) => {
+    setImage(url)
+    setImageOpen(true)
+  }
+
+  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
+  const regexp = /(?:\.([^.]+))?$/
   const my = user.id === data.from._id
 
   const deleteMessage = () => {
@@ -28,7 +40,27 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
     <div className={my ? 'message_item my' : 'message_item'}>
       <div className={`message_body markdown`} id={'msg_' + data._id}>
         <div className="message_content">
-          <Markdown source={data.body} />
+          {data.file && (
+            <div className={data.file.length > 1 ? 'msg_file_grid group' : 'msg_file_grid one'}>
+              {data.file.map((item, index) => (
+                <Fragment key={index}>
+                  {imageTypes.find(i => i === item.type) ? (
+                    <div
+                      onClick={() => imageView(BACKEND + item.file)}
+                      className="msg_file"
+                      style={{ backgroundImage: `url(${BACKEND + item.file})` }}
+                    />
+                  ) : (
+                    <div onClick={() => window.open(BACKEND + item.file)} className="msg_file empty">
+                      <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </div>
+          )}
+
+          <Markdown source={data.body} onImageClick={imageView} />
         </div>
         <span className="message_info">
           {dateFormat(data.createdAt, 'short')}
@@ -42,6 +74,13 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
           </div>
         )}
       </div>
+
+      {imageOpen && (
+        <Lightbox
+          mainSrc={image}
+          onCloseRequest={() => setImageOpen(false)}
+        />
+      )}
     </div>
   )
 }

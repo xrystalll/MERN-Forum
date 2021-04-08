@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const { Types } = require('mongoose');
 const createError = require('http-errors');
@@ -10,29 +9,8 @@ const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
 
 const deleteFiles = require('../utils//deleteFiles');
-
-const checkFileExec = (file, callback) => {
-  if (
-    file.mimetype === 'text/javascript' ||
-    file.mimetype === 'text/html' ||
-    file.mimetype === 'text/css' ||
-    file.mimetype === 'application/json' ||
-    file.mimetype === 'application/ld+json' ||
-    file.mimetype === 'application/php'
-  ) {
-    callback('File format is not allowed', false)
-  }
-  else callback(null, true)
-}
-
-const storage = (dest, name) => {
-  return multer.diskStorage({
-    destination: path.join(__dirname, '..', '..', '..', 'public', dest),
-    filename: (req, file, callback) => {
-      callback(null, name + '_' + Date.now() + path.extname(file.originalname))
-    }
-  })
-}
+const checkFileExec = require('../utils/checkFileExec');
+const storage = require('../utils/storage');
 
 const upload = multer({
   storage: storage('uploads', 'file'),

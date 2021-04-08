@@ -8,7 +8,6 @@ import Modal from 'components/Modal';
 
 import Header from './Header';
 import LeftMenu from './LeftMenu';
-import Footer from './Footer';
 import './style.css';
 
 const Layout = ({ children }) => {
@@ -88,8 +87,6 @@ const Layout = ({ children }) => {
 
         <main className="content">
           {children}
-
-          <Footer />
         </main>
 
         {user && fab && (

@@ -1,5 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
 
@@ -11,6 +12,7 @@ import { dateFormat } from 'support/Utils';
 
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
+import FileUploadForm from 'components/Form/FileUploadForm';
 // import Dropdown from 'components/Card/Dropdown';
 import UserRole from 'components/UserRole';
 import Loader from 'components/Loader';
@@ -50,13 +52,12 @@ const Dialogue = ({ match }) => {
   }, [dialogueId])
 
   useEffect(() => {
+    document.querySelector('html').scrollTo(0, 0)
     document.body.classList.add('noscroll')
     document.querySelector('.main_section').classList.add('with_hested_scroll')
-    document.querySelector('.general_footer').style.display = 'none'
     return () => {
       document.body.classList.remove('noscroll')
       document.querySelector('.main_section').classList.remove('with_hested_scroll')
-      document.querySelector('.general_footer').style.display = ''
     }
   }, [])
 
@@ -208,14 +209,59 @@ const Dialogue = ({ match }) => {
     // eslint-disable-next-line
   }, [dialogueId])
 
+  const [files, setFiles] = useState([])
+  const [clearFiles, setClearFiles] = useState(false)
+
+  const getFile = (files) => {
+    setClearFiles(false)
+    setFiles(files)
+  }
+
+  useEffect(() => {
+    if (clearFiles) {
+      setFiles([])
+    }
+  }, [clearFiles])
+
+  const sendMessageWithFiles = () => {
+    const formData = new FormData()
+    files.map(item => formData.append('file', item))
+    formData.append('postData', JSON.stringify({
+      dialogueId,
+      body: values.body.substring(0, 1000),
+      to: toUser._id
+    }))
+
+    fetch(BACKEND + '/api/message/create', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.error) {
+          setClearFiles(true)
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        toast.error(err.message)
+      })
+  }
+
   const sendMessageCallback = () => {
-    if (!values.body.trim()) {
+    if (!files.length && !values.body.trim()) {
       return setErrors({ body: Strings.enterContent[lang] })
     }
 
     setErrors({})
     reset()
-    Socket.emit('createMessage', { token, dialogueId, body: values.body, to: toUser._id })
+    if (!files.length) {
+      Socket.emit('createMessage', { token, dialogueId, body: values.body, to: toUser._id })
+    } else {
+      sendMessageWithFiles()
+    }
     Socket.emit('stopType', { token, dialogueId })
   }
 
@@ -236,7 +282,7 @@ const Dialogue = ({ match }) => {
     Socket.emit('stopType', { token, dialogueId })
   }
 
-  const [chatHeight, setChatHeigth] = useState(window.innerHeight)
+  const [chatHeight, setChatHeight] = useState(window.innerHeight)
 
   useEffect(() => {
     window.addEventListener('resize', handleResize)
@@ -246,7 +292,7 @@ const Dialogue = ({ match }) => {
   })
 
   const handleResize = () => {
-    setChatHeigth(window.innerHeight)
+    setChatHeight(window.innerHeight)
   }
 
   return (
@@ -311,6 +357,12 @@ const Dialogue = ({ match }) => {
 
         <form className="form_inner comments_form" onSubmit={onSubmit}>
           <FormCardItem row>
+            <FileUploadForm
+              mini
+              sendFiles={getFile}
+              clearFiles={clearFiles}
+            />
+
             <div className={errors.body ? 'form_block error' : 'form_block' }>
               <Input
                 name="body"

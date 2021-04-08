@@ -6,7 +6,7 @@ import { Strings } from 'support/Constants';
 
 import FileInput from './FileInput';
 
-const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, accept }) => {
+const FileUploadForm = ({ mini, title, hint, sendFiles, clearFiles, multiple = true, accept }) => {
   const { lang } = useContext(StoreContext)
   const [files, setFiles] = useState([])
   const [inputVisible, setInputVisible] = useState(true)
@@ -64,51 +64,93 @@ const FileUploadForm = ({ title, hint, sendFiles, clearFiles, multiple = true, a
   }
 
   return (
-    <div className={files.length ? 'card_item attach_list' : 'card_item'}>
-      {files && (
-        files.map((item, index) => (
-          <Fragment key={index}>
-            {imageTypes.find(i => i === item.type) ? (
-              <div className="attached_file card_left" style={{ backgroundImage: `url(${item.url})` }}>
-                <span className="remove_file" onClick={() => removeFile(item)}>
-                  <i className="bx bx-x" />
-                </span>
-              </div>
-            ) : (
-              <div className="attached_file card_left empty">
-                <span className="remove_file" onClick={() => removeFile(item)}>
-                  <i className="bx bx-x" />
-                </span>
-                <div className="attached_info">{regexp.exec(item.name)[1]}</div>
-              </div>
-            )}
-          </Fragment>
-        ))
-      )}
+    !mini ? (
+      <div className={files.length ? 'card_item attach_list' : 'card_item'}>
+        {files && (
+          files.map((item, index) => (
+            <Fragment key={index}>
+              {imageTypes.find(i => i === item.type) ? (
+                <div className="attached_file card_left" style={{ backgroundImage: `url(${item.url})` }}>
+                  <span className="remove_file" onClick={() => removeFile(item)}>
+                    <i className="bx bx-x" />
+                  </span>
+                </div>
+              ) : (
+                <div className="attached_file card_left empty">
+                  <span className="remove_file" onClick={() => removeFile(item)}>
+                    <i className="bx bx-x" />
+                  </span>
+                  <div className="attached_info">{regexp.exec(item.name)[1]}</div>
+                </div>
+              )}
+            </Fragment>
+          ))
+        )}
 
-      {inputVisible && (
-        <div className="card_body file_input_body">
-          <div className="card_outside_title with_hint">
-            {title || Strings.attachFile[lang]}
-            <div className="title_hint">
-              <i className="bx bx-help-circle" />
-              <div className="hint_popover">
-                {hint || `${Strings.maxFilesCount[lang]}: 4; ${Strings.maxSize[lang]}: 12 Mb ${Strings.perFile[lang]}`}
+        {inputVisible && (
+          <div className="card_body file_input_body">
+            <div className="card_outside_title with_hint">
+              {title || Strings.attachFile[lang]}
+              <div className="title_hint">
+                <i className="bx bx-help-circle" />
+                <div className="hint_popover">
+                  {hint || `${Strings.maxFilesCount[lang]}: 4; ${Strings.maxSize[lang]}: 12 Mb ${Strings.perFile[lang]}`}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="form_block">
-            <FileInput
-              onChange={handleFile}
-              multiple={multiple}
-              accept={accept}
-              disabled={files.length >= maxCount}
-            />
+            <div className="form_block">
+              <FileInput
+                onChange={handleFile}
+                multiple={multiple}
+                accept={accept}
+                disabled={files.length >= maxCount}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    ) : (
+      <Fragment>
+        {files.length ? (
+          <div className="card_item attach_list">
+            {files && (
+              files.map((item, index) => (
+                <Fragment key={index}>
+                  {imageTypes.find(i => i === item.type) ? (
+                    <div className="attached_file card_left" style={{ backgroundImage: `url(${item.url})` }}>
+                      <span className="remove_file" onClick={() => removeFile(item)}>
+                        <i className="bx bx-x" />
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="attached_file card_left empty">
+                      <span className="remove_file" onClick={() => removeFile(item)}>
+                        <i className="bx bx-x" />
+                      </span>
+                      <div className="attached_info">{regexp.exec(item.name)[1]}</div>
+                    </div>
+                  )}
+                </Fragment>
+              ))
+            )}
+          </div>
+        ) : null}
+
+        <input
+          id="miniFileInput"
+          type="file"
+          className="miniFileInput"
+          multiple={multiple}
+          accept={accept}
+          onChange={handleFile}
+          disabled={files.length >= maxCount}
+        />
+        <label htmlFor="miniFileInput" className="message_action_item send_file" title={Strings.chooseAFile[lang]}>
+          <i className="bx bx-paperclip" />
+        </label>
+      </Fragment>
+    )
   )
 }
 

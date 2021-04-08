@@ -8,34 +8,13 @@ const Dialogue = require('../models/Dialogue');
 const Message = require('../models/Message');
 
 const deleteFiles = require('../utils//deleteFiles');
-
-const checkFileExec = (file, callback) => {
-  if (
-    file.mimetype === 'text/javascript' ||
-    file.mimetype === 'text/html' ||
-    file.mimetype === 'text/css' ||
-    file.mimetype === 'application/json' ||
-    file.mimetype === 'application/ld+json' ||
-    file.mimetype === 'application/php'
-  ) {
-    callback('File format is not allowed', false)
-  }
-  else callback(null, true)
-}
-
-const storage = (dest, name) => {
-  return multer.diskStorage({
-    destination: path.join(__dirname, '..', '..', '..', 'public', dest),
-    filename: (req, file, callback) => {
-      callback(null, name + '_' + Date.now() + path.extname(file.originalname))
-    }
-  })
-}
+const checkFileExec = require('../utils/checkFileExec');
+const storage = require('../utils/storage');
 
 const upload = multer({
   storage: storage('message', 'file'),
   fileFilter: (req, file, callback) => checkFileExec(file, callback),
-  limits: { fields: 1, fileSize: 1048576 * 42 } // 42Mb
+  limits: { fields: 1, fileSize: 1048576 * 24 } // 24Mb
 }).array('file', 4)
 
 module.exports.getDialogues = async (req, res, next) => {
@@ -119,6 +98,106 @@ module.exports.getMessages = async (req, res, next) => {
   }
 }
 
+module.exports.createMessage = async (req, res, next) => {
+  try {
+    upload(req, res, async (err) => {
+      if (err) return next(createError.BadRequest(err.message))
+
+      const { dialogueId, body = '', to } = JSON.parse(req.body.postData)
+
+      if (!to) return next(createError.BadRequest('"to" must not be empty'))
+
+      let files = null
+      if (req.files.length) {
+        files = req.files.reduce((array, item) => [...array, {
+          file: `/message/${item.filename}`,
+          type: item.mimetype,
+          size: item.size
+        }], [])
+      }
+
+      let isNewDialogue = false
+      let dId
+      const dialogueExist = await Dialogue.findOne({ _id: Types.ObjectId(dialogueId) })
+
+      if (!dialogueExist) {
+        isNewDialogue = true
+
+        const newDialogue = new Dialogue({
+          from: req.payload.id,
+          to
+        })
+
+        const dialogue = await newDialogue.save()
+        dId = dialogue._id
+
+        req.io.emit('joinToDialogue', dialogue)
+      } else {
+        dId = dialogueExist._id
+      }
+
+      const now = new Date().toISOString()
+
+      const newMessage = new Message({
+        dialogueId: dId,
+        body: body.substring(0, 1000),
+        createdAt: now,
+        from: req.payload.id,
+        to,
+        file: files,
+        read: false
+      })
+
+      const message = await newMessage.save()
+      await Dialogue.updateOne({ _id: Types.ObjectId(dId) }, { lastMessage: message._id, updatedAt: now })
+
+      res.json(message)
+
+      const populate = [{
+        path: 'from',
+        select: '_id name displayName onlineAt picture role'
+      }, {
+        path: 'to',
+        select: '_id name displayName onlineAt picture role'
+      }]
+      const populatedMessage = await Message.findById(message._id).populate(populate)
+
+      req.io.to('pm:' + dId).emit('newMessage', populatedMessage)
+
+      const populatedDialogue = [{
+        path: 'from',
+        select: '_id name displayName onlineAt picture role'
+      }, {
+        path: 'to',
+        select: '_id name displayName onlineAt picture role'
+      }, {
+        path: 'lastMessage'
+      }]
+      const newOrUpdatedDialogue = await Dialogue.findById(dId).populate(populatedDialogue)
+
+      if (isNewDialogue) {
+        req.io.to('dialogues:' + to).emit('newDialogue', newOrUpdatedDialogue)
+      } else {
+        req.io.to('dialogues:' + to).emit('updateDialogue', newOrUpdatedDialogue)
+      }
+
+      const dialogues = await Dialogue.find({
+        $or: [{
+          to: Types.ObjectId(req.payload.id)
+        }, {
+          from: Types.ObjectId(req.payload.id)
+        }]
+      }).populate({ path: 'lastMessage' })
+
+      const noRead = dialogues.filter(item => item.lastMessage && !item.lastMessage.read && item.lastMessage.to.toString() === to)
+
+      req.io.to('pmCount:' + to).emit('messagesCount', { count: noRead.length })
+    })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
 module.exports.deleteMessage = async (req, res, next) => {
   try {
     const { dialogueId, messageId } = req.body
@@ -127,6 +206,18 @@ module.exports.deleteMessage = async (req, res, next) => {
     if (!messageId) return next(createError.BadRequest('messageId must not be empty'))
 
     const message = await Message.findById(messageId)
+
+    if (message.file && message.file.length) {
+      const files = message.file.reduce((array, item) => [
+        ...array,
+        path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file))
+      ], [])
+
+      deleteFiles(files, (err) => {
+        if (err) console.error(err)
+      })
+    }
+
     await message.delete()
 
     const messages = await Message.find({ dialogueId: Types.ObjectId(dialogueId) }).sort({ createdAt: -1 })

@@ -431,7 +431,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                         style={{ backgroundImage: `url(${BACKEND + item.file})` }}
                       />
                     ) : (
-                      <a href={item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
+                      <a href={BACKEND + item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
                         <div className="attached_info">{regexp.exec(item.file)[1]}</div>
                       </a>
                     )}
@@ -915,7 +915,11 @@ export const DialoqueCard = ({ data }) => {
                     <UserRole role={data[key].role} />
                   </div>
                   <div className="head_text">
-                    {data.lastMessage.from === user.id && `${Strings.you[lang]}: `}{data.lastMessage.body}
+                    {data.lastMessage.from === user.id && `${Strings.you[lang]}: `}
+                    {data.lastMessage.body.length
+                      ? data.lastMessage.body
+                      : data.lastMessage?.file.length ? Strings.file[lang] : Strings.message[lang]
+                    }
                   </div>
                 </div>
               </Link>

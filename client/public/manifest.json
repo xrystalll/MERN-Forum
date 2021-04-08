@@ -24,6 +24,5 @@
   }],
   "start_url": ".",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#916bc2"
+  "orientation": "portrait"
 }
