@@ -6,10 +6,11 @@ import { toast } from 'react-toastify';
 import { StoreContext } from 'store/Store';
 
 import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
-import { BACKEND, Strings } from 'support/Constants';
+import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
 import UserRole from 'components/UserRole';
+import VideoLightbox from 'components/VideoLightbox';
 
 import Dropdown from './Dropdown';
 
@@ -33,6 +34,8 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
+  const [video, setVideo] = useState('')
+  const [videoOpen, setVideoOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(preview ? true : false)
   const regexp = /(?:\.([^.]+))?$/
 
@@ -52,8 +55,6 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
     }
     // eslint-disable-next-line
   }, [data.closed])
-
-  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
 
   const likeThread = () => {
     fetch(BACKEND + '/api/thread/like', {
@@ -297,13 +298,18 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
     setImageOpen(true)
   }
 
+  const videoView = (url) => {
+    setVideo(url)
+    setVideoOpen(true)
+  }
+
   useEffect(() => {
-    if (imageOpen) {
+    if (imageOpen || videoOpen) {
       document.body.classList.add('noscroll')
     } else {
       document.body.classList.remove('noscroll')
     }
-  }, [imageOpen])
+  }, [imageOpen, videoOpen])
 
   return (
     <CardBody>
@@ -430,6 +436,10 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                         className="attached_file image_file card_left"
                         style={{ backgroundImage: `url(${BACKEND + item.file})` }}
                       />
+                    ) : videoTypes.find(i => i === item.type) ? (
+                      <div onClick={() => videoView(BACKEND + item.file)} className="attached_file card_left empty">
+                        <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                      </div>
                     ) : (
                       <a href={BACKEND + item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
                         <div className="attached_info">{regexp.exec(item.file)[1]}</div>
@@ -444,6 +454,13 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
               <Lightbox
                 mainSrc={image}
                 onCloseRequest={() => setImageOpen(false)}
+              />
+            )}
+
+            {videoOpen && (
+              <VideoLightbox
+                source={video}
+                onCloseRequest={() => setVideoOpen(false)}
               />
             )}
 
@@ -824,7 +841,6 @@ export const FolderCard = ({ data }) => {
 
 export const FileCard = ({ data, deleteFile }) => {
   const { lang } = useContext(StoreContext)
-  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
 
   if (data.author === null) {
     data.author = deletedUser

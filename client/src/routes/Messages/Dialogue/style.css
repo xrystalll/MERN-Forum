@@ -115,7 +115,7 @@
   margin: .8rem 0;
 }
 .message_item.my .message_body {
-  background-color: var(--accent-color-vibrant);
+  background-color: var(--secondary-bg-muted);
 }
 @media (min-width: 420px) {
   .message_body {

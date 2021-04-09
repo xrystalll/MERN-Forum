@@ -11,8 +11,6 @@
   --accent-color: hsl(266deg 42% 59%);
   --accent-color-tint: hsl(266deg 42% 53%);
 
-  --accent-color-vibrant: hsl(266deg 42% 3%);
-
   --dark-bg: #191919;
 
   --main-info-color: #b6bfb7;
@@ -29,6 +27,7 @@
   --secondary-bg: #111113;
   --secondary-bg-tint: #1d1d1d;
   --secondary-bg-tint-focus: #191919;
+  --secondary-bg-muted: #0c0c0e;
   --form-border-color: #161717;
   --form-border-color-active: var(--accent-color);
 
@@ -36,14 +35,13 @@
   --selection-bg: #563170;
 }
 .light {
-  --accent-color-vibrant: hsl(266deg 42% 91%);
-
   --main-text: #3e3e3e;
   --main-bg: #eef0f1;
   --secondary-text: #202428;
   --secondary-bg: #ffffff;
   --secondary-bg-tint: #e6e6e6;
   --secondary-bg-tint-focus: #e0e0e0;
+  --secondary-bg-muted: #e0e0e0;
   --form-border-color: #eeecec;
 
   --selection-text: #000000;
@@ -301,7 +299,7 @@ ul {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-img.card_left {
+img.card_left, video.card_left {
   width: calc(100% - 38px);
   height: 100%;
   margin-bottom: 1rem;

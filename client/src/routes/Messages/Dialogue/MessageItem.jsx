@@ -2,21 +2,28 @@ import { Fragment, useState } from 'react';
 import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
-import { BACKEND } from 'support/Constants';
+import { BACKEND, imageTypes, videoTypes } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Markdown from 'components/Markdown';
+import VideoLightbox from 'components/VideoLightbox';
 
 const MessageItem = ({ data, dialogueId, user, token }) => {
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
+  const [video, setVideo] = useState('')
+  const [videoOpen, setVideoOpen] = useState(false)
 
   const imageView = (url) => {
     setImage(url)
     setImageOpen(true)
   }
 
-  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
+  const videoView = (url) => {
+    setVideo(url)
+    setVideoOpen(true)
+  }
+
   const regexp = /(?:\.([^.]+))?$/
   const my = user.id === data.from._id
 
@@ -50,6 +57,10 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
                       className="msg_file"
                       style={{ backgroundImage: `url(${BACKEND + item.file})` }}
                     />
+                  ) : videoTypes.find(i => i === item.type) ? (
+                    <div onClick={() => videoView(BACKEND + item.file)} className="msg_file empty">
+                      <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                    </div>
                   ) : (
                     <div onClick={() => window.open(BACKEND + item.file)} className="msg_file empty">
                       <div className="attached_info">{regexp.exec(item.file)[1]}</div>
@@ -79,6 +90,13 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
         <Lightbox
           mainSrc={image}
           onCloseRequest={() => setImageOpen(false)}
+        />
+      )}
+
+      {videoOpen && (
+        <VideoLightbox
+          source={video}
+          onCloseRequest={() => setVideoOpen(false)}
         />
       )}
     </div>

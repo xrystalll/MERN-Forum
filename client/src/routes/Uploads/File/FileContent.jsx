@@ -4,7 +4,7 @@ import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { counter, declOfNum, dateFormat, formatBytes, deletedUser } from 'support/Utils';
-import { BACKEND, Strings } from 'support/Constants';
+import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
 import Dropdown from 'components/Card/Dropdown';
@@ -18,7 +18,6 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
-  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
   const regexp = /(?:\.([^.]+))?$/
 
   if (data.author === null) {
@@ -101,14 +100,20 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
         <div className="card_body">
           <div className="card_block">
             <header className="card_head column">
-              {imageTypes.find(i => i === data.file.type) && (
+              {imageTypes.find(i => i === data.file.type) ? (
                 <img
                   className="card_left"
                   src={BACKEND + data.file.url}
                   onClick={() => imageView(BACKEND + data.file.url)}
                   alt="Preview"
                 />
-              )}
+              ) : videoTypes.find(i => i === data.file.type) ? (
+                <video
+                  className="card_left"
+                  src={BACKEND + data.file.url}
+                  controls
+                />
+              ) : null}
 
               <div className="card_head_inner">
                 <div className="card_title full">{data.title}</div>

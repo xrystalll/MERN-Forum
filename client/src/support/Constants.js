@@ -1033,4 +1033,7 @@ const Strings = {
   },
 }
 
-export { BACKEND, Strings };
+const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
+const videoTypes = ['video/mp4', 'video/webm']
+
+export { BACKEND, Strings, imageTypes, videoTypes };
