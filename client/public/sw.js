@@ -21,11 +21,15 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
 
   if (url.origin === location.origin) {
-    event.respondWith(cacheFirst(event.request))
+    event.respondWith(
+      (async () => {
+        try {
+          const cachedResponse = await caches.match(event.request)
+          return cachedResponse ?? await fetch(event.request)
+        } catch(err) {
+          console.error(err)
+        }
+      })()
+    )
   }
 })
-
-const cacheFirst = async (request) => {
-  const cached = await caches.match(request)
-  return cached ?? await fetch(request)
-}

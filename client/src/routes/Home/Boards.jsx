@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
-import { PopularBoardsContainer, PopularBoardsItem } from 'components/Slider';
+import { ControlledSlider } from 'components/Slider';
 
 const Boards = ({ lang }) => {
   const [init, setInit] = useState(true)
   const [boards, setBoards] = useState([])
-  const limit = 6
+  const limit = 7
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -36,11 +36,7 @@ const Boards = ({ lang }) => {
           link={{ title: Strings.all[lang], url: '/boards' }}
         />
 
-        <PopularBoardsContainer>
-          {boards.map(item => (
-            <PopularBoardsItem key={item._id} lang={lang} data={item} />
-          ))}
-        </PopularBoardsContainer>
+        <ControlledSlider items={boards} lang={lang} />
       </Section>
     ) : null
   )

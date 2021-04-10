@@ -623,10 +623,10 @@ const Modal = ({ open, close }) => {
             <DatePicker
               className="input_area"
               selected={date}
-              minDate={date}
+              minDate={new Date()}
               showTimeSelect
-              dateFormat="MMM d, yyyy h:mm aa"
-              timeFormat="HH:mm"
+              dateFormat={lang === 'en' ? 'dd MMM yyyy hh:mm aa' : 'dd MMM yyyy HH:mm'}
+              timeFormat={lang === 'en' ? 'hh:mm aa' : 'HH:mm'}
               onChange={date => setDate(date)}
             />
           </div>

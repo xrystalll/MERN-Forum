@@ -150,6 +150,7 @@ const Dialogue = ({ match }) => {
   }, [page, dialogueId])
 
   const handleScroll = ({ target }) => {
+    document.querySelector('html').scrollTo(0, 0)
     if (!moreTrigger) return
 
     if (target.scrollTop <= 70) {
@@ -292,11 +293,12 @@ const Dialogue = ({ match }) => {
   })
 
   const handleResize = () => {
+    document.querySelector('html').scrollTo(0, 0)
     setChatHeight(window.innerHeight)
   }
 
   return (
-    <Fragment>
+    <>
       <div className="messages_wrapper" style={{ height: `calc(${chatHeight}px - 180px)` }}>
         {toUser.name && (
           <div className="card_head user_head">
@@ -339,7 +341,7 @@ const Dialogue = ({ match }) => {
           {!noData ? (
             !loading ? (
               items.length ? (
-                <Fragment>
+                <>
                   {moreLoading && <Loader className="more_loader" color="#64707d" />}
 
                   <div className="messages_list">
@@ -347,7 +349,7 @@ const Dialogue = ({ match }) => {
                       <MessageItem key={item._id} data={item} dialogueId={dialogueId} user={user} token={token} />
                     ))}
                   </div>
-                </Fragment>
+                </>
               ) : <Errorer message={Strings.noMessagesYet[lang]} />
             ) : <Loader color="#64707d" />
           ) : (
@@ -380,7 +382,7 @@ const Dialogue = ({ match }) => {
           </FormCardItem>
         </form>
       </div>
-    </Fragment>
+    </>
   )
 }
 

@@ -1101,6 +1101,7 @@ a.head_text:hover {
 }
 
 .ril__toolbarLeftSide {
+  margin: 0 !important;
   padding-left: 1rem;
   padding-right: 0;
   flex: 0 1 auto;
@@ -1109,6 +1110,7 @@ a.head_text:hover {
 }
 
 .ril__toolbarRightSide {
+  margin: 0 !important;
   padding-left: 0;
   padding-right: 1rem;
   display: flex;

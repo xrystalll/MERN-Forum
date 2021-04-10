@@ -111,6 +111,13 @@ const DropdownMenu = ({ lang, setLang, user, logout, setDropdownOpen }) => {
               <div className="menu-item-title">{Strings.openProfile[lang]}</div>
             </DropdownItem>
             <DropdownItem
+              leftIcon="cog"
+              onClick={goTo}
+              data={{ url: '/user/' + user.name + '/settings' }}
+            >
+              <div className="menu-item-title">{Strings.settings[lang]}</div>
+            </DropdownItem>
+            <DropdownItem
               leftIcon="world"
               rightIcon="chevron-right"
               goToMenu="language"
@@ -123,13 +130,6 @@ const DropdownMenu = ({ lang, setLang, user, logout, setDropdownOpen }) => {
               onClick={changeTheme}
             >
               <div className="menu-item-title">{Strings.toggleTheme[lang]}</div>
-            </DropdownItem>
-            <DropdownItem
-              leftIcon="cog"
-              onClick={goTo}
-              data={{ url: '/user/' + user.name + '/settings' }}
-            >
-              <div className="menu-item-title">{Strings.settings[lang]}</div>
             </DropdownItem>
             <DropdownItem
               leftIcon="log-out"

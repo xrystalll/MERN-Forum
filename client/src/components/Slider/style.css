@@ -1,8 +1,40 @@
 /* PopularBoards */
+.boards_slide {
+  position: relative;
+}
+.boards_slide_nav {
+  position: absolute;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.slide_nav_btn {
+  border-radius: 50%;
+  color: var(--main-text-light);
+  background-color: rgb(0 0 0 / 30%);
+  transition: var(--transition-background);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+}
+.slide_nav_btn:hover {
+  background-color: rgb(0 0 0 / 50%);
+}
+.boards_slide_nav.prev {
+  left: -12px;
+}
+.boards_slide_nav.next {
+  right: -12px;
+}
 .boards_slide_list, .slides_list {
   display: grid;
   grid-template-columns: repeat(6, minmax(112px, 1fr));
-  grid-gap: 12px;
+  grid-gap: 8px;
   padding: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -21,6 +53,10 @@
     height: 0px;
   }
 }
+.boards_slide_item {
+  width: 122px !important;
+  height: 122px !important;
+}
 .boards_slide_item, .stats_item {
   width: 112px;
   height: 112px;
@@ -30,7 +66,7 @@
   scroll-snap-stop: always;
 }
 .stats_item {
-  width: 100%;
+  width: 100% !important;
   background-color: var(--secondary-bg-tint);
 }
 .stats_item .slide_item_text {
