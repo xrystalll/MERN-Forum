@@ -8,12 +8,11 @@ import { useForm } from 'hooks/useForm';
 
 import { BACKEND, Strings } from 'support/Constants';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
-import { dateFormat } from 'support/Utils';
+import { dateFormat, deletedUser } from 'support/Utils';
 
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
 import FileUploadForm from 'components/Form/FileUploadForm';
-// import Dropdown from 'components/Card/Dropdown';
 import UserRole from 'components/UserRole';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
@@ -65,6 +64,14 @@ const Dialogue = ({ match }) => {
     const userTitle = toUser.displayName || userName
     document.title = `Forum | ${Strings.dialogueWith[lang]} ${userTitle}`
 
+    if (userName === 'deleted') {
+      setToUser(deletedUser)
+      setLoading(false)
+      setNoData(true)
+      setInit(false)
+      return
+    }
+
     const fetchUser = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/user?userName=${userName}`, {
@@ -78,7 +85,10 @@ const Dialogue = ({ match }) => {
           setToUser(response)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        console.error(err)
+        setToUser(deletedUser)
+        setLoading(false)
+        setNoData(true)
+        setInit(false)
       }
     }
 
@@ -212,6 +222,7 @@ const Dialogue = ({ match }) => {
 
   const [files, setFiles] = useState([])
   const [clearFiles, setClearFiles] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   const getFile = (files) => {
     setClearFiles(false)
@@ -240,7 +251,10 @@ const Dialogue = ({ match }) => {
       },
       body: formData
     })
-      .then(response => response.json())
+      .then(response => {
+        setUploading(false)
+        return response.json()
+      })
       .then(data => {
         if (!data.error) {
           setClearFiles(true)
@@ -252,6 +266,8 @@ const Dialogue = ({ match }) => {
   }
 
   const sendMessageCallback = () => {
+    if (uploading || toUser.name === 'deleted') return
+
     if (!files.length && !values.body.trim()) {
       return setErrors({ body: Strings.enterContent[lang] })
     }
@@ -261,6 +277,7 @@ const Dialogue = ({ match }) => {
     if (!files.length) {
       Socket.emit('createMessage', { token, dialogueId, body: values.body, to: toUser._id })
     } else {
+      setUploading(true)
       sendMessageWithFiles()
     }
     Socket.emit('stopType', { token, dialogueId })
@@ -298,7 +315,7 @@ const Dialogue = ({ match }) => {
   }
 
   return (
-    <>
+    <Fragment>
       <div className="messages_wrapper" style={{ height: `calc(${chatHeight}px - 180px)` }}>
         {toUser.name && (
           <div className="card_head user_head">
@@ -341,7 +358,7 @@ const Dialogue = ({ match }) => {
           {!noData ? (
             !loading ? (
               items.length ? (
-                <>
+                <Fragment>
                   {moreLoading && <Loader className="more_loader" color="#64707d" />}
 
                   <div className="messages_list">
@@ -349,7 +366,7 @@ const Dialogue = ({ match }) => {
                       <MessageItem key={item._id} data={item} dialogueId={dialogueId} user={user} token={token} />
                     ))}
                   </div>
-                </>
+                </Fragment>
               ) : <Errorer message={Strings.noMessagesYet[lang]} />
             ) : <Loader color="#64707d" />
           ) : (
@@ -357,32 +374,37 @@ const Dialogue = ({ match }) => {
           )}
         </CustomScrollbar>
 
-        <form className="form_inner comments_form" onSubmit={onSubmit}>
-          <FormCardItem row>
-            <FileUploadForm
-              mini
-              sendFiles={getFile}
-              clearFiles={clearFiles}
-            />
-
-            <div className={errors.body ? 'form_block error' : 'form_block' }>
-              <Input
-                name="body"
-                value={values.body}
-                maxLength="1000"
-                onChange={onChange}
-                onBlur={onBlur}
-                placeholder={Strings.enterYourMessage[lang]}
+        {toUser.name && toUser.name !== 'deleted' && (
+          <form className="form_inner comments_form" onSubmit={onSubmit}>
+            <FormCardItem row>
+              <FileUploadForm
+                mini
+                sendFiles={getFile}
+                clearFiles={clearFiles}
               />
-            </div>
 
-            <button className="btn send_btn">
-              <i className="bx bxs-send" />
-            </button>
-          </FormCardItem>
-        </form>
+              <div className={errors.body ? 'form_block error' : 'form_block' }>
+                <Input
+                  name="body"
+                  value={values.body}
+                  maxLength="1000"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  placeholder={Strings.enterYourMessage[lang]}
+                />
+              </div>
+
+              <button className="btn send_btn" disabled={uploading}>
+                {uploading
+                  ? <i className="bx bx-loader-alt bx-spin" />
+                  : <i className="bx bxs-send" />
+                }
+              </button>
+            </FormCardItem>
+          </form>
+        )}
       </div>
-    </>
+    </Fragment>
   )
 }
 

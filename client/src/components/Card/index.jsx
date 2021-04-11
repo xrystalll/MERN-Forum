@@ -43,7 +43,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
     data.author = deletedUser
   }
   if (threadData && threadData.author === null) {
-    data.author = deletedUser
+    threadData.author = deletedUser
   }
 
   useEffect(() => {
@@ -868,7 +868,7 @@ export const FileCard = ({ data, deleteFile }) => {
                   <Link to={'/user/' + data.author.name} className="head_text bold">{data.author.displayName}</Link>
                   <span className="bullet">•</span>
                   <span className="head_text">
-                    <time>{dateFormat(data.createdAt)}</time>
+                    <time>{dateFormat(data.createdAt, 'mini')}</time>
                   </span>
                 </div>
               </div>
@@ -907,8 +907,12 @@ export const FileCard = ({ data, deleteFile }) => {
 export const DialoqueCard = ({ data }) => {
   const { user, lang } = useContext(StoreContext)
   let key = 'from'
-  if (user.id === data.from._id) {
+  if (user.id === data.from?._id) {
     key = 'to'
+  }
+
+  if (data[key] === null) {
+    data[key] = deletedUser
   }
 
   return (
@@ -931,8 +935,8 @@ export const DialoqueCard = ({ data }) => {
                     <UserRole role={data[key].role} />
                   </div>
                   <div className="head_text">
-                    {data.lastMessage.from === user.id && `${Strings.you[lang]}: `}
-                    {data.lastMessage.body.length
+                    {data.lastMessage?.from === user.id && `${Strings.you[lang]}: `}
+                    {data.lastMessage?.body.length
                       ? data.lastMessage.body
                       : data.lastMessage?.file.length ? Strings.file[lang] : Strings.message[lang]
                     }

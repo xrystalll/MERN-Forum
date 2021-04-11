@@ -184,8 +184,26 @@
   min-width: 140px;
   height: 140px;
   position: relative;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
   background-color: var(--secondary-bg-tint);
   background-size: cover;
   background-position: center;
   cursor: pointer;
+}
+
+.msg_file.video::before {
+  content: '';
+  width: 42px;
+  height: 42px;
+  background: rgb(0 0 0 / 50%);
+  border-radius: 50%;
+}
+.msg_file.video::after {
+  content: '\eb1e';
+  color: var(--main-text-light);
+  font-size: 26px;
+  position: absolute;
+  margin-left: 3px;
 }

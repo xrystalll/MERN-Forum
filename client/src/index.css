@@ -555,6 +555,7 @@ a.head_text:hover {
 }
 .attached_info, .remove_file {
   background-color: rgb(0 0 0 / .4);
+  line-height: initial;
 }
 .remove_file i {
   font-size: 20px;

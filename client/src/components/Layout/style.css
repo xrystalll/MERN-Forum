@@ -33,7 +33,7 @@
     display: flex;
   }
   .left_bar {
-    background-color: var(--secondary-bg-tint-focus);
+    background-color: var(--main-bg);
     position: fixed;
     top: 0;
     left: 0;

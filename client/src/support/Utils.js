@@ -31,8 +31,8 @@ export const dateFormat = (date, type) => {
       nextDay: `DD MMM, ${timeFormat}`,
       nextWeek: `DD MMM, ${timeFormat}`,
       lastWeek: `DD MMM, ${timeFormat}`,
-      sameElse: (m) => {
-        if (m._d.getFullYear() === new Date().getFullYear()) {
+      sameElse: () => {
+        if (new Date(date).getFullYear() === new Date().getFullYear()) {
           return `DD MMM, ${timeFormat}`
         } else {
           return `DD MMM YY, ${timeFormat}`
@@ -46,8 +46,8 @@ export const dateFormat = (date, type) => {
       nextDay: 'DD MMM',
       nextWeek: 'DD MMM',
       lastWeek: 'DD MMM',
-      sameElse: (m) => {
-        if (m._d.getFullYear() === new Date().getFullYear()) {
+      sameElse: () => {
+        if (new Date(date).getFullYear() === new Date().getFullYear()) {
           return 'DD MMM'
         } else {
           return 'DD MMM YY'
@@ -58,8 +58,8 @@ export const dateFormat = (date, type) => {
     formatObj = {
       nextWeek: `DD MMM, ${timeFormat}`,
       lastWeek: `DD MMM, ${timeFormat}`,
-      sameElse: (m) => {
-        if (m._d.getFullYear() === new Date().getFullYear()) {
+      sameElse: () => {
+        if (new Date(date).getFullYear() === new Date().getFullYear()) {
           return `DD MMM, ${timeFormat}`
         } else {
           return `DD MMM YY, ${timeFormat}`

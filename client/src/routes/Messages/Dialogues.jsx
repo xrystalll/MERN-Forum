@@ -29,6 +29,10 @@ const Dialogues = () => {
     Socket.on('newDialogue', (data) => {
       setItems(prev => [data, ...prev])
     })
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
     Socket.on('updateDialogue', (data) => {
       let newArray = [...items]
       newArray[newArray.findIndex(item => item._id === data._id)] = data
