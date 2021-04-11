@@ -1,3 +1,4 @@
+const path = require('path');
 const { Types } = require('mongoose');
 const createError = require('http-errors');
 
@@ -9,6 +10,10 @@ const Ban = require('../models/Ban');
 const Report = require('../models/Report');
 const File = require('../models/File');
 const Comment = require('../models/Comment');
+const Dialogue = require('../models/Dialogue');
+const Message = require('../models/Message');
+
+const deleteFiles = require('../utils//deleteFiles');
 
 module.exports.getStats = async (req, res, next) => {
   try {
@@ -439,7 +444,46 @@ module.exports.deleteUser = async (req, res, next) => {
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
     const user = await User.findById(userId)
-    user.delete()
+
+    await Ban.deleteMany({ user: userId })
+
+    const dialogues = await Dialogue.find({
+      $or: [{
+        to: Types.ObjectId(userId)
+      }, {
+        from: Types.ObjectId(userId)
+      }]
+    })
+    dialogues.map(async (item) => {
+      const dialogue = await Dialogue.findById(item._id)
+      await dialogue.delete()
+    })
+
+    const messages = await Message.find({
+      $or: [{
+        to: Types.ObjectId(userId)
+      }, {
+        from: Types.ObjectId(userId)
+      }]
+    })
+    messages.map(async (item) => {
+      const message = await Message.findById(item._id)
+
+      if (message.file && message.file.length) {
+        const files = message.file.reduce((array, item) => [
+          ...array,
+          path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file))
+        ], [])
+
+        deleteFiles(files, (err) => {
+          if (err) console.error(err)
+        })
+      }
+
+      await messages.delete()
+    })
+
+    await user.delete()
 
     res.json({ message: 'User successfully deleted' })
   } catch(err) {

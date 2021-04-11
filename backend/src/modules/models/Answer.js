@@ -3,6 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const attachSchema = new Schema({
   file: String,
+  thumb: String,
   type: String,
   size: String
 })

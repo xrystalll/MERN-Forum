@@ -3,6 +3,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const fileObjectSchema = new Schema({
   url: String,
+  thumb: String,
   type: String,
   size: String
 })

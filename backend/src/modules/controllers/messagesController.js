@@ -225,7 +225,7 @@ module.exports.deleteMessage = async (req, res, next) => {
       await Dialogue.updateOne({ _id: Types.ObjectId(dialogueId) }, { lastMessage: messages[0]._id, updatedAt: messages[0].createdAt })
     } else {
       const dialogue = await Dialogue.findById(dialogueId)
-      dialogue.delete()
+      await dialogue.delete()
     }
 
     res.json({ message: 'Message successfully deleted' })
