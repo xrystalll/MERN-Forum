@@ -27,9 +27,9 @@ const Home = () => {
 
   return (
     <Fragment>
-      <Boards lang={lang} />
+      {navigator.onLine && <Boards lang={lang} />}
       <Threads lang={lang} />
-      <Uploads lang={lang} />
+      {navigator.onLine && <Uploads lang={lang} />}
       <Footer />
     </Fragment>
   )

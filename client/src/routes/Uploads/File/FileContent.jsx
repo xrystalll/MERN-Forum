@@ -111,6 +111,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                 <video
                   className="card_left"
                   src={BACKEND + data.file.url}
+                  poster={BACKEND + data.file.thumb}
                   controls
                 />
               ) : null}

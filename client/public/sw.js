@@ -23,12 +23,12 @@ self.addEventListener('fetch', (event) => {
   if (url.origin === location.origin) {
     event.respondWith(
       (async () => {
-        try {
-          const cachedResponse = await caches.match(event.request)
-          return cachedResponse ?? await fetch(event.request)
-        } catch(err) {
-          console.error(err)
+        const cachedResponse = await caches.match(event.request)
+        if (event.request.url.split('/').pop() === '') {
+          const index = await caches.match('index.html')
+          if (index) return index
         }
+        return cachedResponse ?? await fetch(event.request)
       })()
     )
   }

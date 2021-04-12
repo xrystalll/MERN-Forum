@@ -11,6 +11,7 @@ const Notification = require('../models/Notification');
 const deleteFiles = require('../utils//deleteFiles');
 const checkFileExec = require('../utils/checkFileExec');
 const storage = require('../utils/storage');
+const createThumb = require('../utils/createThumbnail');
 
 const upload = multer({
   storage: storage('forum', 'attach'),
@@ -224,11 +225,28 @@ module.exports.createThread = async (req, res, next) => {
 
       let files = null
       if (req.files.length) {
-        files = req.files.reduce((array, item) => [...array, {
-          file: `/forum/${item.filename}`,
-          type: item.mimetype,
-          size: item.size
-        }], [])
+        files = []
+        await Promise.all(req.files.map(async (item) => {
+          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+            const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+            const thumbnail = await createThumb(item.path, 'forum', thumbFilename)
+
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: `/forum/thumbnails/${thumbnail}`,
+              type: item.mimetype,
+              size: item.size
+            })
+          } else {
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: null,
+              type: item.mimetype,
+              size: item.size
+            })
+          }
+        }))
       }
 
       const newThread = new Thread({
@@ -265,23 +283,61 @@ module.exports.deleteThread = async (req, res, next) => {
     const thread = await Thread.findById(threadId)
 
     if (thread.attach && thread.attach.length) {
-      const files = thread.attach.reduce((array, item) => [
-        ...array,
-        path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-      ], [])
+      const files = thread.attach.reduce((array, item) => {
+        if (item.thumb) {
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+          ]
+        }
+
+        return [
+          ...array,
+          path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+        ]
+      }, [])
 
       deleteFiles(files, (err) => {
         if (err) console.error(err)
       })
     }
 
+    const answers = await Answer.find({ threadId: Types.ObjectId(threadId) })
+    const answersCount = answers.length
+    answers.map(async (item) => {
+      const answer = await Answer.findById(item._id)
+
+      if (answer.attach && answer.attach.length) {
+        const files = answer.attach.reduce((array, item) => {
+          if (item.thumb) {
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+            ]
+          }
+
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+          ]
+        }, [])
+
+        deleteFiles(files, (err) => {
+          if (err) console.error(err)
+        })
+      }
+
+      await answer.delete()
+    })
+
     await thread.delete()
 
-    const deletedAnswers = await Answer.deleteMany({ threadId })
     await Board.updateOne({ _id: Types.ObjectId(thread.boardId) }, {
       $inc: {
         threadsCount: -1,
-        answersCount: -deletedAnswers.deletedCount
+        answersCount: -answersCount
       }
     })
 
@@ -309,10 +365,20 @@ module.exports.editThread = async (req, res, next) => {
       if (req.payload.id !== thread.author.toString()) return next(createError.Unauthorized('Action not allowed'))
 
       if (req.files.length && thread.attach && thread.attach.length) {
-        const files = thread.attach.reduce((array, item) => [
-          ...array,
-          path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-        ], [])
+        const files = thread.attach.reduce((array, item) => {
+          if (item.thumb) {
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+            ]
+          }
+
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+          ]
+        }, [])
 
         deleteFiles(files, (err) => {
           if (err) console.error(err)
@@ -321,11 +387,28 @@ module.exports.editThread = async (req, res, next) => {
 
       let files = thread.attach
       if (req.files.length) {
-        files = req.files.reduce((array, item) => [...array, {
-          file: `/forum/${item.filename}`,
-          type: item.mimetype,
-          size: item.size
-        }], [])
+        files = []
+        await Promise.all(req.files.map(async (item) => {
+          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+            const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+            await createThumb(item.path, 'forum', thumbFilename)
+
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: `/forum/thumbnails/${thumbFilename}`,
+              type: item.mimetype,
+              size: item.size
+            })
+          } else {
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: null,
+              type: item.mimetype,
+              size: item.size
+            })
+          }
+        }))
       }
 
       const obj = {
@@ -376,10 +459,20 @@ module.exports.adminEditThread = async (req, res, next) => {
       const thread = await Thread.findById(threadId)
 
       if (req.files.length && thread.attach && thread.attach.length) {
-        const files = thread.attach.reduce((array, item) => [
-          ...array,
-          path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-        ], [])
+        const files = thread.attach.reduce((array, item) => {
+          if (item.thumb) {
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+            ]
+          }
+
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+          ]
+        }, [])
 
         deleteFiles(files, (err) => {
           if (err) console.error(err)
@@ -388,11 +481,28 @@ module.exports.adminEditThread = async (req, res, next) => {
 
       let files = thread.attach
       if (req.files.length) {
-        files = req.files.reduce((array, item) => [...array, {
-          file: `/forum/${item.filename}`,
-          type: item.mimetype,
-          size: item.size
-        }], [])
+        files = []
+        await Promise.all(req.files.map(async (item) => {
+          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+            const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+            await createThumb(item.path, 'forum', thumbFilename)
+
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: `/forum/thumbnails/${thumbFilename}`,
+              type: item.mimetype,
+              size: item.size
+            })
+          } else {
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: null,
+              type: item.mimetype,
+              size: item.size
+            })
+          }
+        }))
       }
 
       const obj = {
@@ -497,11 +607,28 @@ module.exports.createAnswer = async (req, res, next) => {
 
       let files = null
       if (req.files.length) {
-        files = req.files.reduce((array, item) => [...array, {
-          file: `/forum/${item.filename}`,
-          type: item.mimetype,
-          size: item.size
-        }], [])
+        files = []
+        await Promise.all(req.files.map(async (item) => {
+          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+            const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+            await createThumb(item.path, 'forum', thumbFilename)
+
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: `/forum/thumbnails/${thumbFilename}`,
+              type: item.mimetype,
+              size: item.size
+            })
+          } else {
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: null,
+              type: item.mimetype,
+              size: item.size
+            })
+          }
+        }))
       }
 
       const newAnswer = new Answer({
@@ -584,10 +711,20 @@ module.exports.deleteAnswer = async (req, res, next) => {
     const answer = await Answer.findById(answerId)
 
     if (answer.attach && answer.attach.length) {
-      const files = answer.attach.reduce((array, item) => [
-        ...array,
-        path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-      ], [])
+      const files = answer.attach.reduce((array, item) => {
+        if (item.thumb) {
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+          ]
+        }
+
+        return [
+          ...array,
+          path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+        ]
+      }, [])
 
       deleteFiles(files, (err) => {
         if (err) console.error(err)
@@ -622,10 +759,20 @@ module.exports.editAnswer = async (req, res, next) => {
 
       if (req.payload.id === answer.author.toString() || moder) {
         if (req.files.length && answer.attach && answer.attach.length) {
-          const files = answer.attach.reduce((array, item) => [
-            ...array,
-            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-          ], [])
+          const files = answer.attach.reduce((array, item) => {
+            if (item.thumb) {
+              return [
+                ...array,
+                path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+                path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+              ]
+            }
+
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+            ]
+          }, [])
 
           deleteFiles(files, (err) => {
             if (err) console.error(err)
@@ -634,11 +781,28 @@ module.exports.editAnswer = async (req, res, next) => {
 
         let files = answer.attach
         if (req.files.length) {
-          files = req.files.reduce((array, item) => [...array, {
-            file: `/forum/${item.filename}`,
-            type: item.mimetype,
-            size: item.size
-          }], [])
+          files = []
+          await Promise.all(req.files.map(async (item) => {
+            if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+              const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+              await createThumb(item.path, 'forum', thumbFilename)
+
+              files.push({
+                file: `/forum/${item.filename}`,
+                thumb: `/forum/thumbnails/${thumbFilename}`,
+                type: item.mimetype,
+                size: item.size
+              })
+            } else {
+              files.push({
+                file: `/forum/${item.filename}`,
+                thumb: null,
+                type: item.mimetype,
+                size: item.size
+              })
+            }
+          }))
         }
 
         await Answer.updateOne({ _id: Types.ObjectId(answerId) }, {

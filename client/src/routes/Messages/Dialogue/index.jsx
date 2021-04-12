@@ -256,9 +256,7 @@ const Dialogue = ({ match }) => {
         return response.json()
       })
       .then(data => {
-        if (!data.error) {
-          setClearFiles(true)
-        } else throw Error(data.error?.message || 'Error')
+        if (data.error) throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
         toast.error(err.message)
@@ -277,6 +275,7 @@ const Dialogue = ({ match }) => {
     if (!files.length) {
       Socket.emit('createMessage', { token, dialogueId, body: values.body, to: toUser._id })
     } else {
+      setClearFiles(true)
       setUploading(true)
       sendMessageWithFiles()
     }

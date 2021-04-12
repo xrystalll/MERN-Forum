@@ -11,6 +11,7 @@ const Notification = require('../models/Notification');
 const deleteFiles = require('../utils//deleteFiles');
 const checkFileExec = require('../utils/checkFileExec');
 const storage = require('../utils/storage');
+const createThumb = require('../utils/createThumbnail');
 
 const upload = multer({
   storage: storage('uploads', 'file'),
@@ -229,6 +230,15 @@ module.exports.createFile = async (req, res, next) => {
 
       const now = new Date().toISOString()
 
+      let thumb = null
+      if (req.file.mimetype === 'video/mp4' || req.file.mimetype === 'video/webm') {
+        const thumbFilename = req.file.filename.replace(path.extname(req.file.filename), '.jpg')
+
+        await createThumb(req.file.path, 'uploads', thumbFilename)
+
+        thumb = `/uploads/thumbnails/${thumbFilename}`
+      }
+
       const newFile = new File({
         folderId,
         title: title.trim().substring(0, 100),
@@ -237,6 +247,7 @@ module.exports.createFile = async (req, res, next) => {
         author: req.payload.id,
         file: {
           url: `/uploads/${req.file.filename}`,
+          thumb,
           type: req.file.mimetype,
           size: req.file.size
         },
@@ -268,8 +279,13 @@ module.exports.deleteFile = async (req, res, next) => {
 
     const file = await File.findById(fileId)
 
-    const fileUri = path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(file.file.url))
-    deleteFiles([fileUri], (err) => {
+    const deleteArray = []
+    deleteArray.push(path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(file.file.url)))
+    if (file.file.thumb) {
+      deleteArray.push(path.join(__dirname, '..', '..', '..', 'public', 'uploads', 'thumbnails', path.basename(file.file.thumb)))
+    }
+
+    deleteFiles(deleteArray, (err) => {
       if (err) console.error(err)
     })
 

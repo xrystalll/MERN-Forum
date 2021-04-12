@@ -58,7 +58,11 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
                       style={{ backgroundImage: `url(${BACKEND + item.file})` }}
                     />
                   ) : videoTypes.find(i => i === item.type) ? (
-                    <div onClick={() => videoView(BACKEND + item.file)} className="msg_file bx video">
+                    <div
+                      onClick={() => videoView(BACKEND + item.file)}
+                      className="msg_file bx video"
+                      style={{ backgroundImage: `url(${BACKEND + item.thumb})` }}
+                    >
                       <div className="attached_info">{regexp.exec(item.file)[1]}</div>
                     </div>
                   ) : (

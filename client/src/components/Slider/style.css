@@ -62,7 +62,7 @@
   height: 112px;
   border-radius: var(--border-radius);
   background: var(--accent-color);
-  scroll-snap-align: start;
+  scroll-snap-align: end;
   scroll-snap-stop: always;
 }
 .stats_item {

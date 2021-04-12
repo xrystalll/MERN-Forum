@@ -1031,6 +1031,11 @@ const Strings = {
     en: 'is typing',
     jp: '入力中'
   },
+  'noInternetConnection': {
+    ru: 'Нет подключения к интернету',
+    en: 'No internet connection',
+    jp: 'インターネットに接続できません'
+  },
 }
 
 const imageTypes = ['image/jpeg', 'image/png', 'image/gif']

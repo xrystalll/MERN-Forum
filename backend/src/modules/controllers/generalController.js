@@ -13,7 +13,7 @@ const Comment = require('../models/Comment');
 const Dialogue = require('../models/Dialogue');
 const Message = require('../models/Message');
 
-const deleteFiles = require('../utils//deleteFiles');
+const deleteFiles = require('../utils/deleteFiles');
 
 module.exports.getStats = async (req, res, next) => {
   try {
@@ -470,10 +470,20 @@ module.exports.deleteUser = async (req, res, next) => {
       const message = await Message.findById(item._id)
 
       if (message.file && message.file.length) {
-        const files = message.file.reduce((array, item) => [
-          ...array,
-          path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file))
-        ], [])
+        const files = message.file.reduce((array, item) => {
+            if (item.thumb) {
+              return [
+                ...array,
+                path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file)),
+                path.join(__dirname, '..', '..', '..', 'public', 'message', 'thumbnails', path.basename(item.thumb))
+              ]
+            }
+
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file))
+            ]
+          }, [])
 
         deleteFiles(files, (err) => {
           if (err) console.error(err)

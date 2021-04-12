@@ -437,7 +437,11 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                         style={{ backgroundImage: `url(${BACKEND + item.file})` }}
                       />
                     ) : videoTypes.find(i => i === item.type) ? (
-                      <div onClick={() => videoView(BACKEND + item.file)} className="attached_file card_left empty">
+                      <div
+                        onClick={() => videoView(BACKEND + item.file)}
+                        className="attached_file card_left image_file card_left"
+                        style={{ backgroundImage: `url(${BACKEND + item.thumb})` }}
+                      >
                         <div className="attached_info">{regexp.exec(item.file)[1]}</div>
                       </div>
                     ) : (
@@ -854,6 +858,11 @@ export const FileCard = ({ data, deleteFile }) => {
             <div
               className="card_left"
               style={{ backgroundImage: `url(${BACKEND + data.file.url})` }}
+            />
+          ) : videoTypes.find(i => i === data.file.type) ? (
+            <div
+              className="card_left"
+              style={{ backgroundImage: `url(${BACKEND + data.file.thumb})` }}
             />
           ) : (
             <div className="card_left empty" />

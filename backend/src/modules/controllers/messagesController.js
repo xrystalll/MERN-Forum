@@ -10,6 +10,7 @@ const Message = require('../models/Message');
 const deleteFiles = require('../utils//deleteFiles');
 const checkFileExec = require('../utils/checkFileExec');
 const storage = require('../utils/storage');
+const createThumb = require('../utils/createThumbnail');
 
 const upload = multer({
   storage: storage('message', 'file'),
@@ -109,11 +110,28 @@ module.exports.createMessage = async (req, res, next) => {
 
       let files = null
       if (req.files.length) {
-        files = req.files.reduce((array, item) => [...array, {
-          file: `/message/${item.filename}`,
-          type: item.mimetype,
-          size: item.size
-        }], [])
+        files = []
+        await Promise.all(req.files.map(async (item) => {
+          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+            const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+            await createThumb(item.path, 'message', thumbFilename)
+
+            files.push({
+              file: `/message/${item.filename}`,
+              thumb: `/message/thumbnails/${thumbFilename}`,
+              type: item.mimetype,
+              size: item.size
+            })
+          } else {
+            files.push({
+              file: `/message/${item.filename}`,
+              thumb: null,
+              type: item.mimetype,
+              size: item.size
+            })
+          }
+        }))
       }
 
       let isNewDialogue = false
@@ -208,10 +226,20 @@ module.exports.deleteMessage = async (req, res, next) => {
     const message = await Message.findById(messageId)
 
     if (message.file && message.file.length) {
-      const files = message.file.reduce((array, item) => [
-        ...array,
-        path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file))
-      ], [])
+      const files = message.file.reduce((array, item) => {
+        if (item.thumb) {
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file)),
+            path.join(__dirname, '..', '..', '..', 'public', 'message', 'thumbnails', path.basename(item.thumb))
+          ]
+        }
+
+        return [
+          ...array,
+          path.join(__dirname, '..', '..', '..', 'public', 'message', path.basename(item.file))
+        ]
+      }, [])
 
       deleteFiles(files, (err) => {
         if (err) console.error(err)
