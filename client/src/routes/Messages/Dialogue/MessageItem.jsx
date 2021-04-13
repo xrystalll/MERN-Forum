@@ -47,7 +47,7 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
     <div className={my ? 'message_item my' : 'message_item'}>
       <div className={`message_body markdown`} id={'msg_' + data._id}>
         <div className="message_content">
-          {data.file.length ? (
+          {data.file && data.file.length ? (
             <div className={data.file.length > 1 ? 'msg_file_grid group' : 'msg_file_grid one'}>
               {data.file.map((item, index) => (
                 <Fragment key={index}>

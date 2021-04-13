@@ -420,7 +420,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           <div
             className={data.attach && data.attach.length === 1 ? 'card_content with_attach_list markdown' : 'card_content markdown'}
           >
-            {data.attach.length ? (
+            {data.attach ? (
               <div className={data.attach.length > 1 ? 'attach_grid' : 'attach_list'}>
                 {data.attach.map((item, index) => (
                   <Fragment key={index}>
