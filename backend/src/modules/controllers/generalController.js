@@ -50,7 +50,7 @@ module.exports.getUsers = async (req, res, next) => {
     const { limit = 10, page = 1, sort } = req.query
 
     let users
-    const select = '_id name displayName createdAt onlineAt picture role'
+    const select = '_id name displayName createdAt onlineAt picture role ban'
     if (sort === 'online') {
       const date = new Date()
       date.setMinutes(date.getMinutes() - 5)
@@ -73,7 +73,7 @@ module.exports.getAdmins = async (req, res, next) => {
   try {
     const { limit = 10, page = 1 } = req.query
 
-    const select = '_id name displayName createdAt onlineAt picture role'
+    const select = '_id name displayName createdAt onlineAt picture role ban'
     const admins = await User.paginate({ role: { $gte: 2 } }, { sort: { createdAt: -1 }, page, limit, select })
 
     res.json(admins)
@@ -119,7 +119,7 @@ module.exports.getBans = async (req, res, next) => {
     if (sort === 'all') {
       const populate = [{
         path: 'user',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }, {
         path: 'admin',
         select: '_id name displayName onlineAt picture role'
@@ -152,7 +152,7 @@ module.exports.getUserBans = async (req, res, next) => {
 
     const populate = [{
       path: 'user',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'admin',
       select: '_id name displayName onlineAt picture role'
@@ -269,7 +269,7 @@ module.exports.getUserThreads = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -290,7 +290,7 @@ module.exports.getUserAnswers = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -312,7 +312,7 @@ module.exports.getReports = async (req, res, next) => {
 
     const populate = {
       path: 'from',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }
     const read = sort === 'read' ? { read: true } : { read: false }
     const reports = await Report.paginate(read, { sort: { createdAt: -1 }, page, limit, populate })
@@ -353,7 +353,7 @@ module.exports.createReport = async (req, res, next) => {
 
     const populate = {
       path: 'from',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }
     const populatedReport = await Report.findById(report._id).populate(populate)
 
@@ -389,21 +389,21 @@ module.exports.search = async (req, res, next) => {
     if (type === 'answers') {
       const populate = [{
         path: 'author',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }, {
         path: 'likes',
         select: '_id name displayName picture'
       }]
       results = await Answer.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
     } else if (type === 'users') {
-      const select = '_id name displayName createdAt onlineAt picture role'
+      const select = '_id name displayName createdAt onlineAt picture role ban'
       results = await User.paginate({ $text: { $search: query } }, { sort: { onlineAt: -1 }, page, limit, select })
     } else if (type === 'boards') {
       results = await Board.paginate({ $text: { $search: query } }, { sort: { newestAnswer: -1 }, page, limit })
     } else {
       const populate = [{
         path: 'author',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }, {
         path: 'likes',
         select: '_id name displayName picture'

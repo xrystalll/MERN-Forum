@@ -24,10 +24,10 @@ module.exports.getDialogues = async (req, res, next) => {
 
     const populate = [{
       path: 'from',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'to',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'lastMessage'
     }]
@@ -86,10 +86,10 @@ module.exports.getMessages = async (req, res, next) => {
 
     const populate = [{
       path: 'from',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'to',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }]
     const messages = await Message.paginate({ dialogueId }, { sort: { createdAt: -1 }, page, limit, populate })
 
@@ -173,10 +173,10 @@ module.exports.createMessage = async (req, res, next) => {
 
       const populate = [{
         path: 'from',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }, {
         path: 'to',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }]
       const populatedMessage = await Message.findById(message._id).populate(populate)
 
@@ -184,10 +184,10 @@ module.exports.createMessage = async (req, res, next) => {
 
       const populatedDialogue = [{
         path: 'from',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }, {
         path: 'to',
-        select: '_id name displayName onlineAt picture role'
+        select: '_id name displayName onlineAt picture role ban'
       }, {
         path: 'lastMessage'
       }]

@@ -38,7 +38,7 @@ const VideoLightbox = ({ source, onCloseRequest }) => {
               <video
                 ref={lightboxContent}
                 className="ril__image"
-                style={{ maxWidth: '100%', height: '100%', aspectRatio: '16/9' }}
+                style={{ maxWidth: '100%', maxHeight: '100%' }}
                 src={source}
                 controls
                 autoPlay

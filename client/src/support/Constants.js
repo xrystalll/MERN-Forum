@@ -186,7 +186,7 @@ const Strings = {
     en: 'Recently answered',
     jp: '最近答えした'
   },
-  'byNewestThread': {
+  'byNewest': {
     ru: 'По новизне',
     en: 'By newest',
     jp: '最新のもの'

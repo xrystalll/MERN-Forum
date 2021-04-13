@@ -9,7 +9,7 @@ import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 import Markdown from 'components/Markdown';
 import Dropdown from 'components/Card/Dropdown';
 import { Button } from 'components/Button';
-import UserRole from 'components/UserRole';
+import UserRole, { UserStatus } from 'components/UserRole';
 
 const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const history = useHistory()
@@ -123,6 +123,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                   <Link to={'/user/' + data.author.name} className="head_text bold">
                     {data.author.displayName}
                     <UserRole role={data.author.role} />
+                    {data.author.ban && <UserStatus status="ban" />}
                   </Link>
                   <span className="bullet">•</span>
                   <span className="head_text">

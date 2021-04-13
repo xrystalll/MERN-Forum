@@ -13,7 +13,7 @@ import { dateFormat, deletedUser } from 'support/Utils';
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
 import FileUploadForm from 'components/Form/FileUploadForm';
-import UserRole from 'components/UserRole';
+import UserRole, { UserStatus } from 'components/UserRole';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 import CustomScrollbar from 'components/CustomScrollbar';
@@ -334,6 +334,7 @@ const Dialogue = ({ match }) => {
                   <Link to={'/user/' + toUser.name} className="user_info_top">
                     {toUser.displayName}
                     <UserRole role={toUser.role} />
+                    {toUser.ban && <UserStatus status="ban" />}
                   </Link>
                   <div className="head_text">
                     {typing ? (

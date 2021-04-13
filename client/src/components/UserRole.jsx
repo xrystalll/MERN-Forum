@@ -21,4 +21,17 @@ const UserRole = ({ role }) => {
   )
 }
 
+export const UserStatus = ({ status }) => {
+  return (
+    <Fragment>
+      {status === 'ban' && (
+        <span className="user_status ban">ban</span>
+      )}
+      {status === 'owner' && (
+        <span className="user_status">owner</span>
+      )}
+    </Fragment>
+  )
+}
+
 export default UserRole;

@@ -86,10 +86,10 @@ module.exports.getNotifications = async (req, res, next) => {
 
     const populate = [{
       path: 'to',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'from',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }]
     const notifications = await Notification.paginate({ to: req.payload.id }, { sort: { createdAt: sortCreatedAt }, page, limit, populate })
 

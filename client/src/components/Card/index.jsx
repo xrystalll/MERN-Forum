@@ -9,7 +9,7 @@ import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
-import UserRole from 'components/UserRole';
+import UserRole, { UserStatus } from 'components/UserRole';
 import VideoLightbox from 'components/VideoLightbox';
 
 import Dropdown from './Dropdown';
@@ -337,18 +337,12 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
               {full && (
                 <Fragment>
                   {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
-                  {data.author.role >= 2 ? (
-                    <UserRole role={data.author.role} />
-                  ) : (
-                    <Fragment>
-                      {type === 'thread' && <span className="user_status">owner</span>}
-                      {type === 'answer' && (
-                        data.author._id === threadData.author._id && (
-                          <span className="user_status">owner</span>
-                        )
-                      )}
-                    </Fragment>
+                  <UserRole role={data.author.role} />
+                  {type === 'thread' && <UserStatus status="owner" />}
+                  {type === 'answer' && (
+                    data.author._id === threadData.author._id && <UserStatus status="owner" />
                   )}
+                  {data.author.ban && <UserStatus status="ban" />}
                 </Fragment>
               )}
             </Link>
@@ -426,7 +420,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           <div
             className={data.attach && data.attach.length === 1 ? 'card_content with_attach_list markdown' : 'card_content markdown'}
           >
-            {data.attach && (
+            {data.attach.length ? (
               <div className={data.attach.length > 1 ? 'attach_grid' : 'attach_list'}>
                 {data.attach.map((item, index) => (
                   <Fragment key={index}>
@@ -452,7 +446,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                   </Fragment>
                 ))}
               </div>
-            )}
+            ) : null}
 
             {imageOpen && (
               <Lightbox
@@ -611,6 +605,7 @@ export const UserCard = ({ data, online }) => {
               <div className="user_info_top">
                 {data.displayName}
                 <UserRole role={data.role} />
+                {data.ban && <UserStatus status="ban" />}
               </div>
                {!online && (
                 <div className="head_text">
@@ -673,7 +668,10 @@ export const BannedCard = ({ data, unBan }) => {
 
       <footer className="card_foot">
         <div className="act_btn foot_btn disable">
-          <span className="card_count">Admin: {data.ban?.admin?.displayName}</span>
+          <span className="card_count">
+            Admin:&nbsp;
+            <Link to={'/user/' + data.ban.admin.name}>{data.ban.admin.displayName}</Link>
+          </span>
         </div>
       </footer>
     </CardBody>
@@ -722,7 +720,10 @@ export const BannedAll = ({ data }) => {
 
       <footer className="card_foot">
         <div className="act_btn foot_btn disable">
-          <span className="card_count">Admin: {data.admin?.displayName}</span>
+          <span className="card_count">
+            Admin:&nbsp;
+            <Link to={'/user/' + data.admin.name}>{data.admin.displayName}</Link>
+          </span>
         </div>
       </footer>
     </CardBody>
@@ -742,7 +743,13 @@ export const BanInfoCard = ({ data, owner }) => {
         <div className="card_head_inner">
           <div className="card_title full">{owner ? Strings.youAreBanned[lang] : Strings.userBanned[lang]}</div>
           <div className="card_info">
-            <div className="head_text bold">Admin: {data.admin?.displayName}</div>
+            <div className="head_text bold">
+              Admin:&nbsp;
+              {owner
+                ? data.admin.displayName
+                : <Link to={'/user/' + data.admin.name}>{data.admin.displayName}</Link>
+              }
+            </div>
             <span className="bullet">•</span>
             <span className="head_text">
               <time>{dateFormat(data.createdAt)}</time>
@@ -795,6 +802,7 @@ export const NotificationCard = ({ data }) => {
                 <Link to={'/user/' + data.from.name} className="head_text bold">
                   {data.from.displayName}
                   <UserRole role={data.from.role} />
+                  {data.from.ban && <UserStatus status="ban" />}
                 </Link>
                 <span className="bullet">•</span>
                 <span className="head_text">
@@ -874,7 +882,15 @@ export const FileCard = ({ data, deleteFile }) => {
                 <Link to={'/file/' + data._id} className="card_title">{data.title}</Link>
 
                 <div className="card_info">
-                  <Link to={'/user/' + data.author.name} className="head_text bold">{data.author.displayName}</Link>
+                  <Link to={'/user/' + data.author.name} className="head_text bold">
+                    {data.author.displayName}
+                    {deleteFile && (
+                      <Fragment>
+                        <UserRole role={data.author.role} />
+                        {data.author.ban && <UserStatus status="ban" />}
+                      </Fragment>
+                    )}
+                  </Link>
                   <span className="bullet">•</span>
                   <span className="head_text">
                     <time>{dateFormat(data.createdAt, 'mini')}</time>
@@ -942,6 +958,7 @@ export const DialoqueCard = ({ data }) => {
                   <div className="user_info_top">
                     {data[key].displayName}
                     <UserRole role={data[key].role} />
+                    {data[key].ban && <UserStatus status="ban" />}
                   </div>
                   <div className="head_text">
                     {data.lastMessage?.from === user.id && `${Strings.you[lang]}: `}

@@ -147,10 +147,10 @@ module.exports = (server) => {
 
         const populate = [{
           path: 'from',
-          select: '_id name displayName onlineAt picture role'
+          select: '_id name displayName onlineAt picture role ban'
         }, {
           path: 'to',
-          select: '_id name displayName onlineAt picture role'
+          select: '_id name displayName onlineAt picture role ban'
         }]
         const populatedMessage = await Message.findById(message._id).populate(populate)
 
@@ -158,10 +158,10 @@ module.exports = (server) => {
 
         const populatedDialogue = [{
           path: 'from',
-          select: '_id name displayName onlineAt picture role'
+          select: '_id name displayName onlineAt picture role ban'
         }, {
           path: 'to',
-          select: '_id name displayName onlineAt picture role'
+          select: '_id name displayName onlineAt picture role ban'
         }, {
           path: 'lastMessage'
         }]

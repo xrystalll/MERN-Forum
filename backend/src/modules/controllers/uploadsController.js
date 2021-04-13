@@ -138,7 +138,7 @@ module.exports.getAdminAllFiles = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -158,7 +158,7 @@ module.exports.getAllFiles = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -179,7 +179,7 @@ module.exports.getFiles = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -470,40 +470,37 @@ module.exports.createComment = async (req, res, next) => {
     req.io.to('file:' + fileId).emit('commentCreated', populatedComment)
 
     let type = 'commentToFile'
-    let to = null
-    if (commentedTo === fileId || !commentedTo) {
-      type = 'commentToFile'
-      to = file.author
-    } else {
+    let to = file.author
+    if (commentedTo && commentedTo !== fileId) {
       const commentTo = await Comment.findById(commentedTo)
       type = 'commentToComment'
       to = commentTo.author
     }
 
-    if (req.payload.id !== file.author.toString()) {
-      const newNotification = new Notification({
-        type,
-        to,
-        from: req.payload.id,
-        pageId: fileId,
-        title: file.title,
-        body: body.substring(0, 1000),
-        createdAt: new Date().toISOString(),
-        read: false
-      })
-      const notification = await newNotification.save()
+    if (!commentedTo && req.payload.id === file.author.toString()) return
 
-      const populate = [{
-        path: 'to',
-        select: '_id name displayName onlineAt picture role'
-      }, {
-        path: 'from',
-        select: '_id name displayName onlineAt picture role'
-      }]
-      const populatedNotification = await Notification.findById(notification._id).populate(populate)
+    const newNotification = new Notification({
+      type,
+      to,
+      from: req.payload.id,
+      pageId: fileId,
+      title: file.title,
+      body: body.substring(0, 1000),
+      createdAt: new Date().toISOString(),
+      read: false
+    })
+    const notification = await newNotification.save()
 
-      req.io.to('notification:' + to).emit('newNotification', populatedNotification)
-    }
+    const populateNotification = [{
+      path: 'to',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'from',
+      select: '_id name displayName onlineAt picture role ban'
+    }]
+    const populatedNotification = await Notification.findById(notification._id).populate(populateNotification)
+
+    req.io.to('notification:' + to).emit('newNotification', populatedNotification)
   } catch(err) {
     next(createError.InternalServerError(err))
   }

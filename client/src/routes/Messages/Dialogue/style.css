@@ -131,6 +131,11 @@
 .message_content {
   word-break: break-word;
 }
+.message_body.markdown img {
+  max-width: 100%;
+  margin: 0 0 .5rem;
+  float: initial;
+}
 
 .message_info {
   display: flex;

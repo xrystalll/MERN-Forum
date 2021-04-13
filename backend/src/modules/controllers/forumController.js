@@ -147,7 +147,7 @@ module.exports.getRecentlyThreads = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -168,7 +168,7 @@ module.exports.getThreads = async (req, res, next) => {
 
     const populate = [{
       path: 'author',
-      select: '_id name displayName onlineAt picture role'
+      select: '_id name displayName onlineAt picture role ban'
     }, {
       path: 'likes',
       select: '_id name displayName picture'
@@ -660,40 +660,37 @@ module.exports.createAnswer = async (req, res, next) => {
       req.io.to('thread:' + threadId).emit('answerCreated', populatedAnswer)
 
       let type = 'answerToThread'
-      let to = null
-      if (answeredTo === threadId || !answeredTo) {
-        type = 'answerToThread'
-        to = thread.author
-      } else {
+      let to = thread.author
+      if (answeredTo && answeredTo !== threadId) {
         const answerTo = await Answer.findById(answeredTo)
         type = 'answerToAnswer'
         to = answerTo.author
       }
 
-      if (req.payload.id !== thread.author.toString()) {
-        const newNotification = new Notification({
-          type,
-          to,
-          from: req.payload.id,
-          pageId: threadId,
-          title: thread.title,
-          body: body.substring(0, 1000),
-          createdAt: new Date().toISOString(),
-          read: false
-        })
-        const notification = await newNotification.save()
+      if (!answeredTo && req.payload.id === thread.author.toString()) return
 
-        const populate = [{
-          path: 'to',
-          select: '_id name displayName onlineAt picture role'
-        }, {
-          path: 'from',
-          select: '_id name displayName onlineAt picture role'
-        }]
-        const populatedNotification = await Notification.findById(notification._id).populate(populate)
+      const newNotification = new Notification({
+        type,
+        to,
+        from: req.payload.id,
+        pageId: threadId,
+        title: thread.title,
+        body: body.substring(0, 1000),
+        createdAt: new Date().toISOString(),
+        read: false
+      })
+      const notification = await newNotification.save()
 
-        req.io.to('notification:' + to).emit('newNotification', populatedNotification)
-      }
+      const populateNotification = [{
+        path: 'to',
+        select: '_id name displayName onlineAt picture role ban'
+      }, {
+        path: 'from',
+        select: '_id name displayName onlineAt picture role ban'
+      }]
+      const populatedNotification = await Notification.findById(notification._id).populate(populateNotification)
+
+      req.io.to('notification:' + to).emit('newNotification', populatedNotification)
     })
   } catch(err) {
     next(createError.InternalServerError(err))

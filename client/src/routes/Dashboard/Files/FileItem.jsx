@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
+import UserRole, { UserStatus } from 'components/UserRole';
 import Markdown from 'components/Markdown';
 
 const FileItem = ({ data, moderate, lang }) => {
@@ -46,7 +47,11 @@ const FileItem = ({ data, moderate, lang }) => {
                 <Link to={'/file/' + data._id} className="card_title">{data.title}</Link>
 
                 <div className="card_info">
-                  <Link to={'/user/' + data.author.name} className="head_text bold">{data.author.displayName}</Link>
+                  <Link to={'/user/' + data.author.name} className="head_text bold">
+                    {data.author.displayName}
+                    <UserRole role={data.author.role} />
+                    {data.author.ban && <UserStatus status="ban" />}
+                  </Link>
                   <span className="bullet">•</span>
                   <span className="head_text">
                     <time>{dateFormat(data.createdAt)}</time>

@@ -423,6 +423,11 @@ a.head_text:hover {
   fill: currentColor;
   width: 13px;
 }
+.user_status.ban {
+  color: var(--main-bg);
+  background-color: var(--main-text);
+  transition: var(--transition-background);
+}
 
 .dropdown {
   position: absolute;

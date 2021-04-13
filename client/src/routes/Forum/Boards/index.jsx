@@ -42,7 +42,7 @@ const Boards = () => {
         { title: Strings.default[lang], sort: 'default' },
         { title: Strings.popular[lang], sort: 'popular' },
         { title: Strings.recentlyAnswered[lang], sort: 'newestanswer' },
-        { title: Strings.byNewestThread[lang], sort: 'newestthread' },
+        { title: Strings.byNewest[lang], sort: 'newestthread' },
         { title: Strings.byAnswersCount[lang], sort: 'answers' }
       ]} setSort={setSort} state={sort} />
 

@@ -36,7 +36,7 @@ const Bans = ({ history, location: { pathname } }) => {
       ]} />
 
       <SortNav links={[
-        { title: Strings.newest[lang], sort: 'bans' },
+        { title: Strings.byNewest[lang], sort: 'bans' },
         { title: Strings.all[lang], sort: 'all' }
       ]} setSort={setSort} state={sort} />
 
