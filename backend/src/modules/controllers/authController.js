@@ -43,6 +43,7 @@ const register = async (req, res, next) => {
       password: result.password,
       createdAt: new Date().toISOString(),
       onlineAt: new Date().toISOString(),
+      karma: 0,
       role: 1,
       ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
       ua: req.headers['user-agent']
@@ -83,6 +84,7 @@ const login = async (req, res, next) => {
       select: '_id expiresAt',
     }
     const user = await User.findOne({ name }).populate(populate)
+
     if (!user) throw createError.NotFound('User not registered')
 
     const isMatch = await user.isValidPassword(result.password)

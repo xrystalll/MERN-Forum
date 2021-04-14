@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Strings } from 'support/Constants';
@@ -8,7 +8,14 @@ import './style.css';
 
 const ControlledSlider = ({ items, lang }) => {
   const slider = useRef()
-  const itemWidth = '122'
+  const [start, setStart] = useState(true)
+  const [end, setEnd] = useState(false)
+  const itemWidth = 122
+
+  const handleScroll = ({ target }) => {
+    setStart(target.scrollLeft <= 0)
+    setEnd(target.scrollLeft + target.offsetWidth === target.scrollWidth)
+  }
 
   const scrollToNextItem = () => {
     slider.current.scrollBy({
@@ -29,10 +36,11 @@ const ControlledSlider = ({ items, lang }) => {
     <div className="boards_slide">
       <ul
         ref={slider}
+        onScroll={handleScroll}
         className="boards_slide_list"
         style={{ gridTemplateColumns: `repeat(${items.length}, minmax(${itemWidth}px, 1fr))` }}
       >
-        <div className="boards_slide_nav prev" onClick={scrollToPrevItem}>
+        <div className={start ? 'boards_slide_nav prev hide' : 'boards_slide_nav prev'} onClick={scrollToPrevItem}>
           <div className="slide_nav_btn">
             <i className="bx bx-left-arrow-alt" />
           </div>
@@ -42,7 +50,7 @@ const ControlledSlider = ({ items, lang }) => {
           <PopularBoardsItem key={item._id} data={item} lang={lang} />
         ))}
 
-        <div className="boards_slide_nav next" onClick={scrollToNextItem}>
+        <div className={end ? 'boards_slide_nav next hide' : 'boards_slide_nav next'} onClick={scrollToNextItem}>
           <div className="slide_nav_btn">
             <i className="bx bx-right-arrow-alt" />
           </div>

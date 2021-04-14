@@ -1036,6 +1036,11 @@ const Strings = {
     en: 'No internet connection',
     jp: 'インターネットに接続できません'
   },
+  'karma': {
+    ru: 'Карма',
+    en: 'Karma',
+    jp: 'カルマ'
+  },
 }
 
 const imageTypes = ['image/jpeg', 'image/png', 'image/gif']

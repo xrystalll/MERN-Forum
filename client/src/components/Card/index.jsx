@@ -211,7 +211,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   }
 
   const onPin = () => {
-    if (type !== 'answer') {
+    if (type === 'thread') {
       const formData = new FormData()
       formData.append('postData', JSON.stringify({
         threadId: data._id,
@@ -236,7 +236,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   }
 
   const onClose = () => {
-    if (type !== 'answer') {
+    if (type === 'thread') {
       const editApi = user.role >= 2 ? 'adminedit' : 'edit'
 
       const formData = new FormData()
@@ -357,55 +357,31 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           <Dropdown>
             {user.role >= 2 && (
               <Fragment>
-                {type !== 'answer' && (
-                  <div
-                    onClick={onPin}
-                    className="dropdown_item"
-                  >
-                    {data.pined
-                      ? Strings.unpin[lang]
-                      : Strings.pin[lang]
-                    }
+                {type === 'thread' && (
+                  <div onClick={onPin} className="dropdown_item">
+                    {data.pined ? Strings.unpin[lang] : Strings.pin[lang]}
                   </div>
                 )}
-                {type !== 'answer' && (
-                  <div
-                    onClick={onClose}
-                    className="dropdown_item"
-                  >
-                    {data.closed
-                      ? Strings.open[lang]
-                      : Strings.close[lang]
-                    }
+                {type === 'thread' && (
+                  <div onClick={onClose} className="dropdown_item">
+                    {data.closed ? Strings.open[lang] : Strings.close[lang]}
                   </div>
                 )}
-                <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
+                {user.role >= data.author.role && <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>}
                 {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
-                  <div
-                    onClick={onBan}
-                    className="dropdown_item"
-                  >
-                    {banned
-                      ? Strings.unbanUser[lang]
-                      : Strings.banUser[lang]
-                    }
+                  <div onClick={onBan} className="dropdown_item">
+                    {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
                   </div>
                 )}
               </Fragment>
             )}
-            {user.id === data.author._id || user.role >= 2
+            {user.id === data.author._id || (user.role >= 2 && user.role >= data.author.role)
               ? <div onClick={editClick} className="dropdown_item">{Strings.edit[lang]}</div>
               : null
             }
-            {type !== 'answer' && user.id === data.author._id && user.role === 1 && (
-              <div
-                onClick={onClose}
-                className="dropdown_item"
-              >
-                {data.closed
-                  ? Strings.open[lang]
-                  : Strings.close[lang]
-                }
+            {type === 'thread' && user.id === data.author._id && user.role === 1 && (
+              <div onClick={onClose} className="dropdown_item">
+                {data.closed ? Strings.open[lang] : Strings.close[lang]}
               </div>
             )}
             {user.id !== data.author._id && (
@@ -588,7 +564,9 @@ export const BoardCard = ({ data }) => {
   )
 }
 
-export const UserCard = ({ data, online }) => {
+export const UserCard = ({ data, online, karma }) => {
+  const { lang } = useContext(StoreContext)
+
   return (
     <CardBody>
       <Link to={'/user/' + data.name} className="card_head user_head">
@@ -607,9 +585,17 @@ export const UserCard = ({ data, online }) => {
                 <UserRole role={data.role} />
                 {data.ban && <UserStatus status="ban" />}
               </div>
-               {!online && (
+              {!online && (
                 <div className="head_text">
                   {new Date() - new Date(data.onlineAt) < 5 * 60000 ? 'online' : dateFormat(data.onlineAt)}
+                </div>
+              )}
+              {karma && (
+                <div className="head_text">
+                  {Strings.karma[lang]}:&nbsp;
+                  <span className={data.karma > 0 ? 'positive' : data.karma < 0 ? 'negative' : ''}>
+                    {data.karma}
+                  </span>
                 </div>
               )}
             </div>
@@ -957,6 +943,7 @@ export const DialoqueCard = ({ data }) => {
                 <div className="user_info">
                   <div className="user_info_top">
                     {data[key].displayName}
+                    {new Date() - new Date(data[key].onlineAt) < 5 * 60000 && <span className="online" title="online" />}
                     <UserRole role={data[key].role} />
                     {data[key].ban && <UserStatus status="ban" />}
                   </div>

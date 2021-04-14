@@ -8,12 +8,13 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Stats = ({ userData, lang, token }) => {
-  const [init, setInit] = useState(true)
   const [userStats, setUserStats] = useState({})
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
+
     const fetchStats = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/user/stats?userId=${userData._id}`, {
@@ -24,21 +25,19 @@ const Stats = ({ userData, lang, token }) => {
         const response = await data.json()
 
         if (!response.error) {
-          setInit(false)
           setUserStats(response)
           setLoading(false)
           setNoData(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        setInit(false)
         setNoData(true)
         setLoading(false)
       }
     }
 
-    init && fetchStats()
+    fetchStats()
     // eslint-disable-next-line
-  }, [init])
+  }, [userData._id])
 
   return !noData ? (
     !loading ? (
@@ -56,6 +55,12 @@ const Stats = ({ userData, lang, token }) => {
             <span className="secondary_text">{Strings.bans[lang]}</span>
             {userStats.bansCount}
           </Link>
+          <div className="profile_stats_item">
+            <span className="secondary_text">{Strings.karma[lang]}</span>
+            <span className={userStats.karma > 0 ? 'positive' : userStats.karma < 0 ? 'negative' : ''}>
+              {userStats.karma}
+            </span>
+          </div>
         </div>
       </CardBody>
     ) : <Loader className="more_loader" color="#64707d" />

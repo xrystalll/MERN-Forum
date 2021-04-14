@@ -3,6 +3,7 @@ const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 
+const User = require('../models/User');
 const Board = require('../models/Board');
 const Thread = require('../models/Thread');
 const Answer = require('../models/Answer');
@@ -16,8 +17,8 @@ const createThumb = require('../utils/createThumbnail');
 const upload = multer({
   storage: storage('forum', 'attach'),
   fileFilter: (req, file, callback) => checkFileExec(file, callback),
-  limits: { fields: 1, fileSize: 1048576 * 12 } // 12Mb
-}).array('attach', 4)
+  limits: { fields: 1, fileSize: 1048576 * 20 } // 20Mb
+}).array('attach', 4) // 20 * 4 = 80Mb
 
 module.exports.getBoards = async (req, res, next) => {
   try {
@@ -264,6 +265,7 @@ module.exports.createThread = async (req, res, next) => {
       const thread = await newThread.save()
 
       await Board.updateOne({ _id: Types.ObjectId(boardId) }, { $inc: { threadsCount: 1 }, newestThread: now })
+      await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, { $inc: { karma: 5 } })
 
       res.json(thread)
     })
@@ -280,7 +282,9 @@ module.exports.deleteThread = async (req, res, next) => {
     if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
 
-    const thread = await Thread.findById(threadId)
+    const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
+
+    if (req.payload.role < thread.author.role) return next(createError.Unauthorized('Action not allowed'))
 
     if (thread.attach && thread.attach.length) {
       const files = thread.attach.reduce((array, item) => {
@@ -360,9 +364,11 @@ module.exports.editThread = async (req, res, next) => {
       if (title.trim() === '') return next(createError.BadRequest('Thread title must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
-      const thread = await Thread.findById(threadId)
+      const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
 
-      if (req.payload.id !== thread.author.toString()) return next(createError.Unauthorized('Action not allowed'))
+      if (req.payload.id !== thread.author._id || req.payload.role < thread.author.role) {
+        return next(createError.Unauthorized('Action not allowed'))
+      }
 
       if (req.files.length && thread.attach && thread.attach.length) {
         const files = thread.attach.reduce((array, item) => {
@@ -456,7 +462,9 @@ module.exports.adminEditThread = async (req, res, next) => {
       if (title.trim() === '') return next(createError.BadRequest('Board title must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Thread body must not be empty'))
 
-      const thread = await Thread.findById(threadId)
+      const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
+
+      if (req.payload.role < thread.author.role) return next(createError.Unauthorized('Action not allowed'))
 
       if (req.files.length && thread.attach && thread.attach.length) {
         const files = thread.attach.reduce((array, item) => {
@@ -655,6 +663,12 @@ module.exports.createAnswer = async (req, res, next) => {
       }]
       const populatedAnswer = await Answer.findById(answer._id).populate(populate)
 
+      await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, {
+        $inc: {
+          karma: populatedAnswer.author._id === req.payload.id ? 1 : 2
+        }
+      })
+
       res.json(populatedAnswer)
 
       req.io.to('thread:' + threadId).emit('answerCreated', populatedAnswer)
@@ -705,7 +719,9 @@ module.exports.deleteAnswer = async (req, res, next) => {
     if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
 
-    const answer = await Answer.findById(answerId)
+    const answer = await Answer.findById(answerId).populate({ path: 'author', select: 'role' })
+
+    if (req.payload.role < answer.author.role) return next(createError.Unauthorized('Action not allowed'))
 
     if (answer.attach && answer.attach.length) {
       const files = answer.attach.reduce((array, item) => {
@@ -747,84 +763,83 @@ module.exports.editAnswer = async (req, res, next) => {
       if (err) return next(createError.BadRequest(err.message))
 
       const { answerId, body } = JSON.parse(req.body.postData)
-      const moder = req.payload.role >= 2
 
       if (!answerId) return next(createError.BadRequest('answerId must not be empty'))
       if (body.trim() === '') return next(createError.BadRequest('Answer body must not be empty'))
 
-      const answer = await Answer.findById(answerId)
+      const answer = await Answer.findById(answerId).populate({ path: 'author', select: 'role' })
 
-      if (req.payload.id === answer.author.toString() || moder) {
-        if (req.files.length && answer.attach && answer.attach.length) {
-          const files = answer.attach.reduce((array, item) => {
-            if (item.thumb) {
-              return [
-                ...array,
-                path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
-                path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
-              ]
-            }
-
-            return [
-              ...array,
-              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
-            ]
-          }, [])
-
-          deleteFiles(files, (err) => {
-            if (err) console.error(err)
-          })
-        }
-
-        let files = answer.attach
-        if (req.files.length) {
-          files = []
-          await Promise.all(req.files.map(async (item) => {
-            if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
-              const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
-
-              await createThumb(item.path, 'forum', thumbFilename)
-
-              files.push({
-                file: `/forum/${item.filename}`,
-                thumb: `/forum/thumbnails/${thumbFilename}`,
-                type: item.mimetype,
-                size: item.size
-              })
-            } else {
-              files.push({
-                file: `/forum/${item.filename}`,
-                thumb: null,
-                type: item.mimetype,
-                size: item.size
-              })
-            }
-          }))
-        }
-
-        await Answer.updateOne({ _id: Types.ObjectId(answerId) }, {
-          body: body.substring(0, 1000),
-          edited: {
-            createdAt: new Date().toISOString()
-          },
-          attach: files
-        })
-
-        const populate = [{
-          path: 'author',
-          select: '_id name displayName onlineAt picture role ban'
-        }, {
-          path: 'likes',
-          select: '_id name displayName picture'
-        }]
-        const editedAnswer = await Answer.findById(answerId).populate(populate)
-
-        res.json(editedAnswer)
-
-        req.io.to('thread:' + answer.threadId).emit('answerEdited', editedAnswer)
-      } else {
+      if (req.payload.id === answer.author._id || req.payload.role < answer.author.role) {
         return next(createError.Unauthorized('Action not allowed'))
       }
+
+      if (req.files.length && answer.attach && answer.attach.length) {
+        const files = answer.attach.reduce((array, item) => {
+          if (item.thumb) {
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+            ]
+          }
+
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+          ]
+        }, [])
+
+        deleteFiles(files, (err) => {
+          if (err) console.error(err)
+        })
+      }
+
+      let files = answer.attach
+      if (req.files.length) {
+        files = []
+        await Promise.all(req.files.map(async (item) => {
+          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+            const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
+
+            await createThumb(item.path, 'forum', thumbFilename)
+
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: `/forum/thumbnails/${thumbFilename}`,
+              type: item.mimetype,
+              size: item.size
+            })
+          } else {
+            files.push({
+              file: `/forum/${item.filename}`,
+              thumb: null,
+              type: item.mimetype,
+              size: item.size
+            })
+          }
+        }))
+      }
+
+      await Answer.updateOne({ _id: Types.ObjectId(answerId) }, {
+        body: body.substring(0, 1000),
+        edited: {
+          createdAt: new Date().toISOString()
+        },
+        attach: files
+      })
+
+      const populate = [{
+        path: 'author',
+        select: '_id name displayName onlineAt picture role ban'
+      }, {
+        path: 'likes',
+        select: '_id name displayName picture'
+      }]
+      const editedAnswer = await Answer.findById(answerId).populate(populate)
+
+      res.json(editedAnswer)
+
+      req.io.to('thread:' + answer.threadId).emit('answerEdited', editedAnswer)
     })
   } catch(err) {
     next(createError.InternalServerError(err))

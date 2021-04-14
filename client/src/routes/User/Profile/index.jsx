@@ -158,7 +158,7 @@ const Profile = ({ userName }) => {
                 { title: Strings.users[lang], link: '/users' }
               ]} />
 
-              {banned && (
+              {banned && userData.ban && (
                 <BanInfoCard data={userData.ban} />
               )}
 

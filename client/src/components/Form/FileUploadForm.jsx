@@ -94,7 +94,7 @@ const FileUploadForm = ({ mini, title, hint, sendFiles, clearFiles, multiple = t
               <div className="title_hint">
                 <i className="bx bx-help-circle" />
                 <div className="hint_popover">
-                  {hint || `${Strings.maxFilesCount[lang]}: 4; ${Strings.maxSize[lang]}: 12 Mb ${Strings.perFile[lang]}`}
+                  {hint || `${Strings.maxFilesCount[lang]}: 4; ${Strings.maxSize[lang]}: 20 Mb ${Strings.perFile[lang]}`}
                 </div>
               </div>
             </div>

@@ -50,7 +50,7 @@ module.exports.getUsers = async (req, res, next) => {
     const { limit = 10, page = 1, sort } = req.query
 
     let users
-    const select = '_id name displayName createdAt onlineAt picture role ban'
+    const select = '_id name displayName createdAt onlineAt picture karma role ban'
     if (sort === 'online') {
       const date = new Date()
       date.setMinutes(date.getMinutes() - 5)
@@ -59,6 +59,8 @@ module.exports.getUsers = async (req, res, next) => {
       users = await User.paginate({ role: { $gte: 2 } }, { sort: { onlineAt: -1 }, page, limit, select })
     } else if (sort === 'old') {
       users = await User.paginate({}, { sort: { createdAt: 1 }, page, limit, select })
+    } else if (sort === 'karma') {
+      users = await User.paginate({}, { sort: { karma: -1 }, page, limit, select })
     } else {
       users = await User.paginate({}, { sort: { createdAt: -1 }, page, limit, select })
     }
@@ -88,7 +90,7 @@ module.exports.getUser = async (req, res, next) => {
 
     if (!userName) return next(createError.BadRequest('userName must not be empty'))
 
-    const select = '_id name displayName createdAt onlineAt picture role ban'
+    const select = '_id name displayName createdAt onlineAt picture karma role ban'
     const populate = {
       path: 'ban',
       select: '_id admin reason body createdAt expiresAt',
@@ -98,6 +100,8 @@ module.exports.getUser = async (req, res, next) => {
       }
     }
     const user = await User.findOne({ name: userName }, select).populate(populate)
+
+    if (!user) return next(createError.BadRequest('User not found'))
 
     if (user.ban) {
       if (user.ban.expiresAt < new Date().toISOString()) {
@@ -198,18 +202,27 @@ module.exports.createBan = async (req, res, next) => {
     if (reason.trim() === '') return next(createError.BadRequest('Reason must not be empty'))
     if (!expiresAt) return next(createError.BadRequest('expiresAt must not be empty'))
 
+    const user = await User.findById(userId).select('role')
+
+    if (!user) return next(createError.BadRequest('User not found'))
+    if (req.payload.role < user.role) return next(createError.Unauthorized('Action not allowed'))
+
+    const now = new Date().toISOString()
+
     const newBan = new Ban({
       user: userId,
       admin: req.payload.id,
       reason,
       body: body.substring(0, 100),
-      createdAt: new Date().toISOString(),
+      createdAt: now,
       expiresAt
     })
 
     const ban = await newBan.save()
 
-    await User.updateOne({ _id: Types.ObjectId(userId) }, { ban: ban._id })
+    const diff = new Date(expiresAt) - new Date(now)
+    const minutes = diff / 60000
+    await User.updateOne({ _id: Types.ObjectId(userId) }, { $inc: { karma: minutes > 43800 ? -50 : -20 }, ban: ban._id })
 
     res.json(ban)
 
@@ -227,7 +240,7 @@ module.exports.unBan = async (req, res, next) => {
     if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
-    await User.updateOne({ _id: Types.ObjectId(userId) }, { ban: null })
+    await User.updateOne({ _id: Types.ObjectId(userId) }, { $inc: { karma: 10 }, ban: null })
 
     res.json('User unbanned')
 
@@ -243,6 +256,10 @@ module.exports.getUserStats = async (req, res, next) => {
 
     if (!userId) return next(createError.BadRequest('userId must not be empty'))
 
+    const user = await User.findById(userId)
+
+    if (!user) return next(createError.BadRequest('User not found'))
+
     const threads = await Thread.find({ author: Types.ObjectId(userId) })
     const answers = await Answer.find({ author: Types.ObjectId(userId) })
     const bans = await Ban.find({ user: Types.ObjectId(userId) })
@@ -254,7 +271,8 @@ module.exports.getUserStats = async (req, res, next) => {
       answersCount: answers.length,
       bansCount: bans.length,
       filesCount: files.length,
-      fileCommentsCount: comments.length
+      fileCommentsCount: comments.length,
+      karma: user.karma
     })
   } catch(err) {
     next(createError.InternalServerError(err))

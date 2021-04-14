@@ -12,6 +12,7 @@ import SortNav from 'components/SortNav';
 import Newest from './Newest';
 import Old from './Old';
 import Online from './Online';
+import Karma from './Karma';
 
 const Users = ({ history, location: { pathname } }) => {
   const { setPostType, setFabVisible, lang } = useContext(StoreContext)
@@ -38,6 +39,8 @@ const Users = ({ history, location: { pathname } }) => {
       route = path + '/oldest'
     } else if (sort === 'online') {
       route = path + '/online'
+    } else if (sort === 'karma') {
+      route = path + '/karma'
     } else {
       route = path
     }
@@ -54,7 +57,8 @@ const Users = ({ history, location: { pathname } }) => {
       <SortNav links={[
         { title: Strings.newest[lang], sort: 'users' },
         { title: Strings.oldest[lang], sort: 'oldest' },
-        { title: Strings.online[lang], sort: 'online' }
+        { title: Strings.online[lang], sort: 'online' },
+        { title: Strings.karma[lang], sort: 'karma' }
       ]} setSort={setSort} state={sort} />
 
       <Switch>
@@ -64,6 +68,10 @@ const Users = ({ history, location: { pathname } }) => {
 
         <Route path={path + '/online'} exact>
           <Online lang={lang} />
+        </Route>
+
+        <Route path={path + '/karma'} exact>
+          <Karma lang={lang} />
         </Route>
 
         <Route path={path} exact>

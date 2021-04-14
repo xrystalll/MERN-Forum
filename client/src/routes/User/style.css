@@ -70,7 +70,7 @@
 
 .profile_stats_grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 .profile_stats_item {
   position: relative;
@@ -97,4 +97,11 @@
 .profile_stats_item .secondary_text {
   margin: 0 0 .3rem;
   font-size: 1.1rem;
+}
+
+.positive {
+  color: var(--main-success-color);
+}
+.negative {
+  color: var(--main-danger-color);
 }

@@ -26,8 +26,10 @@ const upload = multer({
 
 module.exports.getProfile = async (req, res, next) => {
   try {
-    const select = '_id name displayName email createdAt onlineAt picture role ban'
+    const select = '_id name displayName email createdAt onlineAt picture karma role ban'
     const user = await User.findOne({ _id: Types.ObjectId(req.payload.id) }, select)
+
+    if (!user) return next(createError.BadRequest('User not found'))
 
     res.json(user)
   } catch(err) {
@@ -67,6 +69,7 @@ module.exports.uploadUserPicture = (req, res, next) => {
 module.exports.setOnline = async (req, res, next) => {
   try {
     await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, { onlineAt: new Date().toISOString() })
+
     res.json({ success: true })
   } catch(err) {
     next(createError.InternalServerError(err))
@@ -77,11 +80,11 @@ module.exports.getNotifications = async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort } = req.query
 
-    let sortCreatedAt
+    let createdAt
     if (sort === 'old') {
-      sortCreatedAt = 1
+      createdAt = 1
     } else {
-      sortCreatedAt = -1
+      createdAt = -1
     }
 
     const populate = [{
@@ -91,7 +94,7 @@ module.exports.getNotifications = async (req, res, next) => {
       path: 'from',
       select: '_id name displayName onlineAt picture role ban'
     }]
-    const notifications = await Notification.paginate({ to: req.payload.id }, { sort: { createdAt: sortCreatedAt }, page, limit, populate })
+    const notifications = await Notification.paginate({ to: req.payload.id }, { sort: { createdAt }, page, limit, populate })
 
     if (notifications.totalDocs) {
       await Notification.updateMany({ to: req.payload.id, read: false }, { read: true })

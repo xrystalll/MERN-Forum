@@ -195,6 +195,7 @@
   background-color: var(--secondary-bg-tint);
   background-size: cover;
   background-position: center;
+  transition: var(--transition-background);
   cursor: pointer;
 }
 

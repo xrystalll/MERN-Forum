@@ -3,6 +3,7 @@ const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 
+const User = require('../models/User');
 const Folder = require('../models/Folder');
 const File = require('../models/File');
 const Comment = require('../models/Comment');
@@ -259,6 +260,7 @@ module.exports.createFile = async (req, res, next) => {
       const file = await newFile.save()
 
       await Folder.updateOne({ _id: Types.ObjectId(folderId) }, { $inc: { filesCount: 1 } })
+      await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, { $inc: { karma: 5 } })
 
       res.json(file)
 
@@ -277,7 +279,9 @@ module.exports.deleteFile = async (req, res, next) => {
     if (!moder) return next(createError.Unauthorized('Action not allowed'))
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
 
-    const file = await File.findById(fileId)
+    const file = await File.findById(fileId).populate({ path: 'author', select: 'role' })
+
+    if (req.payload.role < file.author.role) return next(createError.Unauthorized('Action not allowed'))
 
     const deleteArray = []
     deleteArray.push(path.join(__dirname, '..', '..', '..', 'public', 'uploads', path.basename(file.file.url)))
@@ -305,35 +309,34 @@ module.exports.deleteFile = async (req, res, next) => {
 module.exports.editFile = async (req, res, next) => {
   try {
     const { fileId, title, body } = req.body
-    const moder = req.payload.role >= 2
 
     if (!fileId) return next(createError.BadRequest('fileId must not be empty'))
     if (title.trim() === '') return next(createError.BadRequest('File title must not be empty'))
     if (body.trim() === '') return next(createError.BadRequest('File body must not be empty'))
 
-    const file = await File.findById(fileId)
+    const file = await File.findById(fileId).populate({ path: 'author', select: 'role' })
 
-    if (req.payload.id === file.author.toString() || moder) {
-      await File.updateOne({ _id: Types.ObjectId(fileId) }, {
-        title: title.trim().substring(0, 100),
-        body: body.substring(0, 1000)
-      })
-
-      const populate = [{
-        path: 'author',
-        select: '_id name displayName onlineAt picture role ban'
-      }, {
-        path: 'likes',
-        select: '_id name displayName picture'
-      }]
-      const editedFile = await File.findById(fileId).populate(populate)
-
-      res.json(editedFile)
-
-      req.io.to('file:' + fileId).emit('fileEdited', editedFile)
-    } else {
+    if (req.payload.id !== file.author._id || req.payload.role < file.author.role) {
       return next(createError.Unauthorized('Action not allowed'))
     }
+
+    await File.updateOne({ _id: Types.ObjectId(fileId) }, {
+      title: title.trim().substring(0, 100),
+      body: body.substring(0, 1000)
+    })
+
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
+    const editedFile = await File.findById(fileId).populate(populate)
+
+    res.json(editedFile)
+
+    req.io.to('file:' + fileId).emit('fileEdited', editedFile)
   } catch(err) {
     next(createError.InternalServerError(err))
   }
@@ -465,6 +468,12 @@ module.exports.createComment = async (req, res, next) => {
     }]
     const populatedComment = await Comment.findById(comment._id).populate(populate)
 
+    await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, {
+      $inc: {
+        karma: populatedComment.author._id === req.payload.id ? 1 : 2
+      }
+    })
+
     res.json(populatedComment)
 
     req.io.to('file:' + fileId).emit('commentCreated', populatedComment)
@@ -509,13 +518,12 @@ module.exports.createComment = async (req, res, next) => {
 module.exports.deleteComment = async (req, res, next) => {
   try {
     const { commentId } = req.body
-    const moder = req.payload.role >= 2
 
     if (!commentId) return next(createError.BadRequest('commentId must not be empty'))
 
-    const comment = await Comment.findById(commentId)
+    const comment = await Comment.findById(commentId).populate({ path: 'author', select: 'role' })
 
-    if (req.payload.id === comment.author.toString() || moder) {
+    if (req.payload.id === comment.author._id || req.payload.role >= comment.author.role) {
       await comment.delete()
 
       await File.updateOne({ _id: Types.ObjectId(comment.fileId) }, { $inc: { commentsCount: -1 } })

@@ -16,7 +16,7 @@ const upload = multer({
   storage: storage('message', 'file'),
   fileFilter: (req, file, callback) => checkFileExec(file, callback),
   limits: { fields: 1, fileSize: 1048576 * 24 } // 24Mb
-}).array('file', 4)
+}).array('file', 4) // 24 * 4 = 96Mb
 
 module.exports.getDialogues = async (req, res, next) => {
   try {
@@ -61,6 +61,8 @@ module.exports.getDialogue = async (req, res, next) => {
     if (!userName) return next(createError.BadRequest('userName must not be empty'))
 
     const user = await User.findOne({ name: userName })
+
+    if (!user) return next(createError.BadRequest('User not found'))
 
     const dialogue = await Dialogue.findOne({
       $or: [{

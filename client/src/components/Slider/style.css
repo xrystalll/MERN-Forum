@@ -31,6 +31,9 @@
 .boards_slide_nav.next {
   right: -12px;
 }
+.boards_slide_nav.hide {
+  display: none;
+}
 .boards_slide_list, .slides_list {
   display: grid;
   grid-template-columns: repeat(6, minmax(112px, 1fr));

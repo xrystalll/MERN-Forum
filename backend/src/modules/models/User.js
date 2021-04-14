@@ -24,6 +24,7 @@ const userSchema = new Schema({
   createdAt: String,
   onlineAt: String,
   picture: String,
+  karma: Number,
   role: Number,
   ban: {
     type: Schema.Types.ObjectId,
