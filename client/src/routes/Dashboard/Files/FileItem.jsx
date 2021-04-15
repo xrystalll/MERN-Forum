@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
-import UserRole, { UserStatus } from 'components/UserRole';
+import { UserRole, UserStatus } from 'components/UserBadge';
 import Markdown from 'components/Markdown';
 
 const FileItem = ({ data, moderate, lang }) => {

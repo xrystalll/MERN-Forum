@@ -670,7 +670,7 @@ a.head_text:hover {
   cursor: pointer;
 }
 .user_title .head_profile {
-  margin-right: 1rem;
+  margin-right: .75rem;
 }
 .user_head {
   padding: .2rem .5rem;

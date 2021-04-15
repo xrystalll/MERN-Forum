@@ -8,12 +8,12 @@ import { useForm } from 'hooks/useForm';
 
 import { BACKEND, Strings } from 'support/Constants';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
-import { dateFormat, deletedUser } from 'support/Utils';
+import { deletedUser } from 'support/Utils';
 
 import FormCardItem from 'components/Card/FormCardItem';
 import Input from 'components/Form/Input';
 import FileUploadForm from 'components/Form/FileUploadForm';
-import UserRole, { UserStatus } from 'components/UserRole';
+import { UserRole, UserStatus, UserOnline } from 'components/UserBadge';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 import CustomScrollbar from 'components/CustomScrollbar';
@@ -343,9 +343,7 @@ const Dialogue = ({ match }) => {
                         <span className="dot_loader"></span>
                       </Fragment>
                     ) : (
-                      new Date() - new Date(toUser.onlineAt) < 5 * 60000
-                        ? 'online'
-                        : Strings.lastSeen[lang] + ' ' + dateFormat(toUser.onlineAt, 'short')
+                      <UserOnline onlineAt={toUser.onlineAt} offlineText={Strings.lastSeen[lang]} dateType="short" />
                     )}
                   </div>
                 </div>

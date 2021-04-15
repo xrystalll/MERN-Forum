@@ -71,6 +71,8 @@
 .profile_stats_grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .profile_stats_item {
   position: relative;
@@ -80,6 +82,7 @@
   flex-direction: column;
   border-radius: var(--border-radius-inner);
   transition: var(--transition-background);
+  min-width: 76px;
   height: 72px;
   user-select: none;
 }

@@ -60,7 +60,7 @@ module.exports.getUsers = async (req, res, next) => {
     } else if (sort === 'old') {
       users = await User.paginate({}, { sort: { createdAt: 1 }, page, limit, select })
     } else if (sort === 'karma') {
-      users = await User.paginate({}, { sort: { karma: -1 }, page, limit, select })
+      users = await User.paginate({}, { sort: { karma: -1, onlineAt: -1 }, page, limit, select })
     } else {
       users = await User.paginate({}, { sort: { createdAt: -1 }, page, limit, select })
     }

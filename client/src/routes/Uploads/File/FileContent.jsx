@@ -9,7 +9,7 @@ import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 import Markdown from 'components/Markdown';
 import Dropdown from 'components/Card/Dropdown';
 import { Button } from 'components/Button';
-import UserRole, { UserStatus } from 'components/UserRole';
+import { UserRole, UserStatus } from 'components/UserBadge';
 
 const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const history = useHistory()

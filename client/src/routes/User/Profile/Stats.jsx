@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { counter } from 'support/Utils';
 import { BACKEND, Strings } from 'support/Constants';
 
 import { CardBody } from 'components/Card';
@@ -45,20 +46,20 @@ const Stats = ({ userData, lang, token }) => {
         <div className="profile_stats_grid">
           <Link to={'/user/' + userData.name + '/threads'} className="profile_stats_item">
             <span className="secondary_text">{Strings.threads[lang]}</span>
-            {userStats.threadsCount}
+            {counter(userStats.threadsCount)}
           </Link>
           <Link to={'/user/' + userData.name + '/answers'} className="profile_stats_item">
             <span className="secondary_text">{Strings.answers[lang]}</span>
-            {userStats.answersCount}
+            {counter(userStats.answersCount)}
           </Link>
           <Link to={'/user/' + userData.name + '/bans'} className="profile_stats_item">
             <span className="secondary_text">{Strings.bans[lang]}</span>
-            {userStats.bansCount}
+            {counter(userStats.bansCount)}
           </Link>
           <div className="profile_stats_item">
             <span className="secondary_text">{Strings.karma[lang]}</span>
             <span className={userStats.karma > 0 ? 'positive' : userStats.karma < 0 ? 'negative' : ''}>
-              {userStats.karma}
+              {counter(userStats.karma)}
             </span>
           </div>
         </div>

@@ -15,7 +15,7 @@ import Online from './Online';
 import Karma from './Karma';
 
 const Users = ({ history, location: { pathname } }) => {
-  const { setPostType, setFabVisible, lang } = useContext(StoreContext)
+  const { user, setPostType, setFabVisible, lang } = useContext(StoreContext)
   document.title = 'Forum | ' + Strings.users[lang]
   const { path } = useRouteMatch()
   const [init, setInit] = useState(true)
@@ -48,18 +48,22 @@ const Users = ({ history, location: { pathname } }) => {
     history.push(route)
   }, [sort, path, history])
 
+  const sortItems = [
+    { title: Strings.newest[lang], sort: 'users' },
+    { title: Strings.oldest[lang], sort: 'oldest' },
+    { title: Strings.online[lang], sort: 'online' }
+  ]
+  if (user) {
+    sortItems.push({ title: Strings.karma[lang], sort: 'karma' })
+  }
+
   return (
     <Section>
       <Breadcrumbs current={Strings.users[lang]} links={[
         { title: Strings.home[lang], link: '/' }
       ]} />
 
-      <SortNav links={[
-        { title: Strings.newest[lang], sort: 'users' },
-        { title: Strings.oldest[lang], sort: 'oldest' },
-        { title: Strings.online[lang], sort: 'online' },
-        { title: Strings.karma[lang], sort: 'karma' }
-      ]} setSort={setSort} state={sort} />
+      <SortNav links={sortItems} setSort={setSort} state={sort} />
 
       <Switch>
         <Route path={path + '/oldest'} exact>
@@ -70,9 +74,11 @@ const Users = ({ history, location: { pathname } }) => {
           <Online lang={lang} />
         </Route>
 
-        <Route path={path + '/karma'} exact>
-          <Karma lang={lang} />
-        </Route>
+        {user && (
+          <Route path={path + '/karma'} exact>
+            <Karma lang={lang} />
+          </Route>
+        )}
 
         <Route path={path} exact>
           <Newest lang={lang} />

@@ -10,7 +10,7 @@ import { BACKEND, Strings } from 'support/Constants';
 import Markdown from 'components/Markdown';
 import { CardBody } from 'components/Card';
 import Dropdown from 'components/Card/Dropdown';
-import UserRole, { UserStatus } from 'components/UserRole';
+import { UserRole, UserStatus, UserOnline } from 'components/UserBadge';
 
 const CommentItem = ({ data, setCommentedTo }) => {
   const { user, token, setModalOpen, setPostType, lang } = useContext(StoreContext)
@@ -120,7 +120,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
               {data.author.displayName}
 
               <Fragment>
-                {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
+                <UserOnline onlineAt={data.author.onlineAt} dot />
                 <UserRole role={data.author.role} />
                 {data.author.ban && <UserStatus status="ban" />}
               </Fragment>

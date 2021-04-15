@@ -9,7 +9,7 @@ import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
 import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
-import UserRole, { UserStatus } from 'components/UserRole';
+import { UserRole, UserStatus, UserOnline } from 'components/UserBadge';
 import VideoLightbox from 'components/VideoLightbox';
 
 import Dropdown from './Dropdown';
@@ -336,7 +336,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
               {data.author.displayName}
               {full && (
                 <Fragment>
-                  {new Date() - new Date(data.author.onlineAt) < 5 * 60000 && <span className="online" title="online" />}
+                  <UserOnline onlineAt={data.author.onlineAt} dot />
                   <UserRole role={data.author.role} />
                   {type === 'thread' && <UserStatus status="owner" />}
                   {type === 'answer' && (
@@ -587,14 +587,14 @@ export const UserCard = ({ data, online, karma }) => {
               </div>
               {!online && (
                 <div className="head_text">
-                  {new Date() - new Date(data.onlineAt) < 5 * 60000 ? 'online' : dateFormat(data.onlineAt)}
+                  <UserOnline onlineAt={data.onlineAt} />
                 </div>
               )}
               {karma && (
                 <div className="head_text">
                   {Strings.karma[lang]}:&nbsp;
                   <span className={data.karma > 0 ? 'positive' : data.karma < 0 ? 'negative' : ''}>
-                    {data.karma}
+                    {counter(data.karma)}
                   </span>
                 </div>
               )}
@@ -943,15 +943,19 @@ export const DialoqueCard = ({ data }) => {
                 <div className="user_info">
                   <div className="user_info_top">
                     {data[key].displayName}
-                    {new Date() - new Date(data[key].onlineAt) < 5 * 60000 && <span className="online" title="online" />}
+                    <UserOnline onlineAt={data[key].onlineAt} dot />
                     <UserRole role={data[key].role} />
                     {data[key].ban && <UserStatus status="ban" />}
                   </div>
                   <div className="head_text">
-                    {data.lastMessage?.from === user.id && `${Strings.you[lang]}: `}
-                    {data.lastMessage?.body.length
-                      ? data.lastMessage.body
-                      : data.lastMessage?.file.length ? Strings.file[lang] : Strings.message[lang]
+                    {data.lastMessage?.from === user.id && <span>{Strings.you[lang]}: </span>}
+                    {data.lastMessage?.body.length ? data.lastMessage.body : data.lastMessage?.file.length
+                      ? (
+                        <Fragment>
+                          <i className="bx bx-file-blank" />
+                          {Strings.file[lang]}
+                        </Fragment>
+                      ) : Strings.message[lang]
                     }
                   </div>
                 </div>

@@ -5,13 +5,12 @@ import { toast } from 'react-toastify';
 import { StoreContext } from 'store/Store';
 
 import { BACKEND, Strings } from 'support/Constants';
-import { dateFormat } from 'support/Utils';
 
 import Breadcrumbs from 'components/Breadcrumbs';
 import { CardBody, BanInfoCard } from 'components/Card';
 import Dropdown from 'components/Card/Dropdown';
 import { LinkButton } from 'components/Button';
-import UserRole from 'components/UserRole';
+import { UserRole, UserOnline } from 'components/UserBadge';
 import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
@@ -176,10 +175,7 @@ const Profile = ({ userName }) => {
                       <UserRole role={userData.role} />
                     </div>
                     <div>
-                      {new Date() - new Date(userData.onlineAt) < 5 * 60000
-                        ? 'online'
-                        : Strings.lastSeen[lang] + ' ' + dateFormat(userData.onlineAt)
-                      }
+                      <UserOnline onlineAt={userData.onlineAt} offlineText={Strings.lastSeen[lang]} />
                     </div>
 
                     {user.id === userData._id ? (

@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
+import { dateFormat } from 'support/Utils';
 
-const UserRole = ({ role }) => {
+export const UserRole = ({ role }) => {
   return (
     <Fragment>
       {role === 3 && (
@@ -34,4 +35,15 @@ export const UserStatus = ({ status }) => {
   )
 }
 
-export default UserRole;
+export const UserOnline = ({ onlineAt, dot, offlineText = '', dateType = 'full' }) => {
+  const onlineDuration = 5 * 60000 // 5 minutes
+  if (offlineText) {
+    offlineText = offlineText + ' '
+  }
+
+  return dot ? (
+    new Date() - new Date(onlineAt) < onlineDuration && <span className="online" title="online" />
+  ) : (
+    new Date() - new Date(onlineAt) < onlineDuration ? 'online' : offlineText + dateFormat(onlineAt, dateType)
+  )
+}
