@@ -1,17 +1,17 @@
 import { Fragment, useState } from 'react';
-import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { BACKEND, imageTypes, videoTypes } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Markdown from 'components/Markdown';
-import VideoLightbox from 'components/VideoLightbox';
+import VideoLightbox, { ImageLightbox} from 'components/VideoLightbox';
 
 const MessageItem = ({ data, dialogueId, user, token }) => {
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
   const [video, setVideo] = useState('')
+  const [thumb, setThumb] = useState('')
   const [videoOpen, setVideoOpen] = useState(false)
 
   const imageView = (url) => {
@@ -19,8 +19,9 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
     setImageOpen(true)
   }
 
-  const videoView = (url) => {
+  const videoView = (url, thumbUrl) => {
     setVideo(url)
+    setThumb(thumbUrl)
     setVideoOpen(true)
   }
 
@@ -59,7 +60,7 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
                     />
                   ) : videoTypes.find(i => i === item.type) ? (
                     <div
-                      onClick={() => videoView(BACKEND + item.file)}
+                      onClick={() => videoView(BACKEND + item.file, BACKEND + item.thumb)}
                       className="msg_file bx video"
                       style={{ backgroundImage: `url(${BACKEND + item.thumb})` }}
                     >
@@ -90,16 +91,12 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
         )}
       </div>
 
-      {imageOpen && (
-        <Lightbox
-          mainSrc={image}
-          onCloseRequest={() => setImageOpen(false)}
-        />
-      )}
+      {imageOpen && <ImageLightbox image={image} onCloseRequest={() => setImageOpen(false)} />}
 
       {videoOpen && (
         <VideoLightbox
           source={video}
+          thumb={thumb}
           onCloseRequest={() => setVideoOpen(false)}
         />
       )}

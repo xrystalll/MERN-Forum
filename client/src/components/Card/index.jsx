@@ -1,6 +1,5 @@
 import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -10,7 +9,7 @@ import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
 import { UserRole, UserStatus, UserOnline } from 'components/UserBadge';
-import VideoLightbox from 'components/VideoLightbox';
+import VideoLightbox, { ImageLightbox} from 'components/VideoLightbox';
 
 import Dropdown from './Dropdown';
 
@@ -35,6 +34,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
   const [video, setVideo] = useState('')
+  const [thumb, setThumb] = useState('')
   const [videoOpen, setVideoOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(preview ? true : false)
   const regexp = /(?:\.([^.]+))?$/
@@ -298,8 +298,9 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
     setImageOpen(true)
   }
 
-  const videoView = (url) => {
+  const videoView = (url, thumbUrl) => {
     setVideo(url)
+    setThumb(thumbUrl)
     setVideoOpen(true)
   }
 
@@ -408,7 +409,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                       />
                     ) : videoTypes.find(i => i === item.type) ? (
                       <div
-                        onClick={() => videoView(BACKEND + item.file)}
+                        onClick={() => videoView(BACKEND + item.file, BACKEND + item.thumb)}
                         className="attached_file card_left image_file card_left"
                         style={{ backgroundImage: `url(${BACKEND + item.thumb})` }}
                       >
@@ -424,16 +425,12 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
               </div>
             ) : null}
 
-            {imageOpen && (
-              <Lightbox
-                mainSrc={image}
-                onCloseRequest={() => setImageOpen(false)}
-              />
-            )}
+            {imageOpen && <ImageLightbox image={image} onCloseRequest={() => setImageOpen(false)} />}
 
             {videoOpen && (
               <VideoLightbox
                 source={video}
+                thumb={thumb}
                 onCloseRequest={() => setVideoOpen(false)}
               />
             )}

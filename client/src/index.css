@@ -1136,15 +1136,32 @@ a.head_text:hover {
   vertical-align: middle;
 }
 
+.ril__builtinTitle {
+  margin-right: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .7;
+  user-select: none;
+}
+
 .ril__builtinButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 40px;
   height: 40px;
   border: none;
   opacity: .7;
   cursor: pointer;
+  user-select: none;
 }
 .ril__builtinButton:hover {
   opacity: 1;
+}
+a.ril__builtinButton {
+  color: var(--main-text-light);
+  font-size: 20px;
 }
 
 .ril__builtinButtonDisabled {

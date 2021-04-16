@@ -1,12 +1,43 @@
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
+import Lightbox from 'react-image-lightbox';
 
-const VideoLightbox = ({ source, onCloseRequest }) => {
+export const ImageLightbox = ({ image, onCloseRequest }) => {
+  return (
+    <Lightbox
+      mainSrc={image}
+      onCloseRequest={() => onCloseRequest(false)}
+      toolbarButtons={[
+        <div className="ril__builtinTitle">Find in: </div>,
+        <a
+          href={'https://yandex.com/images/search?rpt=imageview&url=' + image}
+          className="ril__builtinButton"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Yandex"
+        >
+          Я
+        </a>,
+        <a
+          href={'https://www.google.com/searchbyimage?image_url=' + image}
+          className="ril__builtinButton"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Google"
+        >
+          <i className="bx bxl-google" />
+        </a>
+      ]}
+    />
+  )
+}
+
+const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
   const lightboxContent = useRef()
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('click', handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('click', handleClickOutside)
     }
     // eslint-disable-next-line
   }, [])
@@ -53,6 +84,35 @@ const VideoLightbox = ({ source, onCloseRequest }) => {
               </ul>
 
               <ul className="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide">
+                {thumb && (
+                  <Fragment>
+                    <li className="ril-toolbar__item ril__toolbarItem">
+                      <div className="ril__builtinTitle">Find in: </div>
+                    </li>
+                    <li className="ril-toolbar__item ril__toolbarItem">
+                      <a
+                        href={'https://yandex.com/images/search?rpt=imageview&amp;url=' + thumb}
+                        className="ril__builtinButton"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Yandex"
+                      >
+                        Я
+                      </a>
+                    </li>
+                    <li className="ril-toolbar__item ril__toolbarItem">
+                      <a
+                        href={'https://www.google.com/searchbyimage?image_url=' + thumb}
+                        className="ril__builtinButton"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Google"
+                      >
+                        <i className="bx bxl-google" />
+                      </a>
+                    </li>
+                  </Fragment>
+                )}
                 <li className="ril-toolbar__item ril__toolbarItem">
                   <button
                     onClick={onCloseRequest}
