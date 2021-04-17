@@ -106,6 +106,7 @@ module.exports.getUser = async (req, res, next) => {
     if (user.ban) {
       if (user.ban.expiresAt < new Date().toISOString()) {
         await User.updateOne({ _id: Types.ObjectId(user._id) }, { ban: null })
+        user.ban = null
       }
     }
 
@@ -222,7 +223,7 @@ module.exports.createBan = async (req, res, next) => {
 
     const diff = new Date(expiresAt) - new Date(now)
     const minutes = diff / 60000
-    await User.updateOne({ _id: Types.ObjectId(userId) }, { $inc: { karma: minutes > 43800 ? -50 : -20 }, ban: ban._id })
+    await User.updateOne({ _id: Types.ObjectId(userId) }, { $inc: { karma: minutes > 43799 ? -50 : -20 }, ban: ban._id })
 
     res.json(ban)
 
@@ -403,15 +404,15 @@ module.exports.search = async (req, res, next) => {
 
     if (!query) return next(createError.BadRequest('query must not be empty'))
 
+    const populate = [{
+      path: 'author',
+      select: '_id name displayName onlineAt picture role ban'
+    }, {
+      path: 'likes',
+      select: '_id name displayName picture'
+    }]
     let results
     if (type === 'answers') {
-      const populate = [{
-        path: 'author',
-        select: '_id name displayName onlineAt picture role ban'
-      }, {
-        path: 'likes',
-        select: '_id name displayName picture'
-      }]
       results = await Answer.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
     } else if (type === 'users') {
       const select = '_id name displayName createdAt onlineAt picture role ban'
@@ -419,13 +420,6 @@ module.exports.search = async (req, res, next) => {
     } else if (type === 'boards') {
       results = await Board.paginate({ $text: { $search: query } }, { sort: { newestAnswer: -1 }, page, limit })
     } else {
-      const populate = [{
-        path: 'author',
-        select: '_id name displayName onlineAt picture role ban'
-      }, {
-        path: 'likes',
-        select: '_id name displayName picture'
-      }]
       results = await Thread.paginate({ $text: { $search: query } }, { sort: { createdAt: -1 }, page, limit, populate })
     }
 

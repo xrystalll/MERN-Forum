@@ -120,6 +120,10 @@ const Profile = ({ userName }) => {
   }
 
   const deleteUser = (userId) => {
+    const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+    if (!conf) return
+
     fetch(BACKEND + '/api/user/delete', {
       method: 'DELETE',
       headers: {

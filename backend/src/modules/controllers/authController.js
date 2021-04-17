@@ -19,7 +19,9 @@ const register = async (req, res, next) => {
       name = toRomaji(name)
     }
 
-    const forbiddenNames = ['admin', 'administrator', 'moder', 'moderator', 'deleted', 'user', 'test', 'qwerty', '12345', '123456789', '1234567890']
+    const forbiddenNames = [
+      'admin', 'administrator', 'moder', 'moderator', 'deleted', 'user', 'test', 'qwerty', '12345', '123456789', '1234567890'
+    ]
     if (forbiddenNames.find(i => i === name)) {
       throw createError.Conflict('Username is prohibited')
     }
