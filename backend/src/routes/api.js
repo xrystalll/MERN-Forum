@@ -33,6 +33,7 @@ router.delete('/reports/delete', verifyAccessToken, GeneralController.deleteRepo
 
 router.get('/profile', verifyAccessToken, ProfileController.getProfile)
 router.put('/profile/upload/picture', verifyAccessToken, ProfileController.uploadUserPicture)
+router.put('/profile/password/edit', verifyAccessToken, ProfileController.editPassword)
 router.put('/profile/setOnline', verifyAccessToken, ProfileController.setOnline)
 
 router.get('/notifications', verifyAccessToken, ProfileController.getNotifications)

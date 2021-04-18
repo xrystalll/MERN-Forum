@@ -4,6 +4,7 @@ const { Types } = require('mongoose');
 const createError = require('http-errors');
 const multer = require('multer');
 const sharp = require('sharp');
+const bcrypt = require('bcrypt');
 
 const User = require('../models/User');
 const Notification = require('../models/Notification');
@@ -63,6 +64,31 @@ module.exports.uploadUserPicture = (req, res, next) => {
     })
   } catch(err) {
     next(err)
+  }
+}
+
+module.exports.editPassword = async (req, res, next) => {
+  try {
+    const { password, newPassword } = req.body
+
+    if (!password) return next(createError.BadRequest('Password must not be empty'))
+    if (!newPassword) return next(createError.BadRequest('newPassword must not be empty'))
+
+    const user = await User.findOne({ _id: Types.ObjectId(req.payload.id) })
+
+    if (!user) return next(createError.BadRequest('User not found'))
+
+    const isMatch = await user.isValidPassword(password)
+    if (!isMatch) return next(createError.BadRequest('Password not valid'))
+
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(newPassword, salt)
+
+    await User.updateOne({ _id: Types.ObjectId(req.payload.id) }, { password: hashedPassword })
+
+    res.json({ message: 'Password successfully changed' })
+  } catch (err) {
+    next(createError.InternalServerError(err))
   }
 }
 

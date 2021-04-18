@@ -142,12 +142,14 @@ const CommentItem = ({ data, setCommentedTo }) => {
                       {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
                     </div>
                   )}
+                  {user.role >= data.author.role && (
+                    <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
+                  )}
                 </Fragment>
               )}
-              {user.id === data.author._id || user.role >= 2
-                ? <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
-                : null
-              }
+              {user.id === data.author._id && user.role === 1 && (
+                <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
+              )}
             </Dropdown>
           ) : null
         )}

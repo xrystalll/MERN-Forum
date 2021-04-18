@@ -1041,6 +1041,26 @@ const Strings = {
     en: 'Karma',
     jp: 'カルマ'
   },
+  'passwordChange': {
+    ru: 'Смена пароля',
+    en: 'Password change',
+    jp: 'パスワードの変更'
+  },
+  'changePassword': {
+    ru: 'Изменить пароль',
+    en: 'Change password',
+    jp: 'パスワードを変更する'
+  },
+  'newPassword': {
+    ru: 'Новый пароль',
+    en: 'New password',
+    jp: '新しいパスワード'
+  },
+  'enterNewPassword': {
+    ru: 'Введите новый пароль',
+    en: 'Enter new password',
+    jp: '新しいパスワードを入力してください'
+  },
 }
 
 const imageTypes = ['image/jpeg', 'image/png', 'image/gif']

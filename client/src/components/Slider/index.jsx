@@ -13,21 +13,23 @@ const ControlledSlider = ({ items, lang }) => {
   const itemWidth = 122
 
   const handleScroll = ({ target }) => {
-    setStart(target.scrollLeft <= 0)
-    setEnd(target.scrollLeft + target.offsetWidth === target.scrollWidth)
+    if (target.scrollLeft === 0) {
+      setStart(true)
+    } else {
+      setStart(false)
+    }
+
+    if (target.scrollLeft + target.offsetWidth === target.scrollWidth) {
+      setEnd(true)
+    } else {
+      setEnd(false)
+    }
   }
 
-  const scrollToNextItem = () => {
+  const scrollTo = (width) => {
     slider.current.scrollBy({
       top: 0,
-      left: itemWidth,
-      behavior: 'smooth'
-    })
-  }
-  const scrollToPrevItem = () => {
-    slider.current.scrollBy({
-      top: 0,
-      left: -itemWidth,
+      left: width,
       behavior: 'smooth'
     })
   }
@@ -40,7 +42,7 @@ const ControlledSlider = ({ items, lang }) => {
         className="boards_slide_list"
         style={{ gridTemplateColumns: `repeat(${items.length}, minmax(${itemWidth}px, 1fr))` }}
       >
-        <div className={start ? 'boards_slide_nav prev hide' : 'boards_slide_nav prev'} onClick={scrollToPrevItem}>
+        <div className={start ? 'boards_slide_nav prev hide' : 'boards_slide_nav prev'} onClick={() => scrollTo(-itemWidth)}>
           <div className="slide_nav_btn">
             <i className="bx bx-left-arrow-alt" />
           </div>
@@ -50,7 +52,7 @@ const ControlledSlider = ({ items, lang }) => {
           <PopularBoardsItem key={item._id} data={item} lang={lang} />
         ))}
 
-        <div className={end ? 'boards_slide_nav next hide' : 'boards_slide_nav next'} onClick={scrollToNextItem}>
+        <div className={end ? 'boards_slide_nav next hide' : 'boards_slide_nav next'} onClick={() => scrollTo(itemWidth)}>
           <div className="slide_nav_btn">
             <i className="bx bx-right-arrow-alt" />
           </div>

@@ -70,6 +70,7 @@
 }
 .stats_item {
   width: 100% !important;
+  height: 112px !important;
   background-color: var(--secondary-bg-tint);
 }
 .stats_item .slide_item_text {

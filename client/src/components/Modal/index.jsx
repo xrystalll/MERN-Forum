@@ -412,6 +412,61 @@ const Modal = ({ open, close }) => {
       })
   }
 
+  const editPasswordCallback = () => {
+    if (loading) return
+
+    setErrors({})
+
+    if (!passwordValues.password.trim()) {
+      return setErrors({ password: Strings.enterPassword[lang] })
+    }
+    if (!passwordValues.newPassword.trim()) {
+      return setErrors({ newPassword: Strings.enterNewPassword[lang] })
+    }
+    if (passwordValues.newPassword.trim() !== passwordValues.confirmPassword) {
+      return setErrors({ confirmPassword: Strings.passwordsNotMatch[lang] })
+    }
+
+    setLoading(true)
+
+    editPassword()
+  }
+
+  const { onChange: editPasswordChange, onSubmit: editPasswordSubmit, values: passwordValues } = useForm(editPasswordCallback, {
+    password: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+
+  const editPassword = () => {
+    const { confirmPassword, ...body } = passwordValues
+
+    fetch(BACKEND + '/api/profile/password/edit', {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+      .then(response => response.json())
+      .then(data => {
+        setLoading(false)
+        if (!data.error) {
+          close()
+          setPostType({
+            type: 'thread',
+            id: null
+          })
+        } else throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => {
+        setLoading(false)
+        setErrors({ general: err.message })
+      })
+  }
+
+
   const threadContent = (
     <ModalBody title={Strings.newThread[lang]} onClick={close}>
       <form className="form_inner" onSubmit={onSubmit}>
@@ -759,6 +814,61 @@ const Modal = ({ open, close }) => {
     </ModalBody>
   )
 
+  const editPasswordContent = (
+    <ModalBody title={Strings.passwordChange[lang]} onClick={close}>
+      <form className="form_inner" onSubmit={editPasswordSubmit}>
+        <FormCardItem title={Strings.password[lang]} error={errors.password}>
+          <div className={errors.password ? 'form_block error' : 'form_block' }>
+            <Input
+              type="password"
+              name="password"
+              value={passwordValues.password}
+              maxLength="50"
+              onChange={editPasswordChange}
+            />
+          </div>
+        </FormCardItem>
+
+        <FormCardItem title={Strings.newPassword[lang]} error={errors.newPassword}>
+          <div className={errors.newPassword ? 'form_block error' : 'form_block' }>
+            <Input
+              type="password"
+              name="newPassword"
+              value={passwordValues.newPassword}
+              maxLength="50"
+              onChange={editPasswordChange}
+            />
+          </div>
+        </FormCardItem>
+
+        <FormCardItem title={Strings.confirmPassword[lang]} error={errors.confirmPassword}>
+          <div className={errors.confirmPassword ? 'form_block error' : 'form_block' }>
+            <Input
+              type="password"
+              name="confirmPassword"
+              value={passwordValues.confirmPassword}
+              maxLength="50"
+              onChange={editPasswordChange}
+            />
+          </div>
+        </FormCardItem>
+
+        {errors.general && (
+          <div className="card_item">
+            <span className="form_error">{errors.general}</span>
+          </div>
+        )}
+
+        <div className="card_item">
+          {loading
+            ? <Loader className="btn" />
+            : <InputButton text={Strings.save[lang]} />
+          }
+        </div>
+      </form>
+    </ModalBody>
+  )
+
   let modalContent
   if (postType.type === 'thread') {
     modalContent = threadContent
@@ -780,6 +890,9 @@ const Modal = ({ open, close }) => {
   }
   if (postType.type === 'fileEdit') {
     modalContent = editFileContent
+  }
+  if (postType.type === 'editPassword') {
+    modalContent = editPasswordContent
   }
 
   return (

@@ -1,6 +1,6 @@
 # MERN-Forum
 
-NodeJs forum app built using Mongoose, ExpressJs, React, Socket.IO, JWT
+Fully responsive NodeJs forum app built using Mongoose, ExpressJs, React, Socket.IO, JWT.
 
 ![Forum screenshot](/screenshot.png)
 
