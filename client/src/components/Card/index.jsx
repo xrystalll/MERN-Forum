@@ -965,3 +965,36 @@ export const DialoqueCard = ({ data }) => {
     </div>
   )
 }
+
+export const AuthHistoryCard = ({ data }) => {
+  return (
+    <CardBody>
+      <header className="card_head">
+        <div className="card_head_inner">
+          <div className="card_info">
+            <Link to={'/user/' + data.user.name} className="head_text bold">
+              {data.user.displayName}
+              <UserRole role={data.user.role} />
+              {data.user.ban && <UserStatus status="ban" />}
+            </Link>
+            <span className="bullet">•</span>
+            <span className="head_text">
+              <time>{dateFormat(data.loginAt)}</time>
+            </span>
+          </div>
+        </div>
+      </header>
+      <div className="card_content">
+        <p>
+          <span className="secondary_text">Ip address:</span>
+          {data.ip}
+        </p>
+        <p>
+          <span className="secondary_text">Browser:</span>
+          {data.ua}
+        </p>
+      </div>
+
+    </CardBody>
+  )
+}

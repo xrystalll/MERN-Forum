@@ -1,4 +1,4 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const fileSchema = new Schema({
@@ -9,22 +9,25 @@ const fileSchema = new Schema({
 })
 
 const messageSchema = new Schema({
-  dialogueId: Schema.Types.ObjectId,
+  dialogueId: Types.ObjectId,
   body: String,
   createdAt: String,
   from: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   to: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
     createdAt: String
   },
   file: [fileSchema],
-  read: Boolean
+  read: {
+    type: Boolean,
+    default: false
+  }
 })
 messageSchema.plugin(mongoosePaginate)
 messageSchema.index({ body: 'text' })

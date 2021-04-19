@@ -1,20 +1,20 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const commentSchema = new Schema({
-  fileId: Schema.Types.ObjectId,
-  commentedTo: Schema.Types.ObjectId,
+  fileId: Types.ObjectId,
+  commentedTo: Types.ObjectId,
   body: String,
   createdAt: String,
   author: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
     createdAt: String
   },
   likes: [{
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   }]
 })

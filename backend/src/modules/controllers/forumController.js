@@ -366,8 +366,10 @@ module.exports.editThread = async (req, res, next) => {
 
       const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
 
-      if (req.payload.id !== thread.author._id || req.payload.role < thread.author.role) {
-        return next(createError.Unauthorized('Action not allowed'))
+      if (req.payload.id !== thread.author._id) {
+        if (req.payload.role < thread.author.role) {
+          return next(createError.Unauthorized('Action not allowed'))
+        }
       }
 
       if (req.files.length && thread.attach && thread.attach.length) {

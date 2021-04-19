@@ -1,17 +1,17 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const dialogueSchema = new Schema({
   from: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   to: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   lastMessage: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'Message'
   },
   updatedAt: String

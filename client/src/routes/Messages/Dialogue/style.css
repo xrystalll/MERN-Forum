@@ -108,11 +108,11 @@
   transition: var(--transition-background);
   border-radius: var(--border-radius);
   border-bottom-left-radius: 0;
-  padding: .4rem .5rem;
+  padding: .4rem .5rem .2rem;
   width: max-content;
   max-width: 300px;
-  min-width: 140px;
-  margin: .8rem 0;
+  min-width: 100px;
+  margin: .3rem 0;
 }
 .message_item.my .message_body {
   background-color: var(--secondary-bg-muted);
@@ -129,11 +129,15 @@
 }
 
 .message_content {
+  font-size: .95rem;
   word-break: break-word;
+}
+.message_content p {
+  display: initial;
 }
 .message_body.markdown img {
   max-width: 100%;
-  margin: 0 0 .5rem;
+  margin: 0 0 .3rem;
   float: initial;
 }
 
@@ -141,8 +145,11 @@
   display: flex;
   align-items: center;
   color: var(--actions-color);
-  font-size: .7rem;
+  font-size: .65rem;
   margin-left: auto;
+  float: right;
+  margin-top: .6rem;
+  margin-left: .85rem;
 }
 .message_info i {
   color: var(--accent-color);
@@ -165,7 +172,7 @@
   grid-template-columns: repeat(1, 1fr);
   border-radius: var(--border-radius-inner);
   overflow: hidden;
-  margin-bottom: .5rem;
+  margin-bottom: .3rem;
 }
 .msg_file_grid.group {
   grid-template-columns: repeat(2, 1fr);

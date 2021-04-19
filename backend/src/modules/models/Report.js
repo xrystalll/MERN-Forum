@@ -1,17 +1,20 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const reportSchema = new Schema({
   from: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
-  threadId: Schema.Types.ObjectId,
-  postId: Schema.Types.ObjectId,
+  threadId: Types.ObjectId,
+  postId: Types.ObjectId,
   title: String,
   body: String,
   createdAt: String,
-  read: Boolean
+  read: {
+    type: Boolean,
+    default: false
+  }
 })
 reportSchema.plugin(mongoosePaginate)
 

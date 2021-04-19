@@ -313,8 +313,10 @@ module.exports.editFile = async (req, res, next) => {
 
     const file = await File.findById(fileId).populate({ path: 'author', select: 'role' })
 
-    if (req.payload.id !== file.author._id || req.payload.role < file.author.role) {
-      return next(createError.Unauthorized('Action not allowed'))
+    if (req.payload.id !== file.author._id) {
+      if (req.payload.role < file.author.role) {
+        return next(createError.Unauthorized('Action not allowed'))
+      }
     }
 
     await File.updateOne({ _id: Types.ObjectId(fileId) }, {

@@ -1,21 +1,24 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const notificationSchema = new Schema({
   type: String,
   to: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   from: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
-  pageId: Schema.Types.ObjectId,
+  pageId: Types.ObjectId,
   title: String,
   body: String,
   createdAt: String,
-  read: Boolean
+  read: {
+    type: Boolean,
+    default: false
+  }
 })
 notificationSchema.plugin(mongoosePaginate)
 

@@ -1,4 +1,4 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const attachSchema = new Schema({
@@ -9,20 +9,20 @@ const attachSchema = new Schema({
 })
 
 const answerSchema = new Schema({
-  boardId: Schema.Types.ObjectId,
-  threadId: Schema.Types.ObjectId,
-  answeredTo: Schema.Types.ObjectId,
+  boardId: Types.ObjectId,
+  threadId: Types.ObjectId,
+  answeredTo: Types.ObjectId,
   body: String,
   createdAt: String,
   author: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
     createdAt: String
   },
   likes: [{
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   }],
   attach: [attachSchema]

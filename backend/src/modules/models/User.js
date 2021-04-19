@@ -1,4 +1,4 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const bcrypt = require('bcrypt');
 
@@ -24,10 +24,16 @@ const userSchema = new Schema({
   createdAt: String,
   onlineAt: String,
   picture: String,
-  karma: Number,
-  role: Number,
+  karma: {
+    type: Number,
+    default: 0
+  },
+  role: {
+    type: Number,
+    default: 1
+  },
   ban: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'Ban'
   },
   ip: String,

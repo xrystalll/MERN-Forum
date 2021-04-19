@@ -1,13 +1,19 @@
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useContext, useEffect, useRef } from 'react';
 import Lightbox from 'react-image-lightbox';
 
+import { StoreContext } from 'store/Store';
+
+import { Strings } from 'support/Constants';
+
 export const ImageLightbox = ({ image, onCloseRequest }) => {
+  const { lang } = useContext(StoreContext)
+
   return (
     <Lightbox
       mainSrc={image}
       onCloseRequest={() => onCloseRequest(false)}
       toolbarButtons={[
-        <div className="ril__builtinTitle">Find in: </div>,
+        <div className="ril__builtinTitle">{Strings.searchIn[lang]}: </div>,
         <a
           href={'https://yandex.com/images/search?rpt=imageview&url=' + image}
           className="ril__builtinButton"
@@ -32,6 +38,7 @@ export const ImageLightbox = ({ image, onCloseRequest }) => {
 }
 
 const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
+  const { lang } = useContext(StoreContext)
   const lightboxContent = useRef()
 
   useEffect(() => {
@@ -87,7 +94,7 @@ const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
                 {thumb && (
                   <Fragment>
                     <li className="ril-toolbar__item ril__toolbarItem">
-                      <div className="ril__builtinTitle">Find in: </div>
+                      <div className="ril__builtinTitle">{Strings.searchIn[lang]}: </div>
                     </li>
                     <li className="ril-toolbar__item ril__toolbarItem">
                       <a

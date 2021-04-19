@@ -1061,6 +1061,26 @@ const Strings = {
     en: 'Enter new password',
     jp: '新しいパスワードを入力してください'
   },
+  'searchIn': {
+    ru: 'Искать в',
+    en: 'Search in',
+    jp: 'で検索'
+  },
+  'authorizationsHistory': {
+    ru: 'История авторизаций',
+    en: 'Authorizations history',
+    jp: '承認履歴'
+  },
+  'userHasNotLoggedInYet': {
+    ru: 'Пользователь еще не входил в систему',
+    en: 'User has not logged in yet',
+    jp: 'ユーザーはまだログインしていません'
+  },
+  'unableToDisplayAuthorizationsHistory': {
+    ru: 'Невозможно отобразить историю авторизаций',
+    en: 'Unable to display authorizations history',
+    jp: '承認履歴を表示できません'
+  },
 }
 
 const imageTypes = ['image/jpeg', 'image/png', 'image/gif']

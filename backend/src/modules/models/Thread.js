@@ -1,4 +1,4 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const attachSchema = new Schema({
@@ -9,21 +9,21 @@ const attachSchema = new Schema({
 })
 
 const threadSchema = new Schema({
-  boardId: Schema.Types.ObjectId,
+  boardId: Types.ObjectId,
   pined: Boolean,
   closed: Boolean,
   title: String,
   body: String,
   createdAt: String,
   author: {
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
     createdAt: String
   },
   likes: [{
-    type: Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   }],
   attach: [attachSchema],

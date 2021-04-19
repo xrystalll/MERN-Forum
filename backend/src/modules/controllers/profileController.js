@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+
 const storage = require('../utils/storage');
 
 const checkFileType = (file, callback) => {

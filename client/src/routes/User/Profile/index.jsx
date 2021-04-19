@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -18,6 +18,7 @@ import Stats from './Stats';
 import Threads from './Threads';
 import Answers from './Answers';
 import Bans from './Bans';
+import AuthHistory from './AuthHistory';
 
 const Profile = ({ userName }) => {
   const { user, token, lang, setModalOpen, setPostType } = useContext(StoreContext)
@@ -155,6 +156,9 @@ const Profile = ({ userName }) => {
             <Route path={url + '/bans'}>
               <Bans userData={userData} />
             </Route>
+            <Route path={url + '/auth/history'}>
+              <AuthHistory userData={userData} />
+            </Route>
             <Route path={url} exact>
               <Breadcrumbs current={userData.displayName} links={[
                 { title: Strings.home[lang], link: '/' },
@@ -212,10 +216,21 @@ const Profile = ({ userName }) => {
                         </Fragment>
                       )}
                       {user.role > userData.role && (
-                        <div onClick={() => onBan(userData._id)} className="dropdown_item">
-                          {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
-                        </div>
+                        <Fragment>
+                          <div onClick={() => onBan(userData._id)} className="dropdown_item">
+                            {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
+                          </div>
+                          <Link to={'/user/' + userData.name + '/auth/history'} className="dropdown_item">
+                            {Strings.authorizationsHistory[lang]}
+                          </Link>
+                        </Fragment>
                       )}
+                    </Dropdown>
+                  ) : user.role >= 2 ? (
+                    <Dropdown>
+                      <Link to={'/user/' + user.name + '/auth/history'} className="dropdown_item">
+                        {Strings.authorizationsHistory[lang]}
+                      </Link>
                     </Dropdown>
                   ) : null}
                 </div>

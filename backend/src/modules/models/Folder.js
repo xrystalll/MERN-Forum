@@ -2,7 +2,11 @@ const { model, Schema } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const pathSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    lowercase: true,
+    required: true
+  },
   title: String,
   body: String,
   position: Number,

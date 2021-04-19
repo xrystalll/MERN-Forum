@@ -3,6 +3,8 @@ const createError = require('http-errors');
 const { isJapanese, toRomaji } = require('wanakana');
 
 const User = require('../models/User');
+const AuthHistory = require('../models/AuthHistory');
+
 const { registerSchema, loginSchema } = require('../utils/validationSchema');
 const { signAccessToken } = require('../utils/jwt');
 const toLatin = require('../utils/transliterate');
@@ -38,13 +40,15 @@ const register = async (req, res, next) => {
 
     let displayName = result.username.replace(/\s/g, '')
 
+    const now = new Date().toISOString()
+
     const user = new User({
       name,
       displayName,
       email: result.email,
       password: result.password,
-      createdAt: new Date().toISOString(),
-      onlineAt: new Date().toISOString(),
+      createdAt: now,
+      onlineAt: now,
       karma: 0,
       role: 1,
       ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
@@ -52,6 +56,14 @@ const register = async (req, res, next) => {
     })
     const savedUser = await user.save()
     const accessToken = await signAccessToken(savedUser)
+
+    const authHistory = new AuthHistory({
+      user: savedUser._id,
+      loginAt: now,
+      ip: savedUser.ip,
+      ua: savedUser.ua
+    })
+    await authHistory.save()
 
     res.json({
       user: {
@@ -92,8 +104,10 @@ const login = async (req, res, next) => {
     const isMatch = await user.isValidPassword(result.password)
     if (!isMatch) throw createError.Unauthorized('Username or password not valid')
 
+    const now = new Date().toISOString()
+
     if (user.ban) {
-      if (user.ban.expiresAt < new Date().toISOString()) {
+      if (user.ban.expiresAt < now) {
         await User.updateOne({ _id: Types.ObjectId(user._id) }, { ban: null })
       } else {
         return res.json({
@@ -106,10 +120,18 @@ const login = async (req, res, next) => {
 
     const accessToken = await signAccessToken(user)
 
-    await User.updateOne({ _id: user._id }, {
-      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-      ua: req.headers['user-agent']
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    const ua = req.headers['user-agent']
+
+    await User.updateOne({ _id: user._id }, { ip, ua })
+
+    const authHistory = new AuthHistory({
+      user: user._id,
+      loginAt: now,
+      ip,
+      ua
     })
+    await authHistory.save()
 
     res.json({
       user: {

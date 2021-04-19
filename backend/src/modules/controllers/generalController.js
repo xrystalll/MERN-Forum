@@ -12,6 +12,7 @@ const File = require('../models/File');
 const Comment = require('../models/Comment');
 const Dialogue = require('../models/Dialogue');
 const Message = require('../models/Message');
+const AuthHistory = require('../models/AuthHistory');
 
 const deleteFiles = require('../utils/deleteFiles');
 
@@ -317,6 +318,30 @@ module.exports.getUserAnswers = async (req, res, next) => {
     const answers = await Answer.paginate({ author: userId }, { sort: { createdAt: -1 }, page, limit, populate })
 
     res.json(answers)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.getAuthHistory = async (req, res, next) => {
+  try {
+    const { userId, limit = 10, page = 1 } = req.query
+    const moder = req.payload.role >= 2
+
+    if (!userId) return next(createError.BadRequest('userId must not be empty'))
+    if (req.payload.id !== userId ) {
+      if (!moder) {
+        return next(createError.Unauthorized('Action not allowed'))
+      }
+    }
+
+    const populate = {
+      path: 'user',
+      select: '_id name displayName onlineAt picture role ban ip ua'
+    }
+    const authHistory = await AuthHistory.paginate({ user: userId }, { sort: { loginAt: -1 }, page, limit, populate })
+
+    res.json(authHistory)
   } catch(err) {
     next(createError.InternalServerError(err))
   }

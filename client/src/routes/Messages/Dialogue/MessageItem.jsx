@@ -77,11 +77,12 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
           ) : null}
 
           <Markdown source={data.body} onImageClick={imageView} />
+
+          <span className="message_info">
+            {dateFormat(data.createdAt, 'short')}
+            {my && data.read && <i className="bx bx-check-double" />}
+          </span>
         </div>
-        <span className="message_info">
-          {dateFormat(data.createdAt, 'short')}
-          {my && data.read && <i className="bx bx-check-double" />}
-        </span>
         {my && (
           <div className="message_actions">
             <div className="message_action_item" onClick={deleteMessage}>
