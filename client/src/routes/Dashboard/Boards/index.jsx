@@ -9,8 +9,7 @@ import { BACKEND, Strings } from 'support/Constants';
 
 import Breadcrumbs from 'components/Breadcrumbs';
 import { Button } from 'components/Button';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
+import DataView from 'components/DataView';
 
 import { BoardItem, NewBoardItem } from './BoardItem';
 import './style.css';
@@ -115,31 +114,24 @@ const Boards = () => {
         />
       )}
 
-      {!noData ? (
-        !loading ? (
-          items.length ? (
-            <Fragment>
-              <div className="items_list">
-                {items.map(item => (
-                  <BoardItem
-                    key={item._id}
-                    lang={lang}
-                    data={item}
-                    editBoard={editBoard}
-                    deleteBoard={deleteBoard}
-                    fetchErrors={fetchErrors}
-                    setFetchErros={setFetchErros}
-                  />
-                ))}
-              </div>
-
-              {moreLoading && <Loader className="more_loader" color="#64707d" />}
-            </Fragment>
-          ) : <Errorer message={Strings.noBoardsYet[lang]} />
-        ) : <Loader color="#64707d" />
-      ) : (
-        <Errorer message={Strings.unableToDisplayBoards[lang]} />
-      )}
+      <DataView
+        data={items}
+        noData={noData}
+        loading={loading}
+        moreLoading={moreLoading}
+        card={(props) => (
+          <BoardItem
+            {...props}
+            lang={lang}
+            editBoard={editBoard}
+            deleteBoard={deleteBoard}
+            fetchErrors={fetchErrors}
+            setFetchErros={setFetchErros}
+          />
+        )}
+        noDataMessage={Strings.noBoardsYet[lang]}
+        errorMessage={Strings.unableToDisplayBoards[lang]}
+      />
     </Fragment>
   )
 }

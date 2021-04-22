@@ -1,31 +1,24 @@
-import { Fragment } from 'react';
-
 import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { Strings } from 'support/Constants';
 
+import DataView from 'components/DataView';
 import { BoardCard } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
 const NewestThread = ({ lang }) => {
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'boards', sort: 'newestThread' })
 
-  return !noData ? (
-    !loading ? (
-      items.length ? (
-        <Fragment>
-          <div className="items_list">
-            {items.map(item => (
-              <BoardCard key={item._id} data={item} />
-            ))}
-          </div>
-
-          {moreLoading && <Loader className="more_loader" color="#64707d" />}
-        </Fragment>
-      ) : <Errorer message={Strings.noBoardsYet[lang]} />
-    ) : <Loader color="#64707d" />
-  ) : <Errorer message={Strings.unableToDisplayBoards[lang]} />
+  return (
+    <DataView
+      data={items}
+      noData={noData}
+      loading={loading}
+      moreLoading={moreLoading}
+      card={BoardCard}
+      noDataMessage={Strings.noBoardsYet[lang]}
+      errorMessage={Strings.unableToDisplayBoards[lang]}
+    />
+  )
 }
 
 export default NewestThread;

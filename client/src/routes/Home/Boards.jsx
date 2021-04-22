@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
-import { ControlledSlider } from 'components/Slider';
+import { ControlledSlider, PopularBoardsItem } from 'components/Slider';
 
 const Boards = ({ lang }) => {
   const [init, setInit] = useState(true)
@@ -36,7 +36,10 @@ const Boards = ({ lang }) => {
           link={{ title: Strings.all[lang], url: '/boards' }}
         />
 
-        <ControlledSlider items={boards} lang={lang} />
+        <ControlledSlider
+          items={boards}
+          card={(props) => <PopularBoardsItem {...props} lang={lang} />}
+        />
       </Section>
     ) : null
   )

@@ -9,8 +9,7 @@ import { BACKEND, Strings } from 'support/Constants';
 
 import Breadcrumbs from 'components/Breadcrumbs';
 import { Button } from 'components/Button';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
+import DataView from 'components/DataView';
 
 import { FolderItem, NewFolderItem } from './FolderItem';
 
@@ -114,31 +113,24 @@ const Folders = () => {
         />
       )}
 
-      {!noData ? (
-        !loading ? (
-          items.length ? (
-            <Fragment>
-              <div className="items_list">
-                {items.map(item => (
-                  <FolderItem
-                    key={item._id}
-                    lang={lang}
-                    data={item}
-                    editFolder={editFolder}
-                    deleteFolder={deleteFolder}
-                    fetchErrors={fetchErrors}
-                    setFetchErros={setFetchErros}
-                  />
-                ))}
-              </div>
-
-              {moreLoading && <Loader className="more_loader" color="#64707d" />}
-            </Fragment>
-          ) : <Errorer message={Strings.noFoldersYet[lang]} />
-        ) : <Loader color="#64707d" />
-      ) : (
-        <Errorer message={Strings.unableToDisplayFolders[lang]} />
-      )}
+      <DataView
+        data={items}
+        noData={noData}
+        loading={loading}
+        moreLoading={moreLoading}
+        card={(props) => (
+          <FolderItem
+            {...props}
+            lang={lang}
+            editFolder={editFolder}
+            deleteFolder={deleteFolder}
+            fetchErrors={fetchErrors}
+            setFetchErros={setFetchErros}
+          />
+        )}
+        noDataMessage={Strings.noFoldersYet[lang]}
+        errorMessage={Strings.unableToDisplayFolders[lang]}
+      />
     </Fragment>
   )
 }

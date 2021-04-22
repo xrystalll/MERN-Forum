@@ -1072,7 +1072,7 @@ const Strings = {
     jp: '承認履歴'
   },
   'userHasNotLoggedInYet': {
-    ru: 'Пользователь еще не входил в систему',
+    ru: 'Пользователь еще не авторизовывался',
     en: 'User has not logged in yet',
     jp: 'ユーザーはまだログインしていません'
   },

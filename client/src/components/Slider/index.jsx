@@ -6,7 +6,7 @@ import { counter, declOfNum } from 'support/Utils';
 
 import './style.css';
 
-const ControlledSlider = ({ items, lang }) => {
+const ControlledSlider = ({ items, card: Card }) => {
   const slider = useRef()
   const [start, setStart] = useState(true)
   const [end, setEnd] = useState(false)
@@ -49,7 +49,7 @@ const ControlledSlider = ({ items, lang }) => {
         </div>
 
         {items.map(item => (
-          <PopularBoardsItem key={item._id} data={item} lang={lang} />
+          <Card key={item._id} data={item} />
         ))}
 
         <div className={end ? 'boards_slide_nav next hide' : 'boards_slide_nav next'} onClick={() => scrollTo(itemWidth)}>
@@ -75,25 +75,17 @@ const PopularBoardsItem = ({ data, lang }) => {
   )
 }
 
-const SlidesContainer = ({ children }) => {
+const SlideItem = ({ data }) => {
   return (
-    <div className="boards_slide">
-      <ul className="boards_slide_list slides_list">
-        {children}
-      </ul>
-    </div>
-  )
-}
-const SlideItem = ({ title, count }) => {
-  return (
-    <li className="boards_slide_item stats_item">
+    <li className="stats_item">
       <div className="slide_item_text">
-        <span className="slide_title">{title}</span>
+        <span className="slide_title">{data.title}</span>
         <span className="slide_content">
-          {counter(count)}
+          {counter(data.count)}
         </span>
       </div>
     </li>
   )
 }
-export { ControlledSlider, SlidesContainer, SlideItem };
+
+export { ControlledSlider, PopularBoardsItem, SlideItem };

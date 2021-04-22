@@ -48,6 +48,10 @@ const BoardItem = ({ lang, data, editBoard, deleteBoard, fetchErrors, setFetchEr
   })
 
   const deleteClick = () => {
+    const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+    if (!conf) return
+
     setEdit(false) 
 
     deleteBoard(data._id)

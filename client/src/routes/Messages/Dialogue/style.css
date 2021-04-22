@@ -109,10 +109,10 @@
   border-radius: var(--border-radius);
   border-bottom-left-radius: 0;
   padding: .4rem .5rem .2rem;
+  margin: .45rem 0;
   width: max-content;
   max-width: 300px;
   min-width: 100px;
-  margin: .3rem 0;
 }
 .message_item.my .message_body {
   background-color: var(--secondary-bg-muted);

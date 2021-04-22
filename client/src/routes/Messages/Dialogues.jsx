@@ -8,9 +8,8 @@ import { Strings } from 'support/Constants';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import Breadcrumbs from 'components/Breadcrumbs';
+import DataView from 'components/DataView';
 import { DialoqueCard } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
 const Dialogues = () => {
   const { user, token, lang } = useContext(StoreContext)
@@ -48,23 +47,15 @@ const Dialogues = () => {
         { title: Strings.home[lang], link: '/' }
       ]} />
 
-      {!noData ? (
-        !loading ? (
-          items.length ? (
-            <Fragment>
-              <div className="items_list">
-                {items.map(item => (
-                  <DialoqueCard key={item._id} data={item} />
-                ))}
-              </div>
-
-              {moreLoading && <Loader className="more_loader" color="#64707d" />}
-            </Fragment>
-          ) : <Errorer message={Strings.noMessagesYet[lang]} />
-        ) : <Loader color="#64707d" />
-      ) : (
-        <Errorer message={Strings.unableToDisplayMessages[lang]} />
-      )}
+      <DataView
+        data={items}
+        noData={noData}
+        loading={loading}
+        moreLoading={moreLoading}
+        card={DialoqueCard}
+        noDataMessage={Strings.noMessagesYet[lang]}
+        errorMessage={Strings.unableToDisplayMessages[lang]}
+      />
     </Fragment>
   )
 }

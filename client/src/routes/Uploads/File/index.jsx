@@ -102,6 +102,10 @@ const File = ({ history, match }) => {
   }, [history])
 
   const deleteFile = () => {
+    const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+    if (!conf) return
+
     fetch(BACKEND + '/api/file/delete', {
       method: 'DELETE',
       headers: {

@@ -48,6 +48,10 @@ const FolderItem = ({ lang, data, editFolder, deleteFolder, fetchErrors, setFetc
   })
 
   const deleteClick = () => {
+    const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+    if (!conf) return
+
     setEdit(false) 
 
     deleteFolder(data._id)

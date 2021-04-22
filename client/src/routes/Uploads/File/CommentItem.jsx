@@ -77,6 +77,10 @@ const CommentItem = ({ data, setCommentedTo }) => {
   }
 
   const onDelete = () => {
+    const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+    if (!conf) return
+
     deleteComment()
   }
 

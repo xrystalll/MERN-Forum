@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -7,9 +7,8 @@ import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { BACKEND, Strings } from 'support/Constants';
 
+import DataView from 'components/DataView';
 import { BannedCard } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
 const Newest = () => {
   const { token, lang } = useContext(StoreContext)
@@ -37,21 +36,17 @@ const Newest = () => {
       .catch(err => toast.error(err.message))
   }
 
-  return !noData ? (
-    !loading ? (
-      items.length ? (
-        <Fragment>
-          <div className="items_list">
-            {items.map(item => (
-              <BannedCard key={item._id} data={item} unBan={unBan} />
-            ))}
-          </div>
-
-          {moreLoading && <Loader className="more_loader" color="#64707d" />}
-        </Fragment>
-      ) : <Errorer message={Strings.noBansYet[lang]} />
-    ) : <Loader color="#64707d" />
-  ) : <Errorer message={Strings.unableToDisplayBans[lang]} />
+  return (
+    <DataView
+      data={items}
+      noData={noData}
+      loading={loading}
+      moreLoading={moreLoading}
+      card={(props) => <BannedCard {...props} unBan={unBan} />}
+      noDataMessage={Strings.noBansYet[lang]}
+      errorMessage={Strings.unableToDisplayBans[lang]}
+    />
+  )
 }
 
 export default Newest;

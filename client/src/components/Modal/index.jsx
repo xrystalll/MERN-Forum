@@ -87,7 +87,7 @@ const Modal = ({ open, close }) => {
   }
 
   const { onChange, onSubmit, values } = useForm(formCallback, {
-    boardId: postType.id,
+    boardId: postType.id || undefined,
     title: postType?.someData?.title || '',
     body: postType?.someData?.body || ''
   })

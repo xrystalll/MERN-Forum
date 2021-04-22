@@ -1,12 +1,11 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { Strings } from 'support/Constants';
 
+import DataView from 'components/DataView';
 import { Card } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
 const Threads = ({ lang, query, type }) => {
   const { loading, moreLoading, noData, items, refetch } = useMoreFetch({ method: 'search', params: { query, type } })
@@ -21,21 +20,17 @@ const Threads = ({ lang, query, type }) => {
     // eslint-disable-next-line
   }, [query])
 
-  return !noData ? (
-    !loading ? (
-      items.length ? (
-        <Fragment>
-          <div className="items_list">
-            {items.map(item => (
-              <Card key={item._id} data={item} />
-            ))}
-          </div>
-
-          {moreLoading && <Loader className="more_loader" color="#64707d" />}
-        </Fragment>
-      ) : <Errorer message={Strings.noResults[lang]} />
-    ) : <Loader color="#64707d" />
-  ) : <Errorer message={Strings.unableToDisplaySearchResults[lang]} />
+  return (
+    <DataView
+      data={items}
+      noData={noData}
+      loading={loading}
+      moreLoading={moreLoading}
+      card={Card}
+      noDataMessage={Strings.noResults[lang]}
+      errorMessage={Strings.unableToDisplaySearchResults[lang]}
+    />
+  )
 }
 
 export default Threads;

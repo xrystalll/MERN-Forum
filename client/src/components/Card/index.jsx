@@ -203,6 +203,10 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   }
 
   const onDelete = () => {
+    const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+    if (!conf) return
+
     if (type === 'answer') {
       deleteAnswer()
     } else {

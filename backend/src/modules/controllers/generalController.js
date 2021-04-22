@@ -40,6 +40,10 @@ module.exports.getStats = async (req, res, next) => {
       _id: 5,
       title: 'Bans',
       count: bans.length
+    }, {
+      _id: 6,
+      title: 'Files',
+      count: await File.countDocuments()
     }])
   } catch(err) {
     next(createError.InternalServerError(err))

@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -8,9 +8,8 @@ import { Strings } from 'support/Constants';
 
 import { Section } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
+import DataView from 'components/DataView';
 import { UserCard } from 'components/Card';
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
 
 const Admins = () => {
   const { setPostType, setFabVisible, lang } = useContext(StoreContext)
@@ -37,24 +36,15 @@ const Admins = () => {
         { title: Strings.home[lang], link: '/' }
       ]} />
 
-      {!noData ? (
-        !loading ? (
-          items.length ? (
-            <Fragment>
-              <div className="items_list">
-                {items.map(item => (
-                  <UserCard key={item._id} data={item} />
-                ))}
-              </div>
-
-              {moreLoading && <Loader className="more_loader" color="#64707d" />}
-            </Fragment>
-          ) : <Errorer message={Strings.noAdminsYet[lang]} />
-        ) : <Loader color="#64707d" />
-      ) : (
-        <Errorer message={Strings.unableToDisplayUsers[lang]} />
-      )}
-
+      <DataView
+        data={items}
+        noData={noData}
+        loading={loading}
+        moreLoading={moreLoading}
+        card={UserCard}
+        noDataMessage={Strings.noAdminsYet[lang]}
+        errorMessage={Strings.unableToDisplayUsers[lang]}
+      />
     </Section>
   )
 }

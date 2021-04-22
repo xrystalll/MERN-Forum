@@ -1,4 +1,4 @@
-const Loader = ({ className, size = '24', color = '#fff' }) => {
+const Loader = ({ className, size = 24, color = '#fff' }) => {
   return (
     <div className={className ? 'content_loader ' + className : 'content_loader'}>
       <svg 

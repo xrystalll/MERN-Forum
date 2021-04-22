@@ -8,7 +8,7 @@ import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
-import { SlidesContainer, SlideItem } from 'components/Slider';
+import { ControlledSlider, SlideItem } from 'components/Slider';
 
 import Boards from './Boards';
 import Admins from './Admins';
@@ -63,11 +63,10 @@ const Dashboard = () => {
           <SectionHeader title={Strings.adminDashboard[lang]} />
 
           {stats.length ? (
-            <SlidesContainer>
-              {stats.map(item => (
-                <SlideItem key={item._id} title={item.title} count={item.count} />
-              ))}
-            </SlidesContainer>
+            <ControlledSlider
+              items={stats}
+              card={SlideItem}
+            />
           ) : null}
 
           <div className="admin__nav">

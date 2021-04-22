@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -7,8 +7,7 @@ import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { BACKEND, Strings } from 'support/Constants';
 
-import Loader from 'components/Loader';
-import Errorer from 'components/Errorer';
+import DataView from 'components/DataView';
 
 import FileItem from './FileItem';
 
@@ -22,6 +21,12 @@ const NotModerated = () => {
 
   const moderate = (type, fileId) => {
     const action = type === 'delete' ? 'delete' : 'moderate'
+
+    if (type === 'delete') {
+      const conf = window.confirm(`${Strings.delete[lang]}?`)
+
+      if (!conf) return
+    }
 
     fetch(BACKEND + '/api/file/' + action, {
       method: type === 'delete' ? 'DELETE' : 'PUT',
@@ -41,26 +46,17 @@ const NotModerated = () => {
       .catch(err => toast.error(err.message))
   }
 
-  return !noData ? (
-    !loading ? (
-      items.length ? (
-        <Fragment>
-          <div className="items_list">
-            {items.map(item => (
-              <FileItem
-                key={item._id}
-                data={item}
-                moderate={moderate}
-                lang={lang}
-              />
-            ))}
-          </div>
-
-          {moreLoading && <Loader className="more_loader" color="#64707d" />}
-        </Fragment>
-      ) : <Errorer message={Strings.noFilesYet[lang]} />
-    ) : <Loader color="#64707d" />
-  ) : <Errorer message={Strings.unableToDisplayFiles[lang]} />
+  return (
+    <DataView
+      data={items}
+      noData={noData}
+      loading={loading}
+      moreLoading={moreLoading}
+      card={(props) => <FileItem {...props} moderate={moderate} lang={lang} />}
+      noDataMessage={Strings.noFilesYet[lang]}
+      errorMessage={Strings.unableToDisplayFiles[lang]}
+    />
+  )
 }
 
 export default NotModerated;
