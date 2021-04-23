@@ -668,6 +668,10 @@ export const BannedCard = ({ data, unBan }) => {
 export const BannedAll = ({ data }) => {
   const { lang } = useContext(StoreContext)
 
+  if (data.user === null) {
+    data.user = deletedUser
+  }
+
   if (data.admin === null) {
     data.admin = deletedUser
   }
@@ -728,7 +732,7 @@ export const BanInfoCard = ({ data, owner }) => {
     <CardBody>
       <div className="card_head">
         <div className="card_head_inner">
-          <div className="card_title full">{owner ? Strings.youAreBanned[lang] : Strings.userBanned[lang]}</div>
+          {!owner && <div className="card_title full">{Strings.userBanned[lang]}</div>}
           <div className="card_info">
             <div className="head_text bold">
               Admin:&nbsp;
@@ -971,6 +975,10 @@ export const DialoqueCard = ({ data }) => {
 }
 
 export const AuthHistoryCard = ({ data }) => {
+  if (data.user === null) {
+    data.user = deletedUser
+  }
+
   return (
     <CardBody>
       <header className="card_head">
@@ -978,8 +986,6 @@ export const AuthHistoryCard = ({ data }) => {
           <div className="card_info">
             <Link to={'/user/' + data.user.name} className="head_text bold">
               {data.user.displayName}
-              <UserRole role={data.user.role} />
-              {data.user.ban && <UserStatus status="ban" />}
             </Link>
             <span className="bullet">•</span>
             <span className="head_text">

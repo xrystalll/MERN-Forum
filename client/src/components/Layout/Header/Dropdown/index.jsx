@@ -79,10 +79,12 @@ const DropdownMenu = ({ lang, setLang, user, logout, setDropdownOpen }) => {
       localStorage.setItem('theme', 'dark')
       document.body.classList.remove('light')
       document.querySelector('meta[name="theme-color"]').setAttribute('content', '#161616')
+      document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'dark light')
     } else {
       localStorage.setItem('theme', 'light')
       document.body.classList.add('light')
       document.querySelector('meta[name="theme-color"]').setAttribute('content', '#eef0f1')
+      document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light dark')
     }
   }
 
