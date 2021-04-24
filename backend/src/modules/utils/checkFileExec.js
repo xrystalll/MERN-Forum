@@ -1,4 +1,4 @@
-module.exports = (file, callback) => {
+module.exports.checkFileExec = (file, callback) => {
   if (
     file.mimetype === 'text/javascript' ||
     file.mimetype === 'text/html' ||
@@ -11,3 +11,5 @@ module.exports = (file, callback) => {
   }
   else callback(null, true)
 }
+
+module.exports.videoTypes = ['video/mp4', 'video/webm', 'video/avi', 'video/msvideo', 'video/x-msvideo', 'video/mpeg', 'video/3gpp', 'video/quicktime']

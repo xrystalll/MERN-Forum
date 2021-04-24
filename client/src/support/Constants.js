@@ -1083,7 +1083,7 @@ const Strings = {
   },
 }
 
-const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
-const videoTypes = ['video/mp4', 'video/webm']
+const imageTypes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon']
+const videoTypes = ['video/mp4', 'video/webm', 'video/avi', 'video/msvideo', 'video/x-msvideo', 'video/mpeg', 'video/3gpp', 'video/quicktime']
 
 export { BACKEND, Strings, imageTypes, videoTypes };

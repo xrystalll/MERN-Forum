@@ -10,7 +10,7 @@ const Answer = require('../models/Answer');
 const Notification = require('../models/Notification');
 
 const deleteFiles = require('../utils//deleteFiles');
-const checkFileExec = require('../utils/checkFileExec');
+const { checkFileExec, videoTypes } = require('../utils/checkFileExec');
 const storage = require('../utils/storage');
 const createThumb = require('../utils/createThumbnail');
 
@@ -228,7 +228,7 @@ module.exports.createThread = async (req, res, next) => {
       if (req.files.length) {
         files = []
         await Promise.all(req.files.map(async (item) => {
-          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+          if (videoTypes.find(i => i === item.mimetype)) {
             const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
 
             const thumbnail = await createThumb(item.path, 'forum', thumbFilename)
@@ -397,7 +397,7 @@ module.exports.editThread = async (req, res, next) => {
       if (req.files.length) {
         files = []
         await Promise.all(req.files.map(async (item) => {
-          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+          if (videoTypes.find(i => i === item.mimetype)) {
             const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
 
             await createThumb(item.path, 'forum', thumbFilename)
@@ -493,7 +493,7 @@ module.exports.adminEditThread = async (req, res, next) => {
       if (req.files.length) {
         files = []
         await Promise.all(req.files.map(async (item) => {
-          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+          if (videoTypes.find(i => i === item.mimetype)) {
             const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
 
             await createThumb(item.path, 'forum', thumbFilename)
@@ -619,7 +619,7 @@ module.exports.createAnswer = async (req, res, next) => {
       if (req.files.length) {
         files = []
         await Promise.all(req.files.map(async (item) => {
-          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+          if (videoTypes.find(i => i === item.mimetype)) {
             const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
 
             await createThumb(item.path, 'forum', thumbFilename)
@@ -800,7 +800,7 @@ module.exports.editAnswer = async (req, res, next) => {
       if (req.files.length) {
         files = []
         await Promise.all(req.files.map(async (item) => {
-          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+          if (videoTypes.find(i => i === item.mimetype)) {
             const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
 
             await createThumb(item.path, 'forum', thumbFilename)

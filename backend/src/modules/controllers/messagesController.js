@@ -8,7 +8,7 @@ const Dialogue = require('../models/Dialogue');
 const Message = require('../models/Message');
 
 const deleteFiles = require('../utils//deleteFiles');
-const checkFileExec = require('../utils/checkFileExec');
+const { checkFileExec, videoTypes } = require('../utils/checkFileExec');
 const storage = require('../utils/storage');
 const createThumb = require('../utils/createThumbnail');
 
@@ -114,7 +114,7 @@ module.exports.createMessage = async (req, res, next) => {
       if (req.files.length) {
         files = []
         await Promise.all(req.files.map(async (item) => {
-          if (item.mimetype === 'video/mp4' || item.mimetype === 'video/webm') {
+          if (videoTypes.find(i => i === item.mimetype)) {
             const thumbFilename = item.filename.replace(path.extname(item.filename), '.jpg')
 
             await createThumb(item.path, 'message', thumbFilename)

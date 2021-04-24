@@ -10,7 +10,7 @@ const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
 
 const deleteFiles = require('../utils//deleteFiles');
-const checkFileExec = require('../utils/checkFileExec');
+const { checkFileExec, videoTypes } = require('../utils/checkFileExec');
 const storage = require('../utils/storage');
 const createThumb = require('../utils/createThumbnail');
 
@@ -232,7 +232,7 @@ module.exports.createFile = async (req, res, next) => {
       const now = new Date().toISOString()
 
       let thumb = null
-      if (req.file.mimetype === 'video/mp4' || req.file.mimetype === 'video/webm') {
+      if (videoTypes.find(i => i === item.mimetype)) {
         const thumbFilename = req.file.filename.replace(path.extname(req.file.filename), '.jpg')
 
         await createThumb(req.file.path, 'uploads', thumbFilename)
