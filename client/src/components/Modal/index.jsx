@@ -24,6 +24,38 @@ const Modal = ({ open, close }) => {
   const modalOpen = open ? 'modal open' : 'modal'
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+  const [files, setFiles] = useState([])
+  const [clearFiles, setClearFiles] = useState(false)
+
+  const getFile = (files) => {
+    setClearFiles(false)
+    setFiles(files)
+  }
+
+  useEffect(() => {
+    if (clearFiles) {
+      setFiles([])
+    }
+  }, [clearFiles])
+
+
+  const [boards, setBoards] = useState([])
+  const pagination = false
+
+  const loadBoards = () => {
+    if (boards.length) return
+
+    fetch(`${BACKEND}/api/boards?pagination=${pagination}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.docs?.length) {
+          setBoards(data.docs)
+        } else throw Error(Strings.boardsNotLoaded[lang])
+      })
+      .catch(err => {
+        setErrors({ general: err.message })
+      })
+  }
 
   const formCallback = () => {
     setErrors({})
@@ -85,45 +117,11 @@ const Modal = ({ open, close }) => {
       editAnswer()
     }
   }
-
   const { onChange, onSubmit, values } = useForm(formCallback, {
     boardId: postType.id || undefined,
     title: postType?.someData?.title || '',
     body: postType?.someData?.body || ''
   })
-
-  const [files, setFiles] = useState([])
-  const [clearFiles, setClearFiles] = useState(false)
-
-  const getFile = (files) => {
-    setClearFiles(false)
-    setFiles(files)
-  }
-
-  useEffect(() => {
-    if (clearFiles) {
-      setFiles([])
-    }
-  }, [clearFiles])
-
-  const [boards, setBoards] = useState([])
-  const pagination = false
-
-  const loadBoards = () => {
-    if (boards.length) return
-
-    fetch(`${BACKEND}/api/boards?pagination=${pagination}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.docs?.length) {
-          setBoards(data.docs)
-        } else throw Error(Strings.boardsNotLoaded[lang])
-      })
-      .catch(err => {
-        setErrors({ general: err.message })
-      })
-  }
-
   const createThread = () => {
     const formData = new FormData()
     files.map(item => formData.append('attach', item))
@@ -153,7 +151,6 @@ const Modal = ({ open, close }) => {
         setErrors({ general: err.message })
       })
   }
-
   const editThread = (method) => {
     const formData = new FormData()
     files.map(item => formData.append('attach', item))
@@ -186,7 +183,6 @@ const Modal = ({ open, close }) => {
         setErrors({ general: err.message })
       })
   }
-
   const createAnswer = () => {
     const formData = new FormData()
     files.map(item => formData.append('attach', item))
@@ -215,7 +211,6 @@ const Modal = ({ open, close }) => {
         setErrors({ general: err.message })
       })
   }
-
   const editAnswer = () => {
     const formData = new FormData()
     files.map(item => formData.append('attach', item))
@@ -248,6 +243,7 @@ const Modal = ({ open, close }) => {
       })
   }
 
+
   const [date, setDate] = useState(new Date())
 
   const banCallback = () => {
@@ -265,13 +261,11 @@ const Modal = ({ open, close }) => {
       ban()
     }
   }
-
   const { onChange: banChange, onSubmit: banSubmit, values: banValues } = useForm(banCallback, {
     userId: postType.id,
     reason: '',
     body: postType?.someData?.body || ''
   })
-
   const ban = () => {
     fetch(`${BACKEND}/api/ban/create`, {
       method: 'POST',
@@ -297,6 +291,7 @@ const Modal = ({ open, close }) => {
         setErrors({ general: err.message })
       })
   }
+
 
   const [folders, setFolders] = useState([])
 
@@ -345,13 +340,11 @@ const Modal = ({ open, close }) => {
       editFile()
     }
   }
-
   const { onChange: fileChange, onSubmit: uploadSubmit, values: fileValues } = useForm(uploadCallback, {
-    folderId: postType.id,
+    folderId: postType.id || undefined,
     title: postType?.someData?.title || '',
     body: postType?.someData?.body || ''
   })
-
   const createFile = () => {
     const formData = new FormData()
     files.map(item => formData.append('file', item))
@@ -381,7 +374,6 @@ const Modal = ({ open, close }) => {
         setErrors({ general: err.message })
       })
   }
-
   const editFile = () => {
     fetch(`${BACKEND}/api/file/edit`, {
       method: 'PUT',
@@ -412,6 +404,7 @@ const Modal = ({ open, close }) => {
       })
   }
 
+
   const editPasswordCallback = () => {
     if (loading) return
 
@@ -431,13 +424,11 @@ const Modal = ({ open, close }) => {
 
     editPassword()
   }
-
   const { onChange: editPasswordChange, onSubmit: editPasswordSubmit, values: passwordValues } = useForm(editPasswordCallback, {
     password: '',
     newPassword: '',
     confirmPassword: ''
   })
-
   const editPassword = () => {
     const { confirmPassword, ...body } = passwordValues
 
@@ -869,35 +860,23 @@ const Modal = ({ open, close }) => {
     </ModalBody>
   )
 
-  let modalContent
-  if (postType.type === 'thread') {
-    modalContent = threadContent
+  const modalContent = {
+    thread: threadContent,
+    userThreadEdit: editThreadContent,
+    adminThreadEdit: editThreadContent,
+    answer: answerContent,
+    answerEdit: editAnswerContent,
+    ban: banContent,
+    upload: uploadContent,
+    fileEdit: editFileContent,
+    editPassword: editPasswordContent
   }
-  if (postType.type === 'userThreadEdit' || postType.type === 'adminThreadEdit') {
-    modalContent = editThreadContent
-  }
-  if (postType.type === 'answer') {
-    modalContent = answerContent
-  }
-  if (postType.type === 'answerEdit') {
-    modalContent = editAnswerContent
-  }
-  if (postType.type === 'ban') {
-    modalContent = banContent
-  }
-  if (postType.type === 'upload') {
-    modalContent = uploadContent
-  }
-  if (postType.type === 'fileEdit') {
-    modalContent = editFileContent
-  }
-  if (postType.type === 'editPassword') {
-    modalContent = editPasswordContent
-  }
+
+  const content = modalContent[postType.type]
 
   return (
     <section className={modalOpen}>
-      {modalContent}
+       {content}
     </section>
   )
 }

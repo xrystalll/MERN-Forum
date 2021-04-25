@@ -232,7 +232,7 @@ module.exports.createFile = async (req, res, next) => {
       const now = new Date().toISOString()
 
       let thumb = null
-      if (videoTypes.find(i => i === item.mimetype)) {
+      if (videoTypes.find(i => i === req.file.mimetype)) {
         const thumbFilename = req.file.filename.replace(path.extname(req.file.filename), '.jpg')
 
         await createThumb(req.file.path, 'uploads', thumbFilename)

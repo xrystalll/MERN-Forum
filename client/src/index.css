@@ -898,6 +898,7 @@ a.head_text:hover {
   user-select: none;
 }
 .text_area textarea, .input_area {
+  display: flex;
   background: transparent;
   color: var(--main-text);
   border: none;
@@ -912,7 +913,7 @@ a.head_text:hover {
   transition: none;
   resize: vertical;
 }
-.text_area textarea::-webkit-resizer {
+textarea::-webkit-resizer {
   background-color: var(--secondary-bg);
 }
 

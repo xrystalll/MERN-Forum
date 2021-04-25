@@ -5,11 +5,27 @@
 .messages_wrapper {
   height: calc(100vh - 180px);
 }
+.messages_wrapper .card_body.row {
+  align-items: flex-end;
+}
 .messages_wrapper .comments_form {
   position: relative;
   background-color: initial;
-  padding: 0;
-  margin: .5rem 0 !important;
+  padding: .5rem 0 !important;
+  margin: 0 !important;
+}
+.messages_wrapper .comments_form.fixed {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--main-bg);
+}
+.messages_wrapper .form_block {
+  border: none;
+}
+.messages_wrapper .comments_form.fixed textarea.input_area {
+  min-height: 36px !important;
+  max-height: 98px !important;
 }
 .messages_wrapper .comments_form .card_item {
   margin: 0 1rem;

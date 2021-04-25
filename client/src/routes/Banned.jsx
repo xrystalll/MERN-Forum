@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
-import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 
 import { StoreContext } from 'store/Store';
 
+import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 import { BACKEND, Strings } from 'support/Constants';
 
 import { Section, SectionHeader } from 'components/Section';

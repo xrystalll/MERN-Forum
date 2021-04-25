@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
@@ -25,6 +25,9 @@ const User = ({ match }) => {
         <Route path={path + '/settings'} exact component={Settings} />
         <Route path={path}>
           <Profile userName={userName} />
+        </Route>
+        <Route>
+          <Redirect to={path} />
         </Route>
       </Switch>
     </Section>

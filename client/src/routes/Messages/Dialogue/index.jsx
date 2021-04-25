@@ -1,6 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import TextareaAutosize from 'react-textarea-autosize';
 
 import { StoreContext } from 'store/Store';
 
@@ -11,7 +12,6 @@ import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
 import { deletedUser } from 'support/Utils';
 
 import FormCardItem from 'components/Card/FormCardItem';
-import Input from 'components/Form/Input';
 import FileUploadForm from 'components/Form/FileUploadForm';
 import { UserRole, UserStatus, UserOnline } from 'components/UserBadge';
 import Loader from 'components/Loader';
@@ -41,6 +41,7 @@ const Dialogue = ({ match }) => {
   const [fetchMessagesInit, setFetchMessagesInit] = useState(true)
   const [firstMsg, setFirstMsg] = useState('')
   const [typing, setTyping] = useState(false)
+  const [chatWidth, setChatWidth] = useState(null)
 
   useEffect(() => {
     if (dialogueId) joinToRoom('pm:' + dialogueId, { token, userId: user.id })
@@ -54,6 +55,7 @@ const Dialogue = ({ match }) => {
     document.querySelector('html').scrollTo(0, 0)
     document.body.classList.add('noscroll')
     document.querySelector('.main_section')?.classList.add('with_hested_scroll')
+    setChatWidth(document.querySelector('.main_section').clientWidth)
     return () => {
       document.body.classList.remove('noscroll')
       document.querySelector('.main_section')?.classList.remove('with_hested_scroll')
@@ -311,6 +313,7 @@ const Dialogue = ({ match }) => {
   const handleResize = () => {
     document.querySelector('html').scrollTo(0, 0)
     setChatHeight(window.innerHeight)
+    setChatWidth(document.querySelector('.content').clientWidth)
   }
 
   return (
@@ -373,7 +376,7 @@ const Dialogue = ({ match }) => {
         </CustomScrollbar>
 
         {toUser.name && toUser.name !== 'deleted' && (
-          <form className="form_inner comments_form" onSubmit={onSubmit}>
+          <form className="form_inner comments_form fixed" style={{ width: `${chatWidth}px` }} onSubmit={onSubmit}>
             <FormCardItem row>
               <FileUploadForm
                 mini
@@ -382,10 +385,13 @@ const Dialogue = ({ match }) => {
               />
 
               <div className={errors.body ? 'form_block error' : 'form_block' }>
-                <Input
+                <TextareaAutosize
+                  className="input_area"
                   name="body"
                   value={values.body}
                   maxLength="1000"
+                  minRows={1}
+                  maxRows={4}
                   onChange={onChange}
                   onBlur={onBlur}
                   placeholder={Strings.enterYourMessage[lang]}

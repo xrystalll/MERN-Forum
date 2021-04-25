@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { Link, Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, Switch, Redirect, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -237,6 +237,9 @@ const Profile = ({ userName }) => {
               </CardBody>
 
               <Stats userData={userData} lang={lang} token={token} />
+            </Route>
+            <Route>
+              <Redirect to={url} />
             </Route>
           </Switch>
         ) : <Loader color="#64707d" />

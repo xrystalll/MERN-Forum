@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
 
@@ -36,6 +36,9 @@ const Search = () => {
         </Route>
         <Route path={path} exact>
           <Errorer message={Strings.enterYourSearchTerm[lang]} />
+        </Route>
+        <Route>
+          <Redirect to={path} />
         </Route>
       </Switch>
     </Section>
