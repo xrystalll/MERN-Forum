@@ -4,7 +4,7 @@ import Lightbox from 'react-image-lightbox';
 import { toast } from 'react-toastify';
 
 import { counter, declOfNum, dateFormat, formatBytes, deletedUser } from 'support/Utils';
-import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
+import { BACKEND, Strings, imageTypes, videoTypes, fileExt } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
 import Dropdown from 'components/Card/Dropdown';
@@ -18,7 +18,6 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
-  const regexp = /(?:\.([^.]+))?$/
 
   if (data.author === null) {
     data.author = deletedUser
@@ -157,7 +156,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
             <div className="card_content">
               <div>
                 <span className="secondary_text">{Strings.extension[lang]}:</span>
-                {regexp.exec(data.file.url)[1]}
+                {fileExt.exec(data.file.url)[1]}
               </div>
               <div>
                 <span className="secondary_text">{Strings.fileSize[lang]}:</span>

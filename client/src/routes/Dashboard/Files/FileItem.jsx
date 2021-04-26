@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { dateFormat, deletedUser } from 'support/Utils';
-import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
+import { BACKEND, Strings, imageTypes, videoTypes, fileExt } from 'support/Constants';
 
 import { UserRole, UserStatus } from 'components/UserBadge';
 import Markdown from 'components/Markdown';
 
 const FileItem = ({ data, moderate, lang }) => {
   const [collapsed, setCollapsed] = useState(true)
-  const regexp = /(?:\.([^.]+))?$/
 
   const onModerate = ({ type }) => {
     moderate(type, data._id)
@@ -33,11 +32,11 @@ const FileItem = ({ data, moderate, lang }) => {
               className="card_left"
               style={{ backgroundImage: `url(${BACKEND + data.file.thumb})` }}
             >
-              <div className="attached_info">{regexp.exec(data.file.url)[1]}</div>
+              <div className="attached_info">{fileExt.exec(data.file.url)[1]}</div>
             </div>
           ) : (
             <div className="card_left empty">
-              <div className="attached_info">{regexp.exec(data.file.url)[1]}</div>
+              <div className="attached_info">{fileExt.exec(data.file.url)[1]}</div>
             </div>
           )}
 

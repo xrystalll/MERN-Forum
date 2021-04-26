@@ -14,26 +14,31 @@ export const declOfNum = (number, titles) => {
   return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]]
 }
 
-export const dateFormat = (date, type) => {
+export const language = () => {
   const langs = ['ru', 'en', 'jp']
   const langFromLS = langs.find(i => i === localStorage.getItem('lang'))
   const langFromNL = langs.find(i => i === window.navigator.language)
-  const lang = langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
 
+  return langFromLS ? langFromLS : langFromNL ? langFromNL : 'en'
+}
+
+export const dateFormat = (date, type) => {
+  const lang = language()
   const timeFormat = lang === 'en' ? 'hh:mm A' : 'HH:mm'
+  const DMT = `DD MMM, ${timeFormat}`
 
   let formatObj
 
   if (type === 'short') {
     formatObj = {
       sameDay: timeFormat,
-      lastDay: `DD MMM, ${timeFormat}`,
-      nextDay: `DD MMM, ${timeFormat}`,
-      nextWeek: `DD MMM, ${timeFormat}`,
-      lastWeek: `DD MMM, ${timeFormat}`,
+      lastDay: DMT,
+      nextDay: DMT,
+      nextWeek: DMT,
+      lastWeek: DMT,
       sameElse: () => {
         if (new Date(date).getFullYear() === new Date().getFullYear()) {
-          return `DD MMM, ${timeFormat}`
+          return DMT
         } else {
           return `DD MMM YY, ${timeFormat}`
         }
@@ -56,11 +61,11 @@ export const dateFormat = (date, type) => {
     }
   } else {
     formatObj = {
-      nextWeek: `DD MMM, ${timeFormat}`,
-      lastWeek: `DD MMM, ${timeFormat}`,
+      nextWeek: DMT,
+      lastWeek: DMT,
       sameElse: () => {
         if (new Date(date).getFullYear() === new Date().getFullYear()) {
-          return `DD MMM, ${timeFormat}`
+          return DMT
         } else {
           return `DD MMM YY, ${timeFormat}`
         }

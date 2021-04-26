@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
-import { Strings } from 'support/Constants';
+import { Strings, imageTypes, fileExt } from 'support/Constants';
 
 import FileInput from './FileInput';
 
@@ -10,9 +10,7 @@ const FileUploadForm = ({ mini, title, hint, sendFiles, clearFiles, multiple = t
   const { lang } = useContext(StoreContext)
   const [files, setFiles] = useState([])
   const [inputVisible, setInputVisible] = useState(true)
-  const imageTypes = ['image/jpeg', 'image/png', 'image/gif']
   const maxCount = multiple ? 4 : 1
-  const regexp = /(?:\.([^.]+))?$/
 
   useEffect(() => {
     if (clearFiles) {
@@ -80,7 +78,7 @@ const FileUploadForm = ({ mini, title, hint, sendFiles, clearFiles, multiple = t
                   <span className="remove_file" onClick={() => removeFile(item)}>
                     <i className="bx bx-x" />
                   </span>
-                  <div className="attached_info">{regexp.exec(item.name)[1]}</div>
+                  <div className="attached_info">{fileExt.exec(item.name)[1]}</div>
                 </div>
               )}
             </Fragment>
@@ -128,7 +126,7 @@ const FileUploadForm = ({ mini, title, hint, sendFiles, clearFiles, multiple = t
                       <span className="remove_file" onClick={() => removeFile(item)}>
                         <i className="bx bx-x" />
                       </span>
-                      <div className="attached_info">{regexp.exec(item.name)[1]}</div>
+                      <div className="attached_info">{fileExt.exec(item.name)[1]}</div>
                     </div>
                   )}
                 </Fragment>

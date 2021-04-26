@@ -7,8 +7,8 @@ export const joinToRoom = (room, payload) => {
   socket.emit('join', { room, payload })
 }
 
-export const leaveFromRoom = (room, payload) => {
-  socket.emit('leave', { room, payload })
+export const leaveFromRoom = (room) => {
+  socket.emit('leave', { room })
 }
 
 export default socket;

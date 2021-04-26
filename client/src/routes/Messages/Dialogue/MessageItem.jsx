@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { BACKEND, imageTypes, videoTypes } from 'support/Constants';
+import { BACKEND, imageTypes, videoTypes, fileExt } from 'support/Constants';
 import { dateFormat } from 'support/Utils';
 
 import Markdown from 'components/Markdown';
@@ -25,7 +25,6 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
     setVideoOpen(true)
   }
 
-  const regexp = /(?:\.([^.]+))?$/
   const my = user.id === data.from._id
 
   const deleteMessage = () => {
@@ -64,11 +63,11 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
                       className="msg_file bx video"
                       style={{ backgroundImage: `url(${BACKEND + item.thumb})` }}
                     >
-                      <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                      <div className="attached_info">{fileExt.exec(item.file)[1]}</div>
                     </div>
                   ) : (
                     <div onClick={() => window.open(BACKEND + item.file)} className="msg_file empty">
-                      <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                      <div className="attached_info">{fileExt.exec(item.file)[1]}</div>
                     </div>
                   )}
                 </Fragment>

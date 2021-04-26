@@ -665,7 +665,7 @@ const Modal = ({ open, close }) => {
         </FormCardItem>
 
         <FormCardItem title={Strings.banDuration[lang]} error={errors.expiresAt}>
-          <div className={errors.expiresAt ? 'form_block error' : 'form_block' }>
+          <div className={errors.expiresAt ? 'form_block error' : 'form_block' } style={{ position: 'initial' }}>
             <DatePicker
               className="input_area"
               selected={date}

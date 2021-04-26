@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { StoreContext } from 'store/Store';
 
 import { counter, declOfNum, dateFormat, deletedUser } from 'support/Utils';
-import { BACKEND, Strings, imageTypes, videoTypes } from 'support/Constants';
+import { BACKEND, Strings, imageTypes, videoTypes, fileExt } from 'support/Constants';
 
 import Markdown from 'components/Markdown';
 import { UserRole, UserStatus, UserOnline } from 'components/UserBadge';
@@ -37,7 +37,6 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   const [thumb, setThumb] = useState('')
   const [videoOpen, setVideoOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(preview ? true : false)
-  const regexp = /(?:\.([^.]+))?$/
 
   if (data.author === null) {
     data.author = deletedUser
@@ -417,11 +416,11 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                         className="attached_file card_left image_file card_left"
                         style={{ backgroundImage: `url(${BACKEND + item.thumb})` }}
                       >
-                        <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                        <div className="attached_info">{fileExt.exec(item.file)[1]}</div>
                       </div>
                     ) : (
                       <a href={BACKEND + item.file} className="attached_file card_left empty" target="_blank" rel="noopener noreferrer">
-                        <div className="attached_info">{regexp.exec(item.file)[1]}</div>
+                        <div className="attached_info">{fileExt.exec(item.file)[1]}</div>
                       </a>
                     )}
                   </Fragment>

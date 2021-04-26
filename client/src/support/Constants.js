@@ -1085,5 +1085,6 @@ const Strings = {
 
 const imageTypes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon']
 const videoTypes = ['video/mp4', 'video/webm', 'video/avi', 'video/msvideo', 'video/x-msvideo', 'video/mpeg', 'video/3gpp', 'video/quicktime']
+const fileExt = /(?:\.([^.]+))?$/
 
-export { BACKEND, Strings, imageTypes, videoTypes };
+export { BACKEND, Strings, imageTypes, videoTypes, fileExt };

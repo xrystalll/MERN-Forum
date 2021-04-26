@@ -78,6 +78,7 @@ const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
                 className="ril__image"
                 style={{ maxWidth: '100%', maxHeight: '100%' }}
                 src={source}
+                poster={thumb}
                 controls
                 autoPlay
               />
