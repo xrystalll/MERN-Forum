@@ -259,6 +259,8 @@ module.exports.createFile = async (req, res, next) => {
 
       const file = await newFile.save()
 
+      await Folder.updateOne({ _id: Types.ObjectId(file.folderId) }, { $inc: { filesCount: 1 } })
+
       res.json(file)
 
       req.io.to('adminNotification').emit('newAdminNotification', { type: 'file' })
@@ -385,7 +387,6 @@ module.exports.moderateFile = async (req, res, next) => {
 
     const file = File.findById(fileId)
 
-    await Folder.updateOne({ _id: Types.ObjectId(file.folderId) }, { $inc: { filesCount: 1 } })
     await User.updateOne({ _id: Types.ObjectId(file.author) }, { $inc: { karma: 3 } })
 
     res.json({ message: 'File successfully moderated' })

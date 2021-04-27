@@ -19,11 +19,13 @@
   bottom: 0;
   width: 100%;
   background-color: var(--main-bg);
+  transition: var(--transition-background);
 }
 .messages_wrapper .form_block {
   border: none;
 }
 .messages_wrapper .comments_form.fixed textarea.input_area {
+  line-height: 1.4;
   min-height: 36px !important;
   max-height: 98px !important;
 }
@@ -150,6 +152,7 @@
 }
 .message_content p {
   display: initial;
+  white-space: pre-wrap;
 }
 .message_body.markdown img {
   max-width: 100%;

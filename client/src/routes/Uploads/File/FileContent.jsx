@@ -78,13 +78,13 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
       body: JSON.stringify({ fileId: data._id })
     })
       .then(response => response.json())
-      .then(data => {
-        if (data.error) throw Error(data.error?.message || 'Error')
+      .then(res => {
+        if (res.error) throw Error(data.error?.message || 'Error')
+
+        const win = window.open(BACKEND + res.file.url, '_blank')
+        win.focus()
       })
       .catch(console.error)
-
-    const win = window.open(BACKEND + data.file.url, '_blank')
-    win.focus()
   }
 
   const copyLink = (text) => {

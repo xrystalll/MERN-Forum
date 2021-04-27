@@ -915,7 +915,7 @@ a.head_text:hover {
   resize: vertical;
 }
 textarea::-webkit-resizer {
-  background-color: var(--secondary-bg);
+  background-color: transparent;
 }
 .input_area[type=password],
 .input_area[name=password],

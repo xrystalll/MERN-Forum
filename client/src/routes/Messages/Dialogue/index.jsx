@@ -391,7 +391,7 @@ const Dialogue = ({ match }) => {
                   value={values.body}
                   maxLength="1000"
                   minRows={1}
-                  maxRows={4}
+                  maxRows={5}
                   onChange={onChange}
                   onBlur={onBlur}
                   placeholder={Strings.enterYourMessage[lang]}
