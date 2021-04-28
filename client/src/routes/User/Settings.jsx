@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -67,7 +67,7 @@ const Settings = ({ match }) => {
           setUserPicture(data.picture)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const openModal = () => {
@@ -79,7 +79,7 @@ const Settings = ({ match }) => {
   }
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.settings[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.users[lang], link: '/users' },
@@ -109,7 +109,7 @@ const Settings = ({ match }) => {
           <div className="text_show_more" onClick={openModal}>{Strings.changePassword[lang]}</div>
         </div>
       </FormCardItem>
-    </Fragment>
+    </>
   )
 }
 

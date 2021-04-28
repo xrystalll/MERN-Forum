@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useContext, useRef, useState } from 'react';
+import { useEffect, useContext, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
@@ -84,13 +84,13 @@ const Header = ({ setMenuState }) => {
           </li>
 
           {user ? (
-            <Fragment>
+            <>
               <Notifications />
 
               <Dropdown />
-            </Fragment>
+            </>
           ) : (
-           <Fragment>
+           <>
               <li className="head_auth">
                 <Link to="/signup" className="btn media_hide">
                   <i className="bx bx-user-plus" />
@@ -104,7 +104,7 @@ const Header = ({ setMenuState }) => {
                   <span>{Strings.signIn[lang]}</span>
                 </Link>
               </li>
-            </Fragment>
+            </>
           )}
         </ul>
       </div>

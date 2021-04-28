@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Switch, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
@@ -33,7 +33,7 @@ const Reports = ({ history, location: { pathname } }) => {
   }, [])
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.reports[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.dashboard[lang], link: '/dashboard' }
@@ -51,7 +51,7 @@ const Reports = ({ history, location: { pathname } }) => {
           <Redirect to={path} />
         </Route>
       </Switch>
-    </Fragment>
+    </>
   )
 }
 

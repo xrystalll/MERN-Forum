@@ -261,7 +261,7 @@ const Dialogue = ({ match }) => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        toast.error(err.message)
+        toast.error(typeof err.message === 'object' ? 'Error' : err.message)
       })
   }
 
@@ -341,10 +341,10 @@ const Dialogue = ({ match }) => {
                   </Link>
                   <div className="head_text">
                     {typing ? (
-                      <Fragment>
+                      <>
                         {Strings.isTyping[lang]}
                         <span className="dot_loader"></span>
-                      </Fragment>
+                      </>
                     ) : (
                       <UserOnline onlineAt={toUser.onlineAt} offlineText={Strings.lastSeen[lang]} dateType="short" />
                     )}
@@ -359,7 +359,7 @@ const Dialogue = ({ match }) => {
           {!noData ? (
             !loading ? (
               items.length ? (
-                <Fragment>
+                <>
                   {moreLoading && <Loader className="more_loader" color="#64707d" />}
 
                   <div className="messages_list">
@@ -367,7 +367,7 @@ const Dialogue = ({ match }) => {
                       <MessageItem key={item._id} data={item} dialogueId={dialogueId} user={user} token={token} />
                     ))}
                   </div>
-                </Fragment>
+                </>
               ) : <Errorer message={Strings.noMessagesYet[lang]} />
             ) : <Loader color="#64707d" />
           ) : (

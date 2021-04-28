@@ -70,7 +70,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const likeAnswer = () => {
@@ -88,7 +88,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           toast.success(Strings.reportSent[lang])
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const answerTo = (toId, displayName) => {
@@ -182,7 +182,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           history.push('/')
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const deleteAnswer = () => {
@@ -198,7 +198,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const onDelete = () => {
@@ -234,7 +234,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
         .then(data => {
           if (data.error) throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(err.message))
+        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
     }
   }
 
@@ -261,7 +261,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
         .then(data => {
           if (data.error) throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(err.message))
+        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
     }
   }
 
@@ -283,7 +283,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
             setBanned(false)
           } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(err.message))
+        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
     } else {
       setPostType({
         type: 'ban',
@@ -339,7 +339,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
             <Link to={'/user/' + data.author.name} className="head_text bold">
               {data.author.displayName}
               {full && (
-                <Fragment>
+                <>
                   <UserOnline onlineAt={data.author.onlineAt} dot />
                   <UserRole role={data.author.role} />
                   {type === 'thread' && <UserStatus status="owner" />}
@@ -347,7 +347,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                     data.author._id === threadData.author._id && <UserStatus status="owner" />
                   )}
                   {data.author.ban && <UserStatus status="ban" />}
-                </Fragment>
+                </>
               )}
             </Link>
             <span className="bullet">{full ? '-' : '•'}</span>
@@ -360,7 +360,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
         {full && user && (
           <Dropdown>
             {user.role >= 2 && (
-              <Fragment>
+              <>
                 {type === 'thread' && (
                   <div onClick={onPin} className="dropdown_item">
                     {data.pined ? Strings.unpin[lang] : Strings.pin[lang]}
@@ -377,7 +377,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                     {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
                   </div>
                 )}
-              </Fragment>
+              </>
             )}
             {user.id === data.author._id || (user.role >= 2 && user.role >= data.author.role)
               ? <div onClick={editClick} className="dropdown_item">{Strings.edit[lang]}</div>
@@ -875,10 +875,10 @@ export const FileCard = ({ data, deleteFile }) => {
                   <Link to={'/user/' + data.author.name} className="head_text bold">
                     {data.author.displayName}
                     {deleteFile && (
-                      <Fragment>
+                      <>
                         <UserRole role={data.author.role} />
                         {data.author.ban && <UserStatus status="ban" />}
-                      </Fragment>
+                      </>
                     )}
                   </Link>
                   <span className="bullet">•</span>
@@ -955,10 +955,10 @@ export const DialoqueCard = ({ data }) => {
                     {data.lastMessage?.from === user.id && <span>{Strings.you[lang]}: </span>}
                     {data.lastMessage?.body.length ? data.lastMessage.body : data.lastMessage?.file.length
                       ? (
-                        <Fragment>
+                        <>
                           <i className="bx bx-file-blank" />
                           {Strings.file[lang]}
-                        </Fragment>
+                        </>
                       ) : Strings.message[lang]
                     }
                   </div>

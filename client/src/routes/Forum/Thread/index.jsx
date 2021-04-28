@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -96,7 +96,7 @@ const Thread = ({ match }) => {
     <Section>
       {!noData ? (
         !loading ? (
-          <Fragment>
+          <>
             <Breadcrumbs current={thread.title} links={[
               { title: Strings.home[lang], link: '/' },
               { title: Strings.allBoards[lang], link: '/boards' },
@@ -114,17 +114,17 @@ const Thread = ({ match }) => {
               subcribed={answersSubscribed}
               clearSubcribe={setAnswersSubscribed}
             />
-          </Fragment>
+          </>
         ) : <Loader color="#64707d" />
       ) : (
-        <Fragment>
+        <>
           <Breadcrumbs current={Strings.error[lang]} links={[
             { title: Strings.home[lang], link: '/' },
             { title: Strings.allBoards[lang], link: '/boards' }
           ]} />
 
           <Errorer message={Strings.threadNotFound[lang]} />
-        </Fragment>
+        </>
       )}
     </Section>
   )

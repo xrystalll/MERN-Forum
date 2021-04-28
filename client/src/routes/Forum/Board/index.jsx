@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -71,11 +71,11 @@ const Board = ({ match }) => {
 
       {!noData ? (
         !loading ? (
-          <Fragment>
+          <>
             {sort === 'answers' && <Answers boardId={board._id} lang={lang} />}
             {sort === 'recently' && <Recently boardId={board._id} lang={lang} />}
             {sort === 'default' && <Default boardId={board._id} lang={lang} />}
-          </Fragment>
+          </>
         ) : <Loader color="#64707d" />
       ) : (
         <Errorer message={Strings.unableToDisplayBoard[lang]} />

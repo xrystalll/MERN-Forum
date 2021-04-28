@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -17,7 +17,7 @@ const Bans = ({ userData }) => {
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'user/bans', params: { userId: userData._id }, auth: true })
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.bans[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.users[lang], link: '/users' },
@@ -33,7 +33,7 @@ const Bans = ({ userData }) => {
         noDataMessage={Strings.noBansYet[lang]}
         errorMessage={Strings.unableToDisplayBans[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 

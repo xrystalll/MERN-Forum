@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -38,7 +38,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const onDelete = () => {
@@ -102,7 +102,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
             setBanned(false)
           } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(err.message))
+        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
     } else {
       setPostType({
         type: 'ban',
@@ -123,11 +123,11 @@ const CommentItem = ({ data, setCommentedTo }) => {
             <Link to={'/user/' + data.author.name} className="head_text bold">
               {data.author.displayName}
 
-              <Fragment>
+              <>
                 <UserOnline onlineAt={data.author.onlineAt} dot />
                 <UserRole role={data.author.role} />
                 {data.author.ban && <UserStatus status="ban" />}
-              </Fragment>
+              </>
             </Link>
             <span className="bullet">-</span>
             <span className="head_text">
@@ -140,7 +140,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
           user.role >= 2 || user.id === data.author._id ? (
             <Dropdown>
               {user.role >= 2 && (
-                <Fragment>
+                <>
                   {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
                     <div onClick={onBan} className="dropdown_item">
                       {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
@@ -149,7 +149,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
                   {user.role >= data.author.role && (
                     <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
                   )}
-                </Fragment>
+                </>
               )}
               {user.id === data.author._id && user.role === 1 && (
                 <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>
@@ -174,7 +174,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
         <div className="act_btn foot_btn likes" onClick={onLike}>
           <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
           {likes.length ? (
-            <Fragment>
+            <>
               <span className="card_count">{counter(likes.length)}</span>
               <span className="hidden">
                 {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
@@ -195,7 +195,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
                   {likes.length > 4 && <span>and {likes.length - 4} more</span>}
                 </div>
               )}
-            </Fragment>
+            </>
           ) : null}
         </div>
       </footer>

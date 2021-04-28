@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { StoreContext } from 'store/Store';
@@ -29,7 +29,7 @@ const AuthHistory = ({ userData }) => {
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'user/authHistory', params: { userId: userData._id }, auth: true })
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.authorizationsHistory[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.users[lang], link: '/users' },
@@ -47,7 +47,7 @@ const AuthHistory = ({ userData }) => {
         noDataMessage={Strings.userHasNotLoggedInYet[lang]}
         errorMessage={Strings.unableToDisplayAuthorizationsHistory[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 

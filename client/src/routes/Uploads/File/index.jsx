@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -120,7 +120,7 @@ const File = ({ history, match }) => {
           toast.success(data.message)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const editFile = () => {
@@ -139,7 +139,7 @@ const File = ({ history, match }) => {
     <Section>
       {!noData ? (
         !loading ? (
-          <Fragment>
+          <>
             <Breadcrumbs current={file.title} links={[
               { title: Strings.home[lang], link: '/' },
               { title: Strings.uploadsFolders[lang], link: '/uploads' },
@@ -165,10 +165,10 @@ const File = ({ history, match }) => {
               subcribed={commentsSubscribed}
               clearSubcribe={setCommentsSubscribed}
             />
-          </Fragment>
+          </>
         ) : <Loader color="#64707d" />
       ) : (
-        <Fragment>
+        <>
           <Breadcrumbs current={onModeration ? Strings.onModeration[lang] : Strings.error[lang]} links={[
             { title: Strings.home[lang], link: '/' },
             { title: Strings.uploadsFolders[lang], link: '/uploads' }
@@ -177,7 +177,7 @@ const File = ({ history, match }) => {
           <Errorer
             message={onModeration ? Strings.theFileWillBePublishedAfterModeration[lang] : Strings.fileNotFound[lang]}
           />
-        </Fragment>
+        </>
       )}
     </Section>
   )

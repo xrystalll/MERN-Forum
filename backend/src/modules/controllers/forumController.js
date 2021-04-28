@@ -26,7 +26,7 @@ module.exports.getBoards = async (req, res, next) => {
 
     let boards
     if (sort === 'popular') {
-      boards = await Board.paginate({}, { sort: { threadsCount: -1 }, page, limit, pagination: JSON.parse(pagination) })
+      boards = await Board.paginate({}, { sort: { threadsCount: -1, answersCount: -1 }, page, limit, pagination: JSON.parse(pagination) })
     } else if (sort === 'answersCount') {
       boards = await Board.paginate({}, { sort: { answersCount: -1 }, page, limit, pagination: JSON.parse(pagination) })
     } else if (sort === 'newestThread') {
@@ -284,6 +284,11 @@ module.exports.deleteThread = async (req, res, next) => {
 
     const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
 
+    if (!thread.author) {
+      thread.author = {
+        role: 1
+      }
+    }
     if (req.payload.role < thread.author.role) return next(createError.Unauthorized('Action not allowed'))
 
     if (thread.attach && thread.attach.length) {
@@ -366,6 +371,11 @@ module.exports.editThread = async (req, res, next) => {
 
       const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
 
+      if (!thread.author) {
+        thread.author = {
+          role: 1
+        }
+      }
       if (req.payload.id !== thread.author._id) {
         if (req.payload.role < thread.author.role) {
           return next(createError.Unauthorized('Action not allowed'))
@@ -466,6 +476,11 @@ module.exports.adminEditThread = async (req, res, next) => {
 
       const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
 
+      if (!thread.author) {
+        thread.author = {
+          role: 1
+        }
+      }
       if (req.payload.role < thread.author.role) return next(createError.Unauthorized('Action not allowed'))
 
       if (req.files.length && thread.attach && thread.attach.length) {
@@ -723,6 +738,11 @@ module.exports.deleteAnswer = async (req, res, next) => {
 
     const answer = await Answer.findById(answerId).populate({ path: 'author', select: 'role' })
 
+    if (!answer.author) {
+      answer.author = {
+        role: 1
+      }
+    }
     if (req.payload.role < answer.author.role) return next(createError.Unauthorized('Action not allowed'))
 
     if (answer.attach && answer.attach.length) {
@@ -771,6 +791,11 @@ module.exports.editAnswer = async (req, res, next) => {
 
       const answer = await Answer.findById(answerId).populate({ path: 'author', select: 'role' })
 
+      if (!answer.author) {
+        answer.author = {
+          role: 1
+        }
+      }
       if (req.payload.id === answer.author._id || req.payload.role < answer.author.role) {
         return next(createError.Unauthorized('Action not allowed'))
       }

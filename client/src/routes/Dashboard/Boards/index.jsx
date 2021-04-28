@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -40,7 +40,7 @@ const Boards = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ generalCreate: err.message })
+        setFetchErros({ generalCreate: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -63,7 +63,7 @@ const Boards = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ [data.boardId]: err.message })
+        setFetchErros({ [data.boardId]: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -86,11 +86,11 @@ const Boards = () => {
           }
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.manageBoards[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.dashboard[lang], link: '/dashboard' }
@@ -132,7 +132,7 @@ const Boards = () => {
         noDataMessage={Strings.noBoardsYet[lang]}
         errorMessage={Strings.unableToDisplayBoards[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 

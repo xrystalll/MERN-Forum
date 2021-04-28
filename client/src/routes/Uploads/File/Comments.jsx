@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useForm } from 'hooks/useForm';
@@ -103,11 +103,11 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   return (
-    <Fragment>
+    <>
       <SectionHeader title={Strings.comments[lang]} />
 
       {user && (
@@ -139,7 +139,7 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
       ) : (
         <Loader className="more_loader" color="#64707d" />
       )}
-    </Fragment>
+    </>
   )
 }
 

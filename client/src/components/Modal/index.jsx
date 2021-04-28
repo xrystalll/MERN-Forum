@@ -53,7 +53,7 @@ const Modal = ({ open, close }) => {
         } else throw Error(Strings.boardsNotLoaded[lang])
       })
       .catch(err => {
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -148,7 +148,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
   const editThread = (method) => {
@@ -180,7 +180,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
   const createAnswer = () => {
@@ -208,7 +208,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
   const editAnswer = () => {
@@ -239,7 +239,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -288,7 +288,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -306,7 +306,7 @@ const Modal = ({ open, close }) => {
         } else throw Error(Strings.foldersNotLoaded[lang])
       })
       .catch(err => {
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -371,7 +371,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
   const editFile = () => {
@@ -400,7 +400,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -453,7 +453,7 @@ const Modal = ({ open, close }) => {
       })
       .catch(err => {
         setLoading(false)
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 

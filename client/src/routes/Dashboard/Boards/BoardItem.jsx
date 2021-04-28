@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Strings } from 'support/Constants';
@@ -89,7 +89,7 @@ const BoardItem = ({ lang, data, editBoard, deleteBoard, fetchErrors, setFetchEr
 
       <footer className="card_foot">
         {!edit ? (
-          <Fragment>
+          <>
             <div className="act_btn foot_btn disable">
               <i className="bx bx-news" />
               <span className="card_count">{counter(data.threadsCount)}</span>
@@ -105,7 +105,7 @@ const BoardItem = ({ lang, data, editBoard, deleteBoard, fetchErrors, setFetchEr
                 {declOfNum(data.answersCount, [Strings.answer1[lang], Strings.answer2[lang], Strings.answer3[lang]])}
               </span>
             </div>
-          </Fragment>
+          </>
         ) : (
           <form className="form_inner edit_form" onSubmit={onSubmit}>
             <FormCardItem title={Strings.boardShortName[lang] + '*'} error={errors.name}>

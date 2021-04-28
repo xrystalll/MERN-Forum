@@ -55,7 +55,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const onLike = ({ target }) => {
@@ -176,7 +176,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
               <div className="act_btn foot_btn likes" onClick={onLike}>
                 <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
                 {likes.length ? (
-                  <Fragment>
+                  <>
                     <span className="card_count">{counter(likes.length)}</span>
                     <span className="hidden">
                       {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
@@ -197,7 +197,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                         {likes.length > 4 && <span>and {likes.length - 4} more</span>}
                       </div>
                     )}
-                  </Fragment>
+                  </>
                 ) : null}
               </div>
             </footer>

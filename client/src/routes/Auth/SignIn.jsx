@@ -66,7 +66,7 @@ const SignIn = ({ history }) => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setErrors({ general: err.message })
+        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 

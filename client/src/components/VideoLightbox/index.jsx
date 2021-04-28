@@ -1,9 +1,11 @@
-import { Fragment, useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import Lightbox from 'react-image-lightbox';
 
 import { StoreContext } from 'store/Store';
 
 import { Strings } from 'support/Constants';
+
+import './style.css';
 
 export const ImageLightbox = ({ image, onCloseRequest }) => {
   const { lang } = useContext(StoreContext)
@@ -93,7 +95,7 @@ const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
 
               <ul className="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide">
                 {thumb && (
-                  <Fragment>
+                  <>
                     <li className="ril-toolbar__item ril__toolbarItem">
                       <div className="ril__builtinTitle">{Strings.searchIn[lang]}: </div>
                     </li>
@@ -119,7 +121,7 @@ const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
                         <i className="bx bxl-google" />
                       </a>
                     </li>
-                  </Fragment>
+                  </>
                 )}
                 <li className="ril-toolbar__item ril__toolbarItem">
                   <button

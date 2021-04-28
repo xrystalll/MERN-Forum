@@ -40,7 +40,7 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   return (

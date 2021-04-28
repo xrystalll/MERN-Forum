@@ -88,7 +88,7 @@ const Profile = ({ userName }) => {
           setModer(!moder)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const onBan = (userId) => {
@@ -107,7 +107,7 @@ const Profile = ({ userName }) => {
             setBanned(false)
           } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(err.message))
+        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
     } else {
       setPostType({
         type: 'ban',
@@ -139,7 +139,7 @@ const Profile = ({ userName }) => {
           history.push('/users')
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   return (
@@ -208,22 +208,22 @@ const Profile = ({ userName }) => {
                   {user.role >= 2 && user.id !== userData._id ? (
                     <Dropdown>
                       {user.role === 3 && (
-                        <Fragment>
+                        <>
                           <div onClick={() => editRole(userData._id)} className="dropdown_item">
                             {moder ? Strings.removeModerator[lang] : Strings.appointAsAModerator[lang]}
                           </div>
                           <div onClick={() => deleteUser(userData._id)} className="dropdown_item">{Strings.delete[lang]}</div>
-                        </Fragment>
+                        </>
                       )}
                       {user.role > userData.role && (
-                        <Fragment>
+                        <>
                           <div onClick={() => onBan(userData._id)} className="dropdown_item">
                             {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
                           </div>
                           <Link to={'/user/' + userData.name + '/auth/history'} className="dropdown_item">
                             {Strings.authorizationsHistory[lang]}
                           </Link>
-                        </Fragment>
+                        </>
                       )}
                     </Dropdown>
                   ) : user.role >= 2 ? (
@@ -244,14 +244,14 @@ const Profile = ({ userName }) => {
           </Switch>
         ) : <Loader color="#64707d" />
       ) : (
-        <Fragment>
+        <>
           <Breadcrumbs current={Strings.error[lang]} links={[
             { title: Strings.home[lang], link: '/' },
             { title: Strings.users[lang], link: '/users' }
           ]} />
 
           <Errorer message={Strings.unableToDisplayUserProfile[lang]} />
-        </Fragment>
+        </>
       )}
     </Fragment>
   )

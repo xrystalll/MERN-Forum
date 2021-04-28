@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { StoreContext } from 'store/Store';
@@ -39,7 +39,7 @@ const Folders = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ generalCreate: err.message })
+        setFetchErros({ generalCreate: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -62,7 +62,7 @@ const Folders = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ [data.folderId]: err.message })
+        setFetchErros({ [data.folderId]: typeof err.message === 'object' ? 'Error' : err.message })
       })
   }
 
@@ -85,11 +85,11 @@ const Folders = () => {
           }
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.manageUploadsFolders[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.dashboard[lang], link: '/dashboard' }
@@ -131,7 +131,7 @@ const Folders = () => {
         noDataMessage={Strings.noFoldersYet[lang]}
         errorMessage={Strings.unableToDisplayFolders[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -42,7 +42,7 @@ const Dialogues = () => {
   }, [items])
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.messages[lang]} links={[
         { title: Strings.home[lang], link: '/' }
       ]} />
@@ -56,7 +56,7 @@ const Dialogues = () => {
         noDataMessage={Strings.noMessagesYet[lang]}
         errorMessage={Strings.unableToDisplayMessages[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 

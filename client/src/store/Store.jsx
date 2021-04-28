@@ -34,7 +34,7 @@ const initialState = {
   lang
 }
 
-const StoreContext = createContext(initialState)
+export const StoreContext = createContext(initialState)
 
 const Store = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState)
@@ -113,5 +113,4 @@ const Store = ({ children }) => {
   )
 };
 
-export { StoreContext };
 export default Store;

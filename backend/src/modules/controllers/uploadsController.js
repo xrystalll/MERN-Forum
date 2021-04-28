@@ -280,6 +280,11 @@ module.exports.deleteFile = async (req, res, next) => {
 
     const file = await File.findById(fileId).populate({ path: 'author', select: 'role' })
 
+    if (!file.author) {
+      file.author = {
+        role: 1
+      }
+    }
     if (req.payload.role < file.author.role) return next(createError.Unauthorized('Action not allowed'))
 
     const deleteArray = []
@@ -315,6 +320,11 @@ module.exports.editFile = async (req, res, next) => {
 
     const file = await File.findById(fileId).populate({ path: 'author', select: 'role' })
 
+    if (!file.author) {
+      file.author = {
+        role: 1
+      }
+    }
     if (req.payload.id !== file.author._id) {
       if (req.payload.role < file.author.role) {
         return next(createError.Unauthorized('Action not allowed'))
@@ -528,6 +538,11 @@ module.exports.deleteComment = async (req, res, next) => {
 
     const comment = await Comment.findById(commentId).populate({ path: 'author', select: 'role' })
 
+    if (!file.author) {
+      file.author = {
+        role: 1
+      }
+    }
     if (req.payload.id === comment.author._id || req.payload.role >= comment.author.role) {
       await comment.delete()
 

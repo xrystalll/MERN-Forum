@@ -127,7 +127,7 @@ const Dropdown = ({ setDropdownOpen, informer, setInformer, user, token, lang })
           setNotifications([])
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(err.message))
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   return (

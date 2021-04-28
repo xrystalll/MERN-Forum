@@ -1,9 +1,8 @@
-import { Fragment } from 'react';
 import { dateFormat } from 'support/Utils';
 
 export const UserRole = ({ role }) => {
   return (
-    <Fragment>
+    <>
       {role === 3 && (
         <span className="user_status ic adm">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 850">
@@ -18,20 +17,20 @@ export const UserRole = ({ role }) => {
           </svg>
         </span>
       )}
-    </Fragment>
+    </>
   )
 }
 
 export const UserStatus = ({ status }) => {
   return (
-    <Fragment>
+    <>
       {status === 'ban' && (
         <span className="user_status ban">ban</span>
       )}
       {status === 'owner' && (
         <span className="user_status">owner</span>
       )}
-    </Fragment>
+    </>
   )
 }
 

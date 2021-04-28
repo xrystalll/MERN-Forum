@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -26,12 +26,12 @@ const Home = () => {
   }, [init])
 
   return (
-    <Fragment>
+    <>
       {navigator.onLine && <Boards lang={lang} />}
       <Threads lang={lang} />
       {navigator.onLine && <Uploads lang={lang} />}
       <Footer />
-    </Fragment>
+    </>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -17,7 +17,7 @@ const Admins = () => {
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'admins' })
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.admins[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.dashboard[lang], link: '/dashboard' }
@@ -32,7 +32,7 @@ const Admins = () => {
         noDataMessage={Strings.noAdminsYet[lang]}
         errorMessage={Strings.unableToDisplayUsers[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 

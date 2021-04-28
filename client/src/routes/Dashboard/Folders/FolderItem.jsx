@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Strings } from 'support/Constants';
@@ -89,7 +89,7 @@ const FolderItem = ({ lang, data, editFolder, deleteFolder, fetchErrors, setFetc
 
       <footer className="card_foot">
         {!edit ? (
-          <Fragment>
+          <>
             <div className="act_btn foot_btn disable">
               <i className="bx bx-file-blank" />
               <span className="card_count">{counter(data.filesCount)}</span>
@@ -97,7 +97,7 @@ const FolderItem = ({ lang, data, editFolder, deleteFolder, fetchErrors, setFetc
                 {declOfNum(data.filesCount, [Strings.file1[lang], Strings.file2[lang], Strings.file3[lang]])}
               </span>
             </div>
-          </Fragment>
+          </>
         ) : (
           <form className="form_inner edit_form" onSubmit={onSubmit}>
             <FormCardItem title={Strings.folderShortName[lang] + '*'} error={errors.name}>

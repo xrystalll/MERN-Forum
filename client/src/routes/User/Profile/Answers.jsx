@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 
 import { StoreContext } from 'store/Store';
 
@@ -17,7 +17,7 @@ const Answers = ({ userData }) => {
   const { loading, moreLoading, noData, items } = useMoreFetch({ method: 'user/answers', params: { userId: userData._id }, auth: true })
 
   return (
-    <Fragment>
+    <>
       <Breadcrumbs current={Strings.answers[lang]} links={[
         { title: Strings.home[lang], link: '/' },
         { title: Strings.users[lang], link: '/users' },
@@ -33,7 +33,7 @@ const Answers = ({ userData }) => {
         noDataMessage={Strings.noAnswersYet[lang]}
         errorMessage={Strings.unableToDisplayAnswers[lang]}
       />
-    </Fragment>
+    </>
   )
 }
 
