@@ -14,7 +14,6 @@ import Errorer from 'components/Errorer';
 import CommentItem from './CommentItem';
 
 const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
-  const [init, setInit] = useState(true)
   const [comments, setComments] = useState([])
   const pagination = false
   const [loading, setLoading] = useState(true)
@@ -26,19 +25,17 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
         const response = await data.json()
 
         if (!response.error) {
-          setInit(false)
           setComments(response.docs)
           setLoading(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        setInit(false)
         setLoading(false)
       }
     }
 
-    init && fetchComments()
+    fetchComments()
     // eslint-disable-next-line
-  }, [init, fileId])
+  }, [fileId])
 
   useEffect(() => {
     if (!subcribed.type) return

@@ -1,8 +1,8 @@
 {
   "name": "forum-backend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "xrystalll",
-  "description": "Forum express backend",
+  "description": "MERN Forum",
   "main": "index.js",
   "scripts": {
     "start": "node src/index",

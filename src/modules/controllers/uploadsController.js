@@ -538,8 +538,8 @@ module.exports.deleteComment = async (req, res, next) => {
 
     const comment = await Comment.findById(commentId).populate({ path: 'author', select: 'role' })
 
-    if (!file.author) {
-      file.author = {
+    if (!comment.author) {
+      comment.author = {
         role: 1
       }
     }

@@ -30,7 +30,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   const history = useHistory()
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
-  const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
+  const [liked, setLiked] = useState(user ? !!data.likes?.find(i => i._id === user.id) : false)
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
   const [video, setVideo] = useState('')
@@ -93,7 +93,8 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
 
   useEffect(() => {
     setLikes(data.likes)
-  }, [data.likes])
+    setLiked(user ? !!data.likes?.find(i => i._id === user.id) : false)
+  }, [user, data.likes])
 
   const onLike = ({ target }) => {
     if (likesList.current?.contains(target)) return
@@ -211,6 +212,26 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
     } else {
       deleteThread()
     }
+  }
+
+  const onClear = () => {
+    const conf = window.confirm(`${Strings.deleteAllAnswers[lang]}?`) ////////////////////
+
+    if (!conf) return
+
+    fetch(BACKEND + '/api/thread/clear', {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ threadId: data._id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) throw Error(data.error?.message || 'Error')
+      })
+      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
   }
 
   const onPin = () => {
@@ -372,6 +393,9 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                   </div>
                 )}
                 {user.role >= data.author.role && <div onClick={onDelete} className="dropdown_item">{Strings.delete[lang]}</div>}
+                {type === 'thread' && user.role >= data.author.role && (
+                  <div onClick={onClear} className="dropdown_item">{Strings.deleteAllAnswers[lang]}</div>
+                )}
                 {data.author.name !== 'deleted' && user.id !== data.author._id && data.author.role === 1 && (
                   <div onClick={onBan} className="dropdown_item">
                     {banned ? Strings.unbanUser[lang] : Strings.banUser[lang]}
@@ -664,7 +688,7 @@ export const BannedCard = ({ data, unBan }) => {
   )
 }
 
-export const BannedAll = ({ data }) => {
+export const BannedAll = ({ data, deleteBan }) => {
   const { lang } = useContext(StoreContext)
 
   if (data.user === null) {
@@ -715,6 +739,12 @@ export const BannedAll = ({ data }) => {
             <Link to={'/user/' + data.admin.name}>{data.admin.displayName}</Link>
           </span>
         </div>
+
+        {deleteBan && (
+          <div className="act_btn foot_btn delete" onClick={() => deleteBan(data._id)}>
+            <i className="bx bx-trash-alt" />
+          </div>
+        )}
       </footer>
     </CardBody>
   )

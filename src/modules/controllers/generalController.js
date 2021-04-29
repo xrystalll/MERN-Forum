@@ -256,6 +256,23 @@ module.exports.unBan = async (req, res, next) => {
   }
 }
 
+module.exports.deleteBan = async (req, res, next) => {
+  try {
+    const { banId } = req.body
+    const moder = req.payload.role >= 2
+
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
+    if (!banId) return next(createError.BadRequest('banId must not be empty'))
+
+    const ban = await Ban.findById(banId)
+    await ban.delete()
+
+    res.json('Ban successfully deleted')
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
 module.exports.getUserStats = async (req, res, next) => {
   try {
     const { userId } = req.query
@@ -495,10 +512,10 @@ module.exports.deleteUser = async (req, res, next) => {
         from: Types.ObjectId(userId)
       }]
     })
-    dialogues.map(async (item) => {
+    await Promise.all(dialogues.map(async (item) => {
       const dialogue = await Dialogue.findById(item._id)
       await dialogue.delete()
-    })
+    }))
 
     const messages = await Message.find({
       $or: [{
@@ -507,7 +524,7 @@ module.exports.deleteUser = async (req, res, next) => {
         from: Types.ObjectId(userId)
       }]
     })
-    messages.map(async (item) => {
+    await Promise.all(messages.map(async (item) => {
       const message = await Message.findById(item._id)
 
       if (message.file && message.file.length) {
@@ -532,7 +549,7 @@ module.exports.deleteUser = async (req, res, next) => {
       }
 
       await messages.delete()
-    })
+    }))
 
     await user.delete()
 

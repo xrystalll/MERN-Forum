@@ -314,7 +314,7 @@ module.exports.deleteThread = async (req, res, next) => {
 
     const answers = await Answer.find({ threadId: Types.ObjectId(threadId) })
     const answersCount = answers.length
-    answers.map(async (item) => {
+    await Promise.all(answers.map(async (item) => {
       const answer = await Answer.findById(item._id)
 
       if (answer.attach && answer.attach.length) {
@@ -339,7 +339,7 @@ module.exports.deleteThread = async (req, res, next) => {
       }
 
       await answer.delete()
-    })
+    }))
 
     await thread.delete()
 
@@ -353,6 +353,63 @@ module.exports.deleteThread = async (req, res, next) => {
     res.json({ message: 'Thread successfully deleted' })
 
     req.io.to('thread:' + threadId).emit('threadDeleted', { id: threadId })
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.clearThread = async (req, res, next) => {
+  try {
+    const { threadId } = req.body
+    const moder = req.payload.role >= 2
+
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
+    if (!threadId) return next(createError.BadRequest('threadId must not be empty'))
+
+    const thread = await Thread.findById(threadId).populate({ path: 'author', select: 'role' })
+
+    if (!thread.author) {
+      thread.author = {
+        role: 1
+      }
+    }
+    if (req.payload.role < thread.author.role) return next(createError.Unauthorized('Action not allowed'))
+
+    const answers = await Answer.find({ threadId: Types.ObjectId(threadId) })
+    const answersCount = answers.length
+    await Promise.all(answers.map(async (item) => {
+      const answer = await Answer.findById(item._id)
+
+      if (answer.attach && answer.attach.length) {
+        const files = answer.attach.reduce((array, item) => {
+          if (item.thumb) {
+            return [
+              ...array,
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file)),
+              path.join(__dirname, '..', '..', '..', 'public', 'forum', 'thumbnails', path.basename(item.thumb))
+            ]
+          }
+
+          return [
+            ...array,
+            path.join(__dirname, '..', '..', '..', 'public', 'forum', path.basename(item.file))
+          ]
+        }, [])
+
+        deleteFiles(files, (err) => {
+          if (err) console.error(err)
+        })
+      }
+
+      await answer.delete()
+    }))
+
+    await Thread.updateOne({ _id: Types.ObjectId(threadId) }, { answersCount: 0 })
+    await Board.updateOne({ _id: Types.ObjectId(thread.boardId) }, { $inc: { answersCount: -answersCount } })
+
+    res.json({ message: 'Thread successfully cleared' })
+
+    req.io.to('thread:' + threadId).emit('threadCleared', { id: threadId })
   } catch(err) {
     next(createError.InternalServerError(err))
   }

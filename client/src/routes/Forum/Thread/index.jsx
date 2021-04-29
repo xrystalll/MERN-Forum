@@ -15,19 +15,16 @@ import Answers from './Answers';
 
 const Thread = ({ match }) => {
   const { user, setPostType, setFabVisible, lang } = useContext(StoreContext)
-  const [init, setInit] = useState(true)
   const { threadId } = match.params
 
   useEffect(() => {
-    init && setPostType({
+    setPostType({
       type: 'answer',
       id: threadId
     })
-    setInit(false)
     // eslint-disable-next-line
-  }, [init])
+  }, [threadId])
 
-  const [fetchInit, setFetchInit] = useState(true)
   const [board, setBoard] = useState({})
   const [thread, setThread] = useState({})
   const [loading, setLoading] = useState(true)
@@ -37,28 +34,28 @@ const Thread = ({ match }) => {
   useEffect(() => {
     const threadTitle = thread.title || Strings.thread[lang]
     document.title = 'Forum | ' + threadTitle
+  }, [thread, lang])
 
+  useEffect(() => {
     const fetchThread = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/thread?threadId=${threadId}`)
         const response = await data.json()
 
         if (!response.error) {
-          setFetchInit(false)
           setBoard(response.board)
           setThread(response.thread)
           setLoading(false)
           setNoData(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        setFetchInit(false)
         setNoData(true)
         setLoading(false)
       }
     }
 
-    fetchInit && fetchThread()
-  }, [fetchInit, thread, lang, threadId])
+    fetchThread()
+  }, [threadId])
 
   useEffect(() => {
     if (thread._id) joinToRoom('thread:' + thread._id)
@@ -88,6 +85,9 @@ const Thread = ({ match }) => {
     })
     Socket.on('answerLiked', (data) => {
       setAnswersSubscribed({ type: 'answerLiked', payload: data })
+    })
+    Socket.on('threadCleared', (data) => {
+      setAnswersSubscribed({ type: 'threadCleared', payload: data })
     })
     // eslint-disable-next-line
   }, [])

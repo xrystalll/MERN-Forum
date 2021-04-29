@@ -1081,6 +1081,11 @@ const Strings = {
     en: 'Unable to display authorizations history',
     jp: '承認履歴を表示できません'
   },
+  'deleteAllAnswers': {
+    ru: 'Удалить все ответы',
+    en: 'Delete all answers',
+    jp: 'すべての回答を削除する'
+  },
 }
 
 const imageTypes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon']

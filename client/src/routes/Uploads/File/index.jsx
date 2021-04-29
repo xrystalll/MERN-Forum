@@ -31,7 +31,6 @@ const File = ({ history, match }) => {
     // eslint-disable-next-line
   }, [init])
 
-  const [fetchInit, setFetchInit] = useState(true)
   const [folder, setFolder] = useState({})
   const [file, setFile] = useState({})
   const [loading, setLoading] = useState(true)
@@ -42,14 +41,15 @@ const File = ({ history, match }) => {
   useEffect(() => {
     const fileTitle = file.title || Strings.file[lang]
     document.title = 'Forum | ' + fileTitle
+  }, [file, lang])
 
+  useEffect(() => {
     const fetchFile = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/file?fileId=${fileId}`)
         const response = await data.json()
 
         if (!response.error) {
-          setFetchInit(false)
           setFolder(response.folder)
           if (!response.message) {
             setFile(response.file)
@@ -61,14 +61,13 @@ const File = ({ history, match }) => {
           setLoading(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        setFetchInit(false)
         setNoData(true)
         setLoading(false)
       }
     }
 
-    fetchInit && fetchFile()
-  }, [fetchInit, file, fileId, lang])
+    fetchFile()
+  }, [fileId])
 
   useEffect(() => {
     if (file._id) joinToRoom('file:' + file._id)

@@ -15,7 +15,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
   const history = useHistory()
   const likesList = useRef()
   const [likes, setLikes] = useState(data.likes)
-  const [liked, setLiked] = useState(user ? !!data?.likes?.find(i => i._id === user.id) : false)
+  const [liked, setLiked] = useState(user ? !!data.likes?.find(i => i._id === user.id) : false)
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
 
@@ -38,7 +38,8 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
 
   useEffect(() => {
     setLikes(data.likes)
-  }, [data.likes])
+    setLiked(user ? !!data.likes?.find(i => i._id === user.id) : false)
+  }, [user, data.likes])
 
   const likeFile = () => {
     fetch(BACKEND + '/api/file/like', {

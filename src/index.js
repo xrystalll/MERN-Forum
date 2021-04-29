@@ -15,6 +15,7 @@ const httpServer = http.createServer(app)
 const io = require('./modules/socket')(httpServer)
 
 app.use(express.static(path.join(__dirname, '..', 'public')))
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')))
 app.use(cors({
   origin: process.env.CLIENT
 }))
@@ -33,7 +34,6 @@ const limiter = new RateLimit({
 app.use('/auth', limiter)
 app.use('/api', limiter) 
 
-app.use('/', require('./routes'))
 app.use('/auth', require('./routes/auth'))
 
 app.use((req, res, next) => {
@@ -42,10 +42,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/api', require('./routes/api'))
-
-app.use((req, res, next) => {
-  next(createError.NotFound())
-})
+app.use('/', require('./routes'))
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500)

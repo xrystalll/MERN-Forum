@@ -1,8 +1,8 @@
 {
   "name": "forum-client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "xrystalll",
-  "description": "Forum react client",
+  "description": "MERN Forum react client",
   "private": true,
   "scripts": {
     "start": "react-scripts start",

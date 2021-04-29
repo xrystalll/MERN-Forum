@@ -7,7 +7,6 @@ import Loader from 'components/Loader';
 import Errorer from 'components/Errorer';
 
 const Answers = ({ lang, user, thread, subcribed, clearSubcribe }) => {
-  const [init, setInit] = useState(true)
   const [answers, setAnswers] = useState([])
   const pagination = false
   const [loading, setLoading] = useState(true)
@@ -19,19 +18,17 @@ const Answers = ({ lang, user, thread, subcribed, clearSubcribe }) => {
         const response = await data.json()
 
         if (!response.error) {
-          setInit(false)
           setAnswers(response.docs)
           setLoading(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        setInit(false)
         setLoading(false)
       }
     }
 
-    init && fetchAnswers()
+    fetchAnswers()
     // eslint-disable-next-line
-  }, [init])
+  }, [thread._id])
 
   useEffect(() => {
     if (!subcribed.type) return
@@ -50,6 +47,9 @@ const Answers = ({ lang, user, thread, subcribed, clearSubcribe }) => {
       newArray[newArray.findIndex(item => item._id === subcribed.payload._id)] = subcribed.payload
 
       setAnswers(newArray)
+    }
+    if (subcribed.type === 'threadCleared') {
+      setAnswers([])
     }
 
     clearSubcribe({})
