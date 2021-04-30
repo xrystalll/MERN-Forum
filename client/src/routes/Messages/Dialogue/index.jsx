@@ -26,7 +26,6 @@ const Dialogue = ({ match }) => {
   const { userName } = match.params
   const [toUser, setToUser] = useState({})
   const [errors, setErrors] = useState({})
-  const [init, setInit] = useState(true)
   const [dialogueId, setDialogueId] = useState(null)
   const [items, setItems] = useState([])
   const limit = 15
@@ -65,12 +64,13 @@ const Dialogue = ({ match }) => {
   useEffect(() => {
     const userTitle = toUser.displayName || userName
     document.title = `Forum | ${Strings.dialogueWith[lang]} ${userTitle}`
+  }, [toUser, userName, lang])
 
+  useEffect(() => {
     if (userName === 'deleted') {
       setToUser(deletedUser)
       setLoading(false)
       setNoData(true)
-      setInit(false)
       return
     }
 
@@ -84,13 +84,14 @@ const Dialogue = ({ match }) => {
         const response = await data.json()
 
         if (!response.error) {
+          setItems([])
           setToUser(response)
+          setNoData(false)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
         setToUser(deletedUser)
         setLoading(false)
         setNoData(true)
-        setInit(false)
       }
     }
 
@@ -106,23 +107,31 @@ const Dialogue = ({ match }) => {
         if (!response) setLoading(false)
 
         if (!response.error) {
-          setInit(false)
           setDialogueId(response._id)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        setInit(false)
+        toast.error(typeof err.message === 'object' ? 'Error' : err.message)
       }
     }
 
-    if (init) {
-      fetchUser()
-      fetchDialogue()
-    }
-  }, [init, toUser, userName, token, lang])
+    // set initial state
+    setLoading(true)
+    setPage(1)
+    setNextPage(1)
+    setHasNextPage(true)
+    setMoreTrigger(true)
+    setFetchMessagesInit(true)
+    setFirstMsg('')
+
+    fetchUser()
+    fetchDialogue()
+    // eslint-disable-next-line
+  }, [userName])
 
   useEffect(() => {
     const fetchMessages = async () => {
       if (!hasNextPage || !dialogueId) return
+
       setMoreLoading(true)
 
       try {
