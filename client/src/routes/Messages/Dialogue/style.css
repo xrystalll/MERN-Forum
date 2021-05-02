@@ -209,6 +209,15 @@
   min-width: 280px;
   height: 280px;
 }
+.one .simple_file {
+  min-width: 120px !important;
+  height: 120px !important;
+}
+.simple_file .attached_info {
+  border-radius: var(--border-radius-inner);
+  padding: .1rem .3rem;
+  max-width: 120px;
+}
 
 .msg_file {
   width: 100%;
@@ -229,7 +238,7 @@
   content: '';
   width: 42px;
   height: 42px;
-  background: rgb(0 0 0 / 50%);
+  background: rgb(0 0 0 / 40%);
   border-radius: 50%;
 }
 .msg_file.video::after {
@@ -238,4 +247,14 @@
   font-size: 26px;
   position: absolute;
   margin-left: 3px;
+}
+
+.group .msg_file:not(.video)::after {
+  content: '';
+  border: 1px solid rgb(0 0 0 / 2%);
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  position: absolute;
+  top: 0;
+  left: 0;
 }

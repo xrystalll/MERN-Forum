@@ -67,13 +67,6 @@ const Dialogue = ({ match }) => {
   }, [toUser, userName, lang])
 
   useEffect(() => {
-    if (userName === 'deleted') {
-      setToUser(deletedUser)
-      setLoading(false)
-      setNoData(true)
-      return
-    }
-
     const fetchUser = async () => {
       try {
         const data = await fetch(`${BACKEND}/api/user?userName=${userName}`, {
@@ -84,7 +77,6 @@ const Dialogue = ({ match }) => {
         const response = await data.json()
 
         if (!response.error) {
-          setItems([])
           setToUser(response)
           setNoData(false)
         } else throw Error(response.error?.message || 'Error')
@@ -104,7 +96,7 @@ const Dialogue = ({ match }) => {
         })
         const response = await data.json()
 
-        if (!response) setLoading(false)
+        if (!response) return setLoading(false)
 
         if (!response.error) {
           setDialogueId(response._id)
@@ -115,6 +107,8 @@ const Dialogue = ({ match }) => {
     }
 
     // set initial state
+    setDialogueId(null)
+    setItems([])
     setLoading(true)
     setPage(1)
     setNextPage(1)
@@ -122,6 +116,13 @@ const Dialogue = ({ match }) => {
     setMoreTrigger(true)
     setFetchMessagesInit(true)
     setFirstMsg('')
+
+    if (userName === 'deleted') {
+      setToUser(deletedUser)
+      setLoading(false)
+      setNoData(true)
+      return
+    }
 
     fetchUser()
     fetchDialogue()
@@ -202,16 +203,7 @@ const Dialogue = ({ match }) => {
       setItems(prev => prev.filter(item => item._id !== data.id))
     })
     Socket.on('messagesRead', () => {
-      setItems(prev => {
-        return (
-          prev.map(item => {
-            if (item.from._id === user.id) {
-              return { ...item, read: true }
-            }
-            return item
-          })
-        )
-      })
+      setItems(prev => prev.map(item => item.from._id === user.id ? { ...item, read: true } : item))
     })
     Socket.on('startTyping', (data) => {
       setTyping(true)

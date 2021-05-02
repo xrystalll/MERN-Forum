@@ -449,6 +449,7 @@ a.head_text:hover {
   width: max-content;
   min-width: 128px;
   flex-direction: column;
+  box-shadow: 0 3px 6px -4px rgb(0 0 0 / 40%);
   background-color: var(--secondary-bg-tint);
   border-radius: var(--border-radius);
   overflow: hidden;

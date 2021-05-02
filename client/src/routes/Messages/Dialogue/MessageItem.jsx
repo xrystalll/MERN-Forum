@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { BACKEND, imageTypes, videoTypes, fileExt } from 'support/Constants';
-import { dateFormat } from 'support/Utils';
+import { dateFormat, formatBytes } from 'support/Utils';
 
 import Markdown from 'components/Markdown';
 import VideoLightbox, { ImageLightbox} from 'components/VideoLightbox';
@@ -66,8 +66,12 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
                       <div className="attached_info">{fileExt.exec(item.file)[1]}</div>
                     </div>
                   ) : (
-                    <div onClick={() => window.open(BACKEND + item.file)} className="msg_file empty">
-                      <div className="attached_info">{fileExt.exec(item.file)[1]}</div>
+                    <div onClick={() => window.open(BACKEND + item.file)} className="msg_file simple_file empty">
+                      <div className="attached_info">
+                        {fileExt.exec(item.file)[1]}
+                        <br />
+                        {formatBytes(item.size)}
+                      </div>
                     </div>
                   )}
                 </Fragment>

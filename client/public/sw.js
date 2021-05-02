@@ -1,4 +1,4 @@
-const staticCache = 'forum-v0.1.0'
+const staticCache = 'forum-v1.0.0'
 const assets = [
   'index.html',
 ]
