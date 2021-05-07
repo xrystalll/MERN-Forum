@@ -21,8 +21,8 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  createdAt: String,
-  onlineAt: String,
+  createdAt: Date,
+  onlineAt: Date,
   picture: String,
   karma: {
     type: Number,

@@ -39,7 +39,7 @@ const Dashboard = () => {
           setStats(response)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        toast.error(typeof err.message === 'object' ? 'Error' : err.message)
+        toast.error(err.message === '[object Object]' ? 'Error' : err.message)
       }
     }
 

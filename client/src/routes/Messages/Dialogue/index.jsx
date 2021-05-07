@@ -9,7 +9,7 @@ import { useForm } from 'hooks/useForm';
 
 import { BACKEND, Strings } from 'support/Constants';
 import Socket, { joinToRoom, leaveFromRoom } from 'support/Socket';
-import { deletedUser } from 'support/Utils';
+import { dateFormat, deletedUser } from 'support/Utils';
 
 import FormCardItem from 'components/Card/FormCardItem';
 import FileUploadForm from 'components/Form/FileUploadForm';
@@ -102,7 +102,7 @@ const Dialogue = ({ match }) => {
           setDialogueId(response._id)
         } else throw Error(response.error?.message || 'Error')
       } catch(err) {
-        toast.error(typeof err.message === 'object' ? 'Error' : err.message)
+        toast.error(err.message === '[object Object]' ? 'Error' : err.message)
       }
     }
 
@@ -144,8 +144,33 @@ const Dialogue = ({ match }) => {
         const response = await data.json()
 
         if (!response.error) {
-          const array = [...response.docs.reverse(), ...items]
-          setItems([...new Map(array.map(i => [i._id, i])).values()])
+          response.docs.map(resGroup => {
+            if (resGroup.date === items.find(item => item.date === resGroup.date)?.date) {
+              setItems(prev => {
+                let newArray = [...prev]
+                const index = newArray.findIndex(item => item.date === resGroup.date)
+                newArray[index]?.messages.unshift(...resGroup.messages)
+                const messages = newArray[index].messages
+                  .filter((e, i, a) => a.findIndex(({ _id }) => _id === e._id) === i)
+                newArray[index].messages = messages
+
+                return newArray
+              })
+            } else {
+              setItems(prev => {
+                let newArray = [resGroup, ...prev]
+                const index = newArray.findIndex(item => item.date === resGroup.date)
+                const messages = newArray[index].messages
+                  .filter((e, i, a) => a.findIndex(({ _id }) => _id === e._id) === i)
+                newArray[index].messages = messages
+
+                return newArray
+              })
+            }
+
+            return true
+          })
+
           setNextPage(response.nextPage)
           setHasNextPage(response.hasNextPage)
           setLoading(false)
@@ -182,7 +207,7 @@ const Dialogue = ({ match }) => {
   }
 
   useEffect(() => {
-    items.length && setFirstMsg('msg_' + items[0]._id)
+    items.length && setFirstMsg('msg_' + items[0].messages[0]._id)
   }, [items])
 
   useEffect(() => {
@@ -195,15 +220,40 @@ const Dialogue = ({ match }) => {
       setDialogueId(data._id)
     })
     Socket.on('newMessage', (data) => {
-      setItems(prev => [...prev, data])
+      setItems(prev => {
+        const date = new Date(data.createdAt).toISOString().split('T')[0]
+        if (prev[prev.length - 1].date === date) {
+          prev[prev.length - 1].messages.push(data)
+          return prev
+        } else {
+          return [...prev, { groupId: data._id, date, messages: [data] }]
+        }
+      })
       setNoData(false)
       setToBottom((Math.random() * 100).toFixed())
     })
     Socket.on('messageDeleted', (data) => {
-      setItems(prev => prev.filter(item => item._id !== data.id))
+      setItems(prev => {
+        const currentGroup = prev.filter(item => item.groupId === data.groupId)
+        const newMessages = currentGroup[0].messages.filter(item => item._id !== data.id)
+
+        let newArray = [...prev]
+        newArray[newArray.findIndex(item => item.groupId === data.groupId)].messages = newMessages
+
+        if (!newMessages.length) {
+          return prev.filter(item => item.groupId !== data.groupId)
+        }
+
+        return newArray
+      })
     })
     Socket.on('messagesRead', () => {
-      setItems(prev => prev.map(item => item.from._id === user.id ? { ...item, read: true } : item))
+      setItems(prev => prev.map(group => {
+        return {
+          ...group,
+          messages: group.messages.map(msg => ({ ...msg, read: true }))
+        }
+      }))
     })
     Socket.on('startTyping', (data) => {
       setTyping(true)
@@ -262,7 +312,7 @@ const Dialogue = ({ match }) => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        toast.error(typeof err.message === 'object' ? 'Error' : err.message)
+        toast.error(err.message === '[object Object]' ? 'Error' : err.message)
       })
   }
 
@@ -365,7 +415,17 @@ const Dialogue = ({ match }) => {
 
                   <div className="messages_list">
                     {items.map(item => (
-                      <MessageItem key={item._id} data={item} dialogueId={dialogueId} user={user} token={token} />
+                      <div key={item.groupId} className="messages_group">
+                        <div className="group_date_block">
+                          <span className="group_date_title">
+                            {dateFormat(item.date, 'onlyDate')}
+                          </span>
+                        </div>
+
+                        {item.messages.map(msg => (
+                          <MessageItem key={msg._id} groupId={item.groupId} data={msg} user={user} token={token} />
+                        ))}
+                      </div>
                     ))}
                   </div>
                 </>

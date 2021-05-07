@@ -10,11 +10,11 @@ const boardSchema = new Schema({
   title: String,
   body: String,
   position: Number,
-  createdAt: String,
+  createdAt: Date,
   threadsCount: Number,
   answersCount: Number,
-  newestThread: String,
-  newestAnswer: String
+  newestThread: Date,
+  newestAnswer: Date
 })
 boardSchema.plugin(mongoosePaginate)
 boardSchema.index({ name: 'text', title: 'text', body: 'text' })

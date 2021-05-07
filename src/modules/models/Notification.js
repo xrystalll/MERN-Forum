@@ -14,7 +14,7 @@ const notificationSchema = new Schema({
   pageId: Types.ObjectId,
   title: String,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   read: {
     type: Boolean,
     default: false

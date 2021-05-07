@@ -12,8 +12,8 @@ const banSchema = new Schema({
   },
   reason: String,
   body: String,
-  createdAt: String,
-  expiresAt: String
+  createdAt: Date,
+  expiresAt: Date
 })
 banSchema.plugin(mongoosePaginate)
 

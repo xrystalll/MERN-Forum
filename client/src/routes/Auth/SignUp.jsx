@@ -71,7 +71,7 @@ const SignUp = ({ history }) => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setErrors({ general: typeof err.message === 'object' ? 'Error' : err.message })
+        setErrors({ general: err.message === '[object Object]' ? 'Error' : err.message })
       })
   }
 

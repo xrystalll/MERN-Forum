@@ -38,7 +38,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const onDelete = () => {
@@ -102,7 +102,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
             setBanned(false)
           } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+        .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
     } else {
       setPostType({
         type: 'ban',

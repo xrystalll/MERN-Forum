@@ -12,7 +12,7 @@ const fileSchema = new Schema({
   folderId: Types.ObjectId,
   title: String,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   author: {
     type: Types.ObjectId,
     ref: 'User'

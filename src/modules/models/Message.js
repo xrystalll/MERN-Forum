@@ -11,7 +11,7 @@ const fileSchema = new Schema({
 const messageSchema = new Schema({
   dialogueId: Types.ObjectId,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   from: {
     type: Types.ObjectId,
     ref: 'User'
@@ -21,7 +21,7 @@ const messageSchema = new Schema({
     ref: 'User'
   },
   edited: {
-    createdAt: String
+    createdAt: Date
   },
   file: [fileSchema],
   read: {

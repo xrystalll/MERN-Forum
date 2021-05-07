@@ -14,13 +14,13 @@ const threadSchema = new Schema({
   closed: Boolean,
   title: String,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   author: {
     type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
-    createdAt: String
+    createdAt: Date
   },
   likes: [{
     type: Types.ObjectId,
@@ -28,7 +28,7 @@ const threadSchema = new Schema({
   }],
   attach: [attachSchema],
   answersCount: Number,
-  newestAnswer: String
+  newestAnswer: Date
 })
 threadSchema.plugin(mongoosePaginate)
 threadSchema.index({ title: 'text', body: 'text' })

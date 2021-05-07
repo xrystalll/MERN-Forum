@@ -6,7 +6,7 @@ const authHistorySchema = new Schema({
     type: Types.ObjectId,
     ref: 'User'
   },
-  loginAt: String,
+  loginAt: Date,
   ip: String,
   ua: String
 })

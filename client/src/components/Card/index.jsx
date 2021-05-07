@@ -70,7 +70,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const likeAnswer = () => {
@@ -88,7 +88,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           setLikes(data.likes)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   useEffect(() => {
@@ -150,7 +150,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           toast.success(Strings.reportSent[lang])
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const answerTo = (toId, displayName) => {
@@ -183,7 +183,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
           history.push('/')
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const deleteAnswer = () => {
@@ -199,7 +199,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const onDelete = () => {
@@ -215,7 +215,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
   }
 
   const onClear = () => {
-    const conf = window.confirm(`${Strings.deleteAllAnswers[lang]}?`) ////////////////////
+    const conf = window.confirm(`${Strings.deleteAllAnswers[lang]}?`)
 
     if (!conf) return
 
@@ -231,7 +231,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const onPin = () => {
@@ -255,7 +255,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
         .then(data => {
           if (data.error) throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+        .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
     }
   }
 
@@ -282,7 +282,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
         .then(data => {
           if (data.error) throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+        .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
     }
   }
 
@@ -304,7 +304,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
             setBanned(false)
           } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+        .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
     } else {
       setPostType({
         type: 'ban',
@@ -701,25 +701,19 @@ export const BannedAll = ({ data, deleteBan }) => {
 
   return (
     <CardBody>
-      <div className="card_head user_head">
-        <div className="card_head_inner row">
-          <Link to={'/user/' + data.user.name} className="card_title user_title">
-            {data.user.picture ? (
-              <div className="head_profile" style={{ backgroundImage: `url(${BACKEND + data.user.picture})` }} />
-            ) : (
-              <div className="head_profile">
-                {data.user.displayName.charAt(0)}
-              </div>
-            )}
-            <div className="user_info">
-              <div className="user_info_top">
-                {data.user.displayName}
-              </div>
-              <div className="head_text">{dateFormat(data.createdAt)}</div>
-            </div>
-          </Link>
+      <header className="card_head">
+        <div className="card_head_inner">
+          <div className="card_info">
+            <Link to={'/user/' + data.user.name} className="head_text bold">
+              {data.user.displayName}
+            </Link>
+            <span className="bullet">•</span>
+            <span className="head_text">
+              <time>{dateFormat(data.createdAt)}</time>
+            </span>
+          </div>
         </div>
-      </div>
+      </header>
 
       <div className="card_content">
         <p>

@@ -86,6 +86,14 @@ module.exports.getMessages = async (req, res, next) => {
 
     if (!dialogueId) return next(createError.BadRequest('dialogueId must not be empty'))
 
+    const dialogue = await Dialogue.findById(dialogueId)
+
+    if (dialogue.from.toString() !== req.payload.id) {
+      if (dialogue.to.toString() !== req.payload.id) {
+        return next(createError.Unauthorized('Action not allowed'))
+      }
+    }
+
     const populate = [{
       path: 'from',
       select: '_id name displayName onlineAt picture role ban'
@@ -94,6 +102,26 @@ module.exports.getMessages = async (req, res, next) => {
       select: '_id name displayName onlineAt picture role ban'
     }]
     const messages = await Message.paginate({ dialogueId }, { sort: { createdAt: -1 }, page, limit, populate })
+
+    const groups = messages.docs.reduce((groups, item) => {
+      const date = new Date(item.createdAt).toISOString().split('T')[0]
+      if (!groups[date]) {
+        groups[date] = []
+      }
+      groups[date].push(item)
+      return groups
+    }, {})
+
+    const grouped = Object.keys(groups).map((date) => {
+      const msgList = groups[date].reverse()
+      return {
+        groupId: msgList[0]._id,
+        date,
+        messages: msgList
+      }
+    })
+
+    messages.docs = grouped
 
     res.json(messages)
   } catch(err) {
@@ -220,9 +248,10 @@ module.exports.createMessage = async (req, res, next) => {
 
 module.exports.deleteMessage = async (req, res, next) => {
   try {
-    const { dialogueId, messageId } = req.body
+    const { dialogueId, groupId, messageId } = req.body
 
     if (!dialogueId) return next(createError.BadRequest('dialogueId must not be empty'))
+    if (!groupId) return next(createError.BadRequest('groupId must not be empty'))
     if (!messageId) return next(createError.BadRequest('messageId must not be empty'))
 
     const message = await Message.findById(messageId)
@@ -258,9 +287,9 @@ module.exports.deleteMessage = async (req, res, next) => {
       await dialogue.delete()
     }
 
-    res.json({ message: 'Message successfully deleted' })
+    res.json({ message: 'Message successfully deleted', })
 
-    req.io.to('pm:' + dialogueId).emit('messageDeleted', { id: messageId })
+    req.io.to('pm:' + dialogueId).emit('messageDeleted', { id: messageId, groupId })
   } catch(err) {
     next(createError.InternalServerError(err))
   }

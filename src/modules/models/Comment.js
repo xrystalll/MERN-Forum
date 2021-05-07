@@ -5,13 +5,13 @@ const commentSchema = new Schema({
   fileId: Types.ObjectId,
   commentedTo: Types.ObjectId,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   author: {
     type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
-    createdAt: String
+    createdAt: Date
   },
   likes: [{
     type: Types.ObjectId,

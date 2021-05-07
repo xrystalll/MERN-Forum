@@ -59,6 +59,30 @@ export const dateFormat = (date, type) => {
         }
       }
     }
+  } else if (type === 'onlyDate') {
+    formatObj = {
+      sameDay: 'DD MMM',
+      lastDay: 'DD MMM',
+      nextDay: 'DD MMM',
+      nextWeek: 'DD MMM',
+      lastWeek: 'DD MMM',
+      sameElse: () => {
+        if (new Date(date).getFullYear() === new Date().getFullYear()) {
+          return 'DD MMM'
+        } else {
+          return 'DD MMM YYYY'
+        }
+      }
+    }
+  } else if (type === 'onlyTime') {
+    formatObj = {
+      sameDay: timeFormat,
+      lastDay: timeFormat,
+      nextDay: timeFormat,
+      nextWeek: timeFormat,
+      lastWeek: timeFormat,
+      sameElse: timeFormat
+    }
   } else {
     formatObj = {
       nextWeek: DMT,

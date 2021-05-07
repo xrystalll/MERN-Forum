@@ -39,7 +39,7 @@ const Folders = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ generalCreate: typeof err.message === 'object' ? 'Error' : err.message })
+        setFetchErros({ generalCreate: err.message === '[object Object]' ? 'Error' : err.message })
       })
   }
 
@@ -62,7 +62,7 @@ const Folders = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ [data.folderId]: typeof err.message === 'object' ? 'Error' : err.message })
+        setFetchErros({ [data.folderId]: err.message === '[object Object]' ? 'Error' : err.message })
       })
   }
 
@@ -85,7 +85,7 @@ const Folders = () => {
           }
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   return (

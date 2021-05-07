@@ -40,7 +40,7 @@ const Boards = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ generalCreate: typeof err.message === 'object' ? 'Error' : err.message })
+        setFetchErros({ generalCreate: err.message === '[object Object]' ? 'Error' : err.message })
       })
   }
 
@@ -63,7 +63,7 @@ const Boards = () => {
         } else throw Error(data.error?.message || 'Error')
       })
       .catch(err => {
-        setFetchErros({ [data.boardId]: typeof err.message === 'object' ? 'Error' : err.message })
+        setFetchErros({ [data.boardId]: err.message === '[object Object]' ? 'Error' : err.message })
       })
   }
 
@@ -86,7 +86,7 @@ const Boards = () => {
           }
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   return (

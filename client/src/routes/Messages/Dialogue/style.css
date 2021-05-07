@@ -165,10 +165,10 @@
   align-items: center;
   color: var(--actions-color);
   font-size: .65rem;
-  margin-left: auto;
   float: right;
   margin-top: .6rem;
   margin-left: .85rem;
+  height: 15px;
 }
 .message_info i {
   color: var(--accent-color);
@@ -257,4 +257,21 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.group_date_block {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.group_date_title {
+  border-radius: var(--border-radius);
+  background-color: rgb(0 0 0 / 25%);
+  color: var(--main-text-light);
+  font-size: .8em;
+  padding: 0 .5rem;
+  user-select: none;
 }

@@ -7,7 +7,7 @@ import { dateFormat, formatBytes } from 'support/Utils';
 import Markdown from 'components/Markdown';
 import VideoLightbox, { ImageLightbox} from 'components/VideoLightbox';
 
-const MessageItem = ({ data, dialogueId, user, token }) => {
+const MessageItem = ({ data, groupId, user, token }) => {
   const [image, setImage] = useState('')
   const [imageOpen, setImageOpen] = useState(false)
   const [video, setVideo] = useState('')
@@ -34,13 +34,13 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ messageId: data._id, dialogueId  })
+      body: JSON.stringify({ messageId: data._id, groupId, dialogueId: data.dialogueId  })
     })
       .then(response => response.json())
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   return (
@@ -82,7 +82,7 @@ const MessageItem = ({ data, dialogueId, user, token }) => {
           <Markdown source={data.body} onImageClick={imageView} />
 
           <span className="message_info">
-            {dateFormat(data.createdAt, 'short')}
+            {dateFormat(data.createdAt, 'onlyTime')}
             {my && data.read && <i className="bx bx-check-double" />}
           </span>
         </div>

@@ -88,7 +88,7 @@ const Profile = ({ userName }) => {
           setModer(!moder)
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   const onBan = (userId) => {
@@ -107,7 +107,7 @@ const Profile = ({ userName }) => {
             setBanned(false)
           } else throw Error(data.error?.message || 'Error')
         })
-        .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+        .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
     } else {
       setPostType({
         type: 'ban',
@@ -139,7 +139,7 @@ const Profile = ({ userName }) => {
           history.push('/users')
         } else throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   return (

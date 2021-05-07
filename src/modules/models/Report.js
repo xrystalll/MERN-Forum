@@ -10,7 +10,7 @@ const reportSchema = new Schema({
   postId: Types.ObjectId,
   title: String,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   read: {
     type: Boolean,
     default: false

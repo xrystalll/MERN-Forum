@@ -100,7 +100,7 @@ const Comments = ({ lang, user, token, fileId, subcribed, clearSubcribe }) => {
       .then(data => {
         if (data.error) throw Error(data.error?.message || 'Error')
       })
-      .catch(err => toast.error(typeof err.message === 'object' ? 'Error' : err.message))
+      .catch(err => toast.error(err.message === '[object Object]' ? 'Error' : err.message))
   }
 
   return (

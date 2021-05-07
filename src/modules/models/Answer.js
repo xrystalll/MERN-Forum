@@ -13,13 +13,13 @@ const answerSchema = new Schema({
   threadId: Types.ObjectId,
   answeredTo: Types.ObjectId,
   body: String,
-  createdAt: String,
+  createdAt: Date,
   author: {
     type: Types.ObjectId,
     ref: 'User'
   },
   edited: {
-    createdAt: String
+    createdAt: Date
   },
   likes: [{
     type: Types.ObjectId,

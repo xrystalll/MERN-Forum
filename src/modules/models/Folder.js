@@ -10,7 +10,7 @@ const pathSchema = new Schema({
   title: String,
   body: String,
   position: Number,
-  createdAt: String,
+  createdAt: Date,
   filesCount: Number
 })
 pathSchema.plugin(mongoosePaginate)
