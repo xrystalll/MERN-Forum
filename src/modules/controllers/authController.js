@@ -48,11 +48,7 @@ const register = async (req, res, next) => {
       email: result.email,
       password: result.password,
       createdAt: now,
-      onlineAt: now,
-      karma: 0,
-      role: 1,
-      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-      ua: req.headers['user-agent']
+      onlineAt: now
     })
     const savedUser = await user.save()
     const accessToken = await signAccessToken(savedUser)
@@ -60,8 +56,8 @@ const register = async (req, res, next) => {
     const authHistory = new AuthHistory({
       user: savedUser._id,
       loginAt: now,
-      ip: savedUser.ip,
-      ua: savedUser.ua
+      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+      ua: req.headers['user-agent']
     })
     await authHistory.save()
 
@@ -120,16 +116,11 @@ const login = async (req, res, next) => {
 
     const accessToken = await signAccessToken(user)
 
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    const ua = req.headers['user-agent']
-
-    await User.updateOne({ _id: user._id }, { ip, ua })
-
     const authHistory = new AuthHistory({
       user: user._id,
       loginAt: now,
-      ip,
-      ua
+      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+      ua: req.headers['user-agent']
     })
     await authHistory.save()
 

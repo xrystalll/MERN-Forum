@@ -35,9 +35,7 @@ const userSchema = new Schema({
   ban: {
     type: Types.ObjectId,
     ref: 'Ban'
-  },
-  ip: String,
-  ua: String
+  }
 })
 userSchema.plugin(mongoosePaginate)
 userSchema.index({ name: 'text', displayName: 'text' })

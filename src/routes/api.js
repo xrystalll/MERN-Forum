@@ -19,6 +19,7 @@ router.get('/user/threads', verifyAccessToken, GeneralController.getUserThreads)
 router.get('/user/answers', verifyAccessToken, GeneralController.getUserAnswers)
 router.get('/user/bans', verifyAccessToken, GeneralController.getUserBans)
 router.get('/user/authHistory', verifyAccessToken, GeneralController.getAuthHistory)
+router.get('/user/authHistory/search', verifyAccessToken, GeneralController.searchAuthHistory)
 router.delete('/user/delete', verifyAccessToken, GeneralController.deleteUser)
 
 router.get('/bans', GeneralController.getBans)

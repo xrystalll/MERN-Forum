@@ -358,9 +358,32 @@ module.exports.getAuthHistory = async (req, res, next) => {
 
     const populate = {
       path: 'user',
-      select: '_id name displayName onlineAt picture role ban ip ua'
+      select: '_id name displayName onlineAt picture role ban'
     }
     const authHistory = await AuthHistory.paginate({ user: userId }, { sort: { loginAt: -1 }, page, limit, populate })
+
+    res.json(authHistory)
+  } catch(err) {
+    next(createError.InternalServerError(err))
+  }
+}
+
+module.exports.searchAuthHistory = async (req, res, next) => {
+  try {
+    const { ip, limit = 10, page = 1 } = req.query
+    const moder = req.payload.role >= 2
+
+    if (!moder) return next(createError.Unauthorized('Action not allowed'))
+    if (!ip) return next(createError.BadRequest('ip must not be empty'))
+
+    const populate = {
+      path: 'user',
+      select: '_id name displayName onlineAt picture role ban'
+    }
+    const authHistory = await AuthHistory.paginate(
+      { $text: { $search: ip } },
+      { sort: { ip: -1, ua: -1, loginAt: -1 }, page, limit, populate }
+    )
 
     res.json(authHistory)
   } catch(err) {

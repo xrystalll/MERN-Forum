@@ -11,5 +11,6 @@ const authHistorySchema = new Schema({
   ua: String
 })
 authHistorySchema.plugin(mongoosePaginate)
+authHistorySchema.index({ ip: 'text' })
 
 module.exports = model('AuthHistory', authHistorySchema);

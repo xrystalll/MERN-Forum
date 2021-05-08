@@ -16,6 +16,7 @@ import Reports from './Reports';
 import Bans from './Bans';
 import Folders from './Folders';
 import Files from './Files';
+import SearchAuth from './SearchAuth';
 import './style.css';
 
 const Dashboard = () => {
@@ -55,6 +56,7 @@ const Dashboard = () => {
         <Route path={path + '/bans'} component={Bans} />
         {user.role === 3 && <Route path={path + '/folders'} component={Folders} />}
         <Route path={path + '/files'} component={Files} />
+        <Route path={path + '/searchauth'} component={SearchAuth} />
         <Route path={path} exact>
           <Breadcrumbs current={Strings.dashboard[lang]} links={[
             { title: Strings.home[lang], link: '/' }
@@ -110,6 +112,11 @@ const Dashboard = () => {
             >
               <i className="bx bx-file-blank" />
               {Strings.moderateFiles[lang]}
+            </NavLink>
+
+            <NavLink to={path + '/searchauth'} className="admin__nav_item">
+              <i className="bx bx-search" />
+              {Strings.authorizationsHistory[lang]}
             </NavLink>
           </div>
         </Route>

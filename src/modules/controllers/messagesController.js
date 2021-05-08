@@ -112,10 +112,10 @@ module.exports.getMessages = async (req, res, next) => {
       return groups
     }, {})
 
-    const grouped = Object.keys(groups).map((date) => {
+    const grouped = Object.keys(groups).map((date, index) => {
       const msgList = groups[date].reverse()
       return {
-        groupId: msgList[0]._id,
+        groupId: date,
         date,
         messages: msgList
       }
@@ -287,7 +287,7 @@ module.exports.deleteMessage = async (req, res, next) => {
       await dialogue.delete()
     }
 
-    res.json({ message: 'Message successfully deleted', })
+    res.json({ message: 'Message successfully deleted' })
 
     req.io.to('pm:' + dialogueId).emit('messageDeleted', { id: messageId, groupId })
   } catch(err) {
