@@ -1086,6 +1086,11 @@ const Strings = {
     en: 'Delete all answers',
     jp: 'すべての回答を削除する'
   },
+  'isViewing': {
+    ru: 'в треде',
+    en: 'is viewing',
+    jp: 'ウォッチング'
+  },
 }
 
 const imageTypes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon']

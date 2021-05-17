@@ -14,7 +14,7 @@ import Errorer from 'components/Errorer';
 import Answers from './Answers';
 
 const Thread = ({ match }) => {
-  const { user, setPostType, setFabVisible, lang } = useContext(StoreContext)
+  const { user, token, setPostType, setFabVisible, lang } = useContext(StoreContext)
   const { threadId } = match.params
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const Thread = ({ match }) => {
 
   const [board, setBoard] = useState({})
   const [thread, setThread] = useState({})
+  const [joined, setJoined] = useState([])
   const [loading, setLoading] = useState(true)
   const [noData, setNoData] = useState(false)
   const [answersSubscribed, setAnswersSubscribed] = useState({})
@@ -58,11 +59,11 @@ const Thread = ({ match }) => {
   }, [threadId])
 
   useEffect(() => {
-    if (thread._id) joinToRoom('thread:' + thread._id)
+    if (thread._id) joinToRoom('thread:' + thread._id, { token })
     return () => {
       if (thread._id) leaveFromRoom('thread:' + thread._id)
     }
-  }, [thread._id])
+  }, [thread._id, token])
 
   useEffect(() => {
     Socket.on('threadDeleted', (data) => {
@@ -73,6 +74,9 @@ const Thread = ({ match }) => {
     })
     Socket.on('threadLiked', (data) => {
       setThread(data)
+    })
+    Socket.on('joinedList', (data) => {
+      setJoined(data)
     })
     Socket.on('answerCreated', (data) => {
       setAnswersSubscribed({ type: 'answerCreated', payload: data })
@@ -103,7 +107,7 @@ const Thread = ({ match }) => {
               { title: board.title, link: '/boards/' + board.name }
             ]} />
 
-            <Card data={thread} full type="thread" />
+            <Card data={thread} full type="thread" joinedList={joined} />
 
             <br />
 

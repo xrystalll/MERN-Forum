@@ -623,13 +623,13 @@ a.head_text:hover {
     display: block;
   }
 }
-.likes {
+.relative {
   position: relative;
 }
 .liked {
   color: var(--main-danger-color);
 }
-.likes_list {
+.pop_list {
   display: none;
   align-items: center;
   position: absolute;
@@ -641,16 +641,18 @@ a.head_text:hover {
   cursor: default;
   z-index: 1;
 }
-.likes:hover .likes_list {
+.relative:hover .pop_list {
   display: flex;
+  overflow-x: auto;
+  max-width: 160px;
 }
-.likes_list .head_profile:not(:last-child) {
+.pop_list .head_profile:not(:last-child) {
   margin-right: .2rem;
 }
-.likes_list .head_profile {
+.pop_list .head_profile {
   cursor: pointer;
 }
-.likes_list span {
+.pop_list span {
   margin: 0 .5rem 0 .2rem;
   color: var(--secondary-text-light);
 }

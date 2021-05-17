@@ -25,7 +25,7 @@ export const CardBody = ({ children }) => {
   )
 }
 
-export const Card = ({ data, threadData, full = false, preview = false, type }) => {
+export const Card = ({ data, threadData, full = false, preview = false, type, joinedList }) => {
   const { user, token, setModalOpen, setPostType, setFabVisible, lang } = useContext(StoreContext)
   const history = useHistory()
   const likesList = useRef()
@@ -489,7 +489,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
               </div>
             )}
 
-            <div className="act_btn foot_btn likes" onClick={onLike}>
+            <div className="act_btn foot_btn relative" onClick={onLike}>
               <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
               {likes.length ? (
                 <Fragment>
@@ -498,7 +498,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                     {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
                   </span>
                   {user && (
-                    <div className="likes_list" ref={likesList}>
+                    <div className="pop_list" ref={likesList}>
                       {likes.slice(0, 4).map((item, index) => (
                         <Link
                           key={index}
@@ -510,7 +510,7 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                           {!item.picture && item.displayName.charAt(0)}
                         </Link>
                       ))}
-                      {likes.length > 4 && <span>and {likes.length - 4} more</span>}
+                      {likes.length > 4 && <span>+{likes.length - 4}</span>}
                     </div>
                   )}
                 </Fragment>
@@ -526,6 +526,28 @@ export const Card = ({ data, threadData, full = false, preview = false, type }) 
                 </span>
               </div>
             )}
+
+            {user && joinedList && joinedList.length ? (
+              <div className="act_btn foot_btn relative">
+                <i className="bx bx-show-alt" />
+                <span className="card_count">{counter(joinedList.length)}</span>
+                <span className="hidden">{Strings.isViewing[lang]}</span>
+
+                <div className="pop_list">
+                  {joinedList.map((item, index) => (
+                    <Link
+                      key={index}
+                      to={'/user/' + item.user.name}
+                      className="head_profile"
+                      title={item.user.displayName}
+                      style={{ backgroundImage: `url(${item.user.picture ? BACKEND + item.user.picture : ''})` }}
+                    >
+                      {!item.user.picture && item.user.displayName.charAt(0)}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </Fragment>
         ) : (
           type !== 'answer' ? (

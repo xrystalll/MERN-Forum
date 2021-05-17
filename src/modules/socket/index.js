@@ -17,6 +17,8 @@ module.exports = (server) => {
     }
   })
 
+  const joinedList = []
+
   io.on('connection', (socket) => {
     socket.on('join', async (data) => {
       let jwtData = null
@@ -25,6 +27,31 @@ module.exports = (server) => {
       }
 
       socket.join(data.room)
+
+      if (/thread:/.test(data.room)) {
+        if (!jwtData) return
+
+        const threadId = data.room.replace('thread:', '')
+        const { id, name, displayName, picture, role } = jwtData
+        const joinedObj = {
+          threadId,
+          socket: socket.id,
+          user: {
+            _id: id,
+            name,
+            displayName,
+            picture,
+            role
+          }
+        }
+        if (joinedList.findIndex(item => item.user._id === id)) {
+          joinedList.push(joinedObj)
+        }
+
+        const listByThreadId = joinedList.filter(item => item.threadId === threadId)
+
+        io.to(data.room).emit('joinedList', listByThreadId)
+      }
 
       if (/notification:/.test(data.room)) {
         if (!jwtData || jwtData.id !== data.room.replace('notification:', '')) {
@@ -95,6 +122,20 @@ module.exports = (server) => {
 
     socket.on('leave', (data) => {
       socket.leave(data.room)
+
+      if (/thread:/.test(data.room)) {
+        const threadId = data.room.replace('thread:', '')
+
+        joinedList.splice(joinedList.findIndex(item => item.socket === socket.id), 1)
+
+        const listByThreadId = joinedList.filter(item => item.threadId === threadId)
+
+        io.to(data.room).emit('joinedList', listByThreadId)
+      }
+    })
+
+    socket.on('disconnect', (reason) => {
+      joinedList.splice(joinedList.findIndex(item => item.socket === socket.id), 1)
     })
 
     socket.on('createMessage', async (data) => {
