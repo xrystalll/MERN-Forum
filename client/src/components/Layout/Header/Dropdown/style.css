@@ -11,7 +11,8 @@
   box-shadow: 0 2px 8px -3px rgb(0 0 0 / 20%);
   padding: .4rem;
   overflow: hidden;
-  transition: height .3s ease;
+  transition-duration: .2s;
+  transition-property: height, background-color;
   pointer-events: initial !important;
   cursor: default;
   user-select: none;
@@ -74,14 +75,14 @@
 }
 .menu-primary-enter-active {
   transform: translateX(0%);
-  transition: all .3s ease;
+  transition: all .3s;
 }
 .menu-primary-exit {
   position: absolute;
 }
 .menu-primary-exit-active {
   transform: translateX(-110%);
-  transition: all .3s ease;
+  transition: all .3s;
 }
 
 .menu-secondary-enter {
@@ -89,9 +90,9 @@
 }
 .menu-secondary-enter-active {
   transform: translateX(0%);
-  transition: all .3s ease;
+  transition: all .3s;
 }
 .menu-secondary-exit-active {
   transform: translateX(110%);
-  transition: all .3s ease;
+  transition: all .3s;
 }

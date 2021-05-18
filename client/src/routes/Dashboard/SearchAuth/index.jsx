@@ -57,7 +57,8 @@ const SearchAuth = () => {
             <Input
               name="ip"
               value={values.ip}
-              maxLength="21"
+              placeholder={Strings.enterYourSearchTerm[lang] + '...'}
+              maxLength="50"
               onChange={onChange}
             />
           </div>

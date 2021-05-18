@@ -197,7 +197,7 @@ a.ril__builtinButton {
 
 .ril__navButtonPrev, .ril__navButtonNext {
   font-family: 'boxicons';
-  background: rgb(0 0 0 / 20%);
+  background-color: rgb(0 0 0 / 20%);
   border-radius: var(--border-radius);
   font-size: 42px;
   color: var(--main-text-light);

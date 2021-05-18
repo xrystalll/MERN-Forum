@@ -17,13 +17,21 @@ const Markdown = ({ source, onImageClick }) => {
   const renderers = {
     code: ({ language, value }) => <SyntaxHighlighter style={materialDark} language={language} showLineNumbers children={value} />,
     link: ({ href, children }) => {
-      const url = new URL(href)
+      let url
+      if (!href.startsWith('/')) {
+        url = new URL(href)
+      } else {
+        url = {
+          origin: window.location.origin,
+          pathname: href
+        }
+      }
 
       if (url.origin === window.location.origin) {
         return <Link to={url.pathname}>{children}</Link>
-      } else {
-        return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>
       }
+
+      return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>
     },
     image: ({ src, alt }) => <img onClick={() => onClick(src)} src={src} alt={alt} />,
     thematicBreak: () => <hr />,

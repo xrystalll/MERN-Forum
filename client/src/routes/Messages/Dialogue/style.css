@@ -238,7 +238,7 @@
   content: '';
   width: 42px;
   height: 42px;
-  background: rgb(0 0 0 / 40%);
+  background-color: rgb(0 0 0 / 40%);
   border-radius: 50%;
 }
 .msg_file.video::after {

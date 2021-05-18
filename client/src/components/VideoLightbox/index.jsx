@@ -72,7 +72,7 @@ const VideoLightbox = ({ source, thumb, onCloseRequest }) => {
         >
           <div
             className="ril-outer ril__outer ril__outerAnimating"
-            style={{ transition: 'opacity 300ms ease 0s', animationDuration: '300ms', animationDirection: 'reverse' }}
+            style={{ transition: 'opacity 300ms 0s', animationDuration: '300ms', animationDirection: 'reverse' }}
           >
             <div className="ril-inner ril__inner">
               <video

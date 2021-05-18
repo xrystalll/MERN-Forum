@@ -91,10 +91,12 @@
 }
 .markdown hr {
   border: 1px solid var(--form-border-color);
+  transition: border-color .2s;
   margin: .7rem 0;
 }
 .markdown .spoiler {
   background-color: var(--main-bg);
+  transition: var(--transition-background);
   border-radius: var(--border-radius-inner);
 }
 .markdown .spoiler_text {

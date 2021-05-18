@@ -77,7 +77,7 @@ body.noscroll {
 }
 ::selection {
   color: var(--selection-text);
-  background: var(--selection-bg);
+  background-color: var(--selection-bg);
   text-shadow: none;
 }
 ::-webkit-scrollbar {
@@ -90,7 +90,7 @@ body.noscroll {
   border: 4px solid transparent;
 }
 ::-webkit-scrollbar-corner {
-  background: transparent;
+  background-color: transparent;
 }
 ::-webkit-input-placeholder {
   color: var(--actions-color);
@@ -635,7 +635,7 @@ a.head_text:hover {
   position: absolute;
   bottom: 22px;
   left: -4px;
-  background: rgb(0 0 0 / 50%);
+  background-color: rgb(0 0 0 / 50%);
   border-radius: var(--border-radius);
   padding: .15rem .25rem;
   cursor: default;
@@ -644,12 +644,13 @@ a.head_text:hover {
 .relative:hover .pop_list {
   display: flex;
   overflow-x: auto;
-  max-width: 160px;
+  max-width: 170px;
 }
 .pop_list .head_profile:not(:last-child) {
   margin-right: .2rem;
 }
 .pop_list .head_profile {
+  flex: none;
   cursor: pointer;
 }
 .pop_list span {
@@ -822,8 +823,8 @@ a.head_text:hover {
 .form_block:focus-within {
   border-color: var(--form-border-color-active) !important;
 }
-.form_block.error {
-  border-color: var(--main-danger-color);
+.form_block.error, .form_block.error:focus-within {
+  border-color: var(--main-danger-color) !important;
 }
 .form_error {
   color: var(--main-danger-color);
@@ -903,7 +904,7 @@ a.head_text:hover {
 }
 .text_area textarea, .input_area {
   display: flex;
-  background: transparent;
+  background-color: transparent;
   color: var(--main-text);
   border: none;
   padding: .6em .8rem;
@@ -1093,24 +1094,24 @@ textarea::-webkit-resizer {
   direction: rtl;
 }
 .Toastify__toast--dark {
-  background: var(--dark-bg);
+  background-color: var(--dark-bg);
   color: var(--main-text-light);
 }
 .Toastify__toast--default {
-  background: var(--main-info-color);
+  background-color: var(--main-info-color);
   color: var(--main-text);
 }
 .Toastify__toast--info {
-  background: var(--main-info-color);
+  background-color: var(--main-info-color);
 }
 .Toastify__toast--success {
-  background: var(--main-success-color);
+  background-color: var(--main-success-color);
 }
 .Toastify__toast--warning {
-  background: var(--main-info-color);
+  background-color: var(--main-info-color);
 }
 .Toastify__toast--error {
-  background: var(--main-danger-color);
+  background-color: var(--main-danger-color);
 }
 .Toastify__toast-body {
   margin: auto 0;
@@ -1129,11 +1130,11 @@ textarea::-webkit-resizer {
 }
 .Toastify__close-button {
   color: var(--main-text-light);
-  background: transparent;
+  background-color: transparent;
   border: none;
   padding: 0;
   opacity: .7;
-  transition: .3s ease;
+  transition: .3s;
   -ms-flex-item-align: start;
   align-self: flex-start;
   cursor: pointer;
@@ -1182,10 +1183,10 @@ textarea::-webkit-resizer {
   transform-origin: right;
 }
 .Toastify__progress-bar--default {
-  background: var(--dark-bg);
+  background-color: var(--dark-bg);
 }
 .Toastify__progress-bar--dark {
-  background: var(--dark-bg);
+  background-color: var(--dark-bg);
 }
 @keyframes Toastify__bounceInRight {
   from, 60%, 75%, 90%, to {

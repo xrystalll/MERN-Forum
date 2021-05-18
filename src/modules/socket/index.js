@@ -44,7 +44,7 @@ module.exports = (server) => {
             role
           }
         }
-        if (joinedList.findIndex(item => item.user._id === id)) {
+        if (joinedList.findIndex(item => item.user._id === id) === -1) {
           joinedList.push(joinedObj)
         }
 
@@ -126,7 +126,10 @@ module.exports = (server) => {
       if (/thread:/.test(data.room)) {
         const threadId = data.room.replace('thread:', '')
 
-        joinedList.splice(joinedList.findIndex(item => item.socket === socket.id), 1)
+        const removeIndex = joinedList.findIndex(item => item.socket === socket.id)
+        if (removeIndex !== -1) {
+          joinedList.splice(removeIndex, 1)
+        }
 
         const listByThreadId = joinedList.filter(item => item.threadId === threadId)
 
@@ -135,7 +138,10 @@ module.exports = (server) => {
     })
 
     socket.on('disconnect', (reason) => {
-      joinedList.splice(joinedList.findIndex(item => item.socket === socket.id), 1)
+      const removeIndex = joinedList.findIndex(item => item.socket === socket.id)
+      if (removeIndex !== -1) {
+        joinedList.splice(removeIndex, 1)
+      }
     })
 
     socket.on('createMessage', async (data) => {

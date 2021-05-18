@@ -68,7 +68,7 @@
 .boards_slide_item {
   width: 122px;
   height: 122px;
-  background: var(--accent-color);
+  background-color: var(--accent-color);
 }
 .stats_item {
   width: 100% !important;
