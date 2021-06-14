@@ -59,7 +59,7 @@ const LeftMenu = ({ open, setMenuOpen }) => {
                 <li className="nav_item">
                   <NavLink to="/dashboard" onClick={dashboardClick}>
                     <span className="nav_text">{Strings.dashboard[lang]}</span>
-                    {adminNotification && <span className="nav_counter dot"></span>}
+                    {adminNotification && <span className="nav_counter dot" />}
                   </NavLink>
                 </li>
               )}

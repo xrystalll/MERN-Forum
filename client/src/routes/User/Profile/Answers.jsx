@@ -6,6 +6,7 @@ import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { Strings } from 'support/Constants';
 
+import { SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import DataView from 'components/DataView';
 import { Card } from 'components/Card';
@@ -23,6 +24,8 @@ const Answers = ({ userData }) => {
         { title: Strings.users[lang], link: '/users' },
         { title: userData.displayName, link: '/user/' + userData.name }
       ]} />
+
+      <SectionHeader title={Strings.answers[lang]} />
 
       <DataView
         data={items}

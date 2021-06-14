@@ -20,6 +20,7 @@
   width: 100%;
   background-color: var(--main-bg);
   transition: var(--transition-background);
+  z-index: 1;
 }
 .messages_wrapper .form_block {
   border: none;

@@ -171,7 +171,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
           </div>
         )}
 
-        <div className="act_btn foot_btn likes" onClick={onLike}>
+        <div className="act_btn foot_btn relative" onClick={onLike}>
           <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
           {likes.length ? (
             <>
@@ -180,7 +180,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
                 {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
               </span>
               {user && (
-                <div className="likes_list" ref={likesList}>
+                <div className="pop_list" ref={likesList}>
                   {likes.slice(0, 4).map((item, index) => (
                     <Link
                       key={index}
@@ -192,7 +192,7 @@ const CommentItem = ({ data, setCommentedTo }) => {
                       {!item.picture && item.displayName.charAt(0)}
                     </Link>
                   ))}
-                  {likes.length > 4 && <span>and {likes.length - 4} more</span>}
+                  {likes.length > 4 && <span>+{likes.length - 4}</span>}
                 </div>
               )}
             </>

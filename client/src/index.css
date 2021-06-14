@@ -96,6 +96,11 @@ body.noscroll {
   color: var(--actions-color);
   user-select: none;
 }
+input:-webkit-autofill {
+  -webkit-background-clip: text;
+  box-shadow: 0 0 0 20px var(--secondary-bg-tint) inset !important;
+  -webkit-text-fill-color: var(--main-text) !important;
+}
 .track-vertical {
   width: 6px;
   right: 3px;

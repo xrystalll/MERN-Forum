@@ -174,7 +174,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                 </span>
               </div>
 
-              <div className="act_btn foot_btn likes" onClick={onLike}>
+              <div className="act_btn foot_btn relative" onClick={onLike}>
                 <i className={liked ? 'bx bx-heart liked' : 'bx bx-heart'} />
                 {likes.length ? (
                   <>
@@ -183,7 +183,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                       {declOfNum(likes.length, [Strings.like1[lang], Strings.like2[lang], Strings.like3[lang]])}
                     </span>
                     {user && (
-                      <div className="likes_list" ref={likesList}>
+                      <div className="pop_list" ref={likesList}>
                         {likes.slice(0, 4).map((item, index) => (
                           <Link
                             key={index}
@@ -195,7 +195,7 @@ const FileContent = ({ data, user, token, lang, deleteFile, editFile }) => {
                             {!item.picture && item.displayName.charAt(0)}
                           </Link>
                         ))}
-                        {likes.length > 4 && <span>and {likes.length - 4} more</span>}
+                        {likes.length > 4 && <span>+{likes.length - 4}</span>}
                       </div>
                     )}
                   </>

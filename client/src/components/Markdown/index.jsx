@@ -19,7 +19,11 @@ const Markdown = ({ source, onImageClick }) => {
     link: ({ href, children }) => {
       let url
       if (!href.startsWith('/')) {
-        url = new URL(href)
+        try {
+          url = new URL(href)
+        } catch(e) {
+          url = href
+        }
       } else {
         url = {
           origin: window.location.origin,

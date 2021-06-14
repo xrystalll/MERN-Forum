@@ -5,15 +5,15 @@
   justify-content: center;
   padding: .5rem .8rem;
   margin: .8rem 2px 1rem;
-  background-color: var(--accent-color);
   color: var(--main-text-light);
+  background-color: var(--accent-color);
+  transition: var(--transition-background);
   font-size: 1rem;
   font-weight: 500;
   font-family: var(--font-ss);
   line-height: 1;
   border: none;
   border-radius: 50px;
-  transition: var(--transition-background);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
@@ -79,8 +79,9 @@
   width: max-content;
   min-width: 100px;
   height: 36px;
-  background-color: var(--secondary-bg-tint);
   color: var(--main-text);
+  background-color: var(--secondary-bg-tint);
+  transition: var(--transition-background);
   font-size: 1rem;
   border-radius: var(--border-radius);
   margin: 8px;

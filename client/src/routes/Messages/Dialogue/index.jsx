@@ -394,7 +394,7 @@ const Dialogue = ({ match }) => {
                     {typing ? (
                       <>
                         {Strings.isTyping[lang]}
-                        <span className="dot_loader"></span>
+                        <span className="dot_loader" />
                       </>
                     ) : (
                       <UserOnline onlineAt={toUser.onlineAt} offlineText={Strings.lastSeen[lang]} dateType="short" />

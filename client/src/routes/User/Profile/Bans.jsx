@@ -7,6 +7,7 @@ import { useMoreFetch } from 'hooks/useMoreFetch';
 
 import { BACKEND, Strings } from 'support/Constants';
 
+import { SectionHeader } from 'components/Section';
 import Breadcrumbs from 'components/Breadcrumbs';
 import DataView from 'components/DataView';
 import { BannedAll } from 'components/Card';
@@ -47,6 +48,8 @@ const Bans = ({ userData }) => {
         { title: Strings.users[lang], link: '/users' },
         { title: userData.displayName, link: '/user/' + userData.name }
       ]} />
+
+      <SectionHeader title={Strings.bans[lang]} />
 
       <DataView
         data={items}
