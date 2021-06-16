@@ -481,6 +481,7 @@ a.head_text:hover {
   font-weight: 500;
   line-height: 1.6;
   overflow-wrap: break-word;
+  word-break: break-all;
 }
 @media (min-width: 400px) {
   .card_content {
