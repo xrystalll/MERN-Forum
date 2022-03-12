@@ -1,4 +1,4 @@
-# MERN-Forum
+# Tribinnov Community
 
 Fully responsive, multilingual, NodeJs forum app built using Mongoose, ExpressJs, React, Socket.IO, JWT.
 
@@ -6,7 +6,7 @@ Fully responsive, multilingual, NodeJs forum app built using Mongoose, ExpressJs
 
 ## Installation
 - Clone and install dependencies
-  - `git clone https://github.com/xrystalll/MERN-Forum.git`
+  - `git clone https://github.com/tribinnov/tribinnov-community.git`
   - `cd MERN-Forum`
   - `npm install`
 
