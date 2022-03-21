@@ -30,7 +30,7 @@
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^13.1.1",
-    "react-scripts": "4.0.3"
+    "react-scripts": "^4.0.3"
   },
   "eslintConfig": {
     "extends": [
