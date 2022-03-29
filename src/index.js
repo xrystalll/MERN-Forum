@@ -1,7 +1,7 @@
 require("dotenv").config();
 const DB = require("./modules/DB");
 
-require("./app"); //app.js
+const app = require("./app"); //app.js
 
 console.new = (err) => {
   if (process.env.NODE_ENV !== "production") {
@@ -16,4 +16,7 @@ DB((errMsg) => {
     console.error(errMsg);
   }
   // hence either connect the server or leave as it is for just a DB connection for testing purposes
+  app.listen(port, () =>
+    console.log(`server running from ${process.env.BACKEND}`)
+  );
 });

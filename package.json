@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/index",
     "dev": "cross-env NODE_ENV=development nodemon src/index",
-    "test": "cross-env NODE_ENV=test mocha test"
+    "test": "cross-env NODE_ENV=test mocha test --exit"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -29,7 +29,8 @@
     "socket.io": "^4.0.1",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
-    "wanakana": "^4.0.2"
+    "wanakana": "^4.0.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "chai": "^4.3.6",

@@ -10,6 +10,13 @@ const { signAccessToken } = require("../utils/jwt");
 
 // Error Handler
 const { registerError } = require("../utils/errorHandler");
+
+// UserServices
+const UserService = require("../lib/UserService");
+
+// 3rd party libs
+const { sendEmail } = require("../utils/emailHandler");
+
 // const toLatin = require("../utils/transliterate");
 
 // const register = async (req, res, next) => {
@@ -91,12 +98,59 @@ const { registerError } = require("../utils/errorHandler");
 // };
 
 const register = async (req, res, next) => {
-  const { value, error } = registerSchema.validate(req.body);
-  if (error) {
-    const userRegisterError = registerError(error);
-    return res.status(400).json({ errors: userRegisterError });
+  let duplicationError = {};
+  try {
+    const { value, error } = registerSchema.validate(req.body);
+    if (error) {
+      const userRegisterError = registerError(error);
+      return res.status(406).json({ errors: userRegisterError });
+    }
+    // check if username or email exists
+    const errorResponse = await UserService.checkEmailUsername(
+      value.email,
+      value.username
+    );
+    if (Object.values(errorResponse).length > 0) {
+      return res.status(409).json({ errors: errorResponse });
+    }
+
+    const createdAt = new Date().toISOString();
+
+    modifiedValue = { ...value, createdAt };
+    // save user to the DB
+    const userObj = new User(modifiedValue);
+    const user = await userObj.save();
+
+    // get my token for email validation
+    const token = await signAccessToken(user);
+
+    // send Email address here awaiting to be verified for 24hrs.
+    // sendEmail().then(....) or use try/catch
+
+    // Auth History
+    const authHistoryObj = {
+      user: user._id,
+      loginAt: createdAt,
+      ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
+      ua: req.headers["user-agent"],
+      profile: "register",
+    };
+    const userAuthHistory = await AuthHistory.create(authHistoryObj);
+
+    // continue
+    return res.status(201).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        role: user.role,
+      },
+      token: token,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
-  return res.send(value);
 };
 
 const login = async (req, res, next) => {
@@ -165,4 +219,4 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login };
+module.exports = { register: register, login: login };

@@ -8,10 +8,7 @@ const signAccessToken = (user) => {
   return new Promise((resolve, reject) => {
     const payload = {
       id: user.id,
-      name: user.name,
-      displayName: user.displayName,
-      picture: user.picture,
-      role: user.role,
+      // use just id
     };
     JWT.sign(
       payload,

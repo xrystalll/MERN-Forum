@@ -20,7 +20,7 @@ const registerSchema = Joi.object({
     .messages({ "any.required": "User name is required" }),
   username: Joi.string().required().min(3).max(21).messages({
     "string.min": "username must be atleast 3 characters long",
-    "string.max": "username must not be more than 3 characters",
+    "string.max": "username must not be more than 21 characters",
     "any.required": "username is required for signup",
   }),
   email: Joi.string().email().required().messages({

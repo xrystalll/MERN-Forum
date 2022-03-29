@@ -1,5 +1,5 @@
+require("dotenv").config();
 const path = require("path");
-
 const http = require("http");
 const express = require("express");
 const cors = require("cors");
@@ -7,6 +7,7 @@ const RateLimit = require("express-rate-limit");
 const createError = require("http-errors");
 
 const app = express();
+
 const httpServer = http.createServer(app);
 const io = require("./modules/socket")(httpServer);
 
@@ -51,4 +52,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-module.exports = { app };
+module.exports = app;

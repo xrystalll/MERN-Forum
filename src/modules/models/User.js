@@ -24,7 +24,7 @@ const userSchema = new Schema({
     required: true,
   },
 
-  userRole: {
+  role: {
     type: String,
     enum: [
       "researcher",
@@ -39,6 +39,8 @@ const userSchema = new Schema({
     ],
     required: true,
   },
+
+  active: { type: Boolean, default: false },
 
   experience: [
     {
@@ -76,10 +78,10 @@ const userSchema = new Schema({
     default: 0,
   },
 
-  role: {
-    type: Number,
-    default: 1,
-  },
+  // role: {
+  //   type: Number,
+  //   default: 1,
+  // },
 
   ban: {
     type: Types.ObjectId,

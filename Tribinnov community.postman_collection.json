@@ -1,0 +1,288 @@
+{
+	"info": {
+		"_postman_id": "a2f854d4-cc3d-4b26-9576-ad5b0c43b1d1",
+		"name": "Tribinnov community",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "authentication",
+			"item": [
+				{
+					"name": "registration",
+					"item": [
+						{
+							"name": "registration error",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison@gmail.com\",\r\n    \"username\":\"Harrison123\",\r\n    \"password\": \"Harry1233\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"somethingOdd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/auth/register",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "when no fields are provided",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "127.0.0.1:8000/auth/register",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"status": "Not Acceptable",
+									"code": 406,
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": "{\n    \"errors\": {\n        \"name\": \"User name is required\",\n        \"username\": \"username is required for signup\",\n        \"email\": \"An email is needed for signup\",\n        \"password\": \"Please provide your password for signup\",\n        \"confirmPassword\": \"please confirm password\",\n        \"role\": \"Please provide a role to continue registration\"\n    }\n}"
+								},
+								{
+									"name": "username should be more than 3 characters",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison@gmail.com\",\r\n    \"username\": \"Ha\",\r\n    \"password\": \"Harry1233\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"talent\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "127.0.0.1:8000/auth/register",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": "{\n    \"errors\": {\n        \"username\": \"username must be atleast 3 characters long\"\n    }\n}"
+								},
+								{
+									"name": "username should be less than 21 chars",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison@gmail.com\",\r\n    \"username\": \"Hariissjsjsjsjsjjsjsjsjsjjsjsjsjsjsjsjjsjsjsjsjjsjsjsj\",\r\n    \"password\": \"Harry1233\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"talent\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "127.0.0.1:8000/auth/register",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": "{\r\n    \"errors\": {\r\n        \"username\": \"username must not be more than 21 characters\"\r\n    }\r\n}"
+								},
+								{
+									"name": "invalid email",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison\",\r\n    \"username\":\"Harrison123\",\r\n    \"password\": \"Harry1233\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"talent\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "127.0.0.1:8000/auth/register",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": "{\r\n    \"errors\": {\r\n        \"email\": \"Please provide a valid email\"\r\n    }\r\n}"
+								},
+								{
+									"name": "password error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison\",\r\n    \"username\":\"Harrison123\",\r\n    \"password\": \"Harr\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"talent\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "127.0.0.1:8000/auth/register",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": "{\r\n    \"errors\": {\r\n        \"email\": \"Please provide a valid email\",\r\n        \"password\": \"Your password must be atleast 6 characters long\",\r\n        \"confirmPassword\": \"passwords do not match\"\r\n    }\r\n}"
+								},
+								{
+									"name": "role error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison@gmail.com\",\r\n    \"username\":\"Harrison123\",\r\n    \"password\": \"Harry1233\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"somethingOdd\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "127.0.0.1:8000/auth/register",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "8000",
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": "{\r\n    \"errors\": {\r\n        \"role\": \"role must be either researcher, talent, founder, mentor, lead, coop-member, organization, institution or student\"\r\n    }\r\n}"
+								}
+							]
+						},
+						{
+							"name": "User created sucessfully",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Harrison\",\r\n    \"email\": \"harrison@gmail.com\",\r\n    \"username\":\"Harrison123\",\r\n    \"password\": \"Harry1233\",\r\n    \"confirmPassword\": \"Harry1233\",\r\n    \"role\":\"talent\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/auth/register",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
