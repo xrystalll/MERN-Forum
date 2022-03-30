@@ -169,22 +169,5 @@ describe("Authentication Test", () => {
           .catch((err) => done(err));
       });
     });
-
-    // describe("testing functions in registration function", () => {
-    //   it("it should test register error when an error occurs", () => {
-    //     const errors = { username: "username must be provided" };
-    //     const req = {};
-    //     const res = {};
-    //     const next = () => {
-    //       return;
-    //     };
-    //     const mockController = sinon.mock(register);
-    //     const expectation = mockController.expects(registerError);
-    //     expectation.exactly(1);
-    //     expectation.withArgs(errors);
-    //     register(req, res, next);
-    //     mockController.verify();
-    //   });
-    // });
   });
 });

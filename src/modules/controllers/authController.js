@@ -98,7 +98,6 @@ const { sendEmail } = require("../utils/emailHandler");
 // };
 
 const register = async (req, res, next) => {
-  let duplicationError = {};
   try {
     const { value, error } = registerSchema.validate(req.body);
     if (error) {
