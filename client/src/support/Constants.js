@@ -1,4 +1,4 @@
-const BACKEND = 'http://localhost:8000'
+const BACKEND = 'http://localhost:8000';
 
 const Strings = {
   'goToHomePage': {
@@ -420,6 +420,11 @@ const Strings = {
     ru: 'Адрес электронной почты',
     en: 'Email address',
     jp: 'メールアドレス'
+  },
+	'registrationCategory': {
+		ru: 'Выберите свою категорию',
+    en: 'Select your category',
+		jp: 'カテゴリを選択してください'
   },
   'confirmPassword': {
     ru: 'Подтверждение пароля',

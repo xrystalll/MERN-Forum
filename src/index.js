@@ -1,63 +1,22 @@
-require('dotenv').config();
+require("dotenv").config();
+const DB = require("./modules/DB");
 
-const path = require('path');
+const app = require("./app"); //app.js
 
-const http = require('http');
-const express = require('express');
-const cors = require('cors');
-const RateLimit = require('express-rate-limit');
-const createError = require('http-errors');
-
-const DB = require('./modules/DB');
-
-const app = express()
-const httpServer = http.createServer(app)
-const io = require('./modules/socket')(httpServer)
-
-app.use(express.static(path.join(__dirname, '..', 'public')))
-app.use(express.static(path.join(__dirname, '..', 'client', 'build')))
-app.use(cors({
-  origin: process.env.CLIENT
-}))
-app.use(express.json())
-
-const limiter = new RateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 50,
-  message: {
-    error: {
-      status: 429,
-      message: 'Too many requests per minute'
-    }
+console.new = (err) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.error(err);
   }
-})
-app.use('/auth', limiter)
-app.use('/api', limiter) 
+  /* this means we are now in production using an else block here, use a logging tool like winston, e.t.c*/
+};
 
-app.use('/auth', require('./routes/auth'))
-
-app.use((req, res, next) => {
-  req.io = io
-  next()
-})
-
-app.use('/api', require('./routes/api'))
-app.use('/', require('./routes'))
-
-app.use((err, req, res, next) => {
-  res.status(err.status || 500)
-  res.json({
-    error: {
-      status: err.status || 500,
-      message: err.message
-    }
-  })
-})
-
-const port = process.env.PORT || 8000
-
-DB().then(() => {
-  httpServer.listen({ port }, () => {
-    console.log(`Server run on ${process.env.BACKEND}`)
-  })
-}).catch(console.error)
+const port = process.env.PORT || 8000;
+DB((errMsg) => {
+  if (errMsg) {
+    console.error(errMsg);
+  }
+  // hence either connect the server or leave as it is for just a DB connection for testing purposes
+  app.listen(port, () =>
+    console.log(`server running from ${process.env.BACKEND}`)
+  );
+});

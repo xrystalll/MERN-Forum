@@ -15,141 +15,156 @@ import { InputButton } from 'components/Button';
 import Loader from 'components/Loader';
 
 const SignUp = ({ history }) => {
-  const { login, lang } = useContext(StoreContext)
-  document.title = 'Forum | ' + Strings.signUp[lang]
-  const [errors, setErrors] = useState({})
-  const [loading, setLoading] = useState(false)
+	const { login, lang } = useContext(StoreContext);
+	document.title = 'Forum | ' + Strings.signUp[lang];
+	const [errors, setErrors] = useState({});
+	const [loading, setLoading] = useState(false);
 
-  const registerUserCallback = () => {
-    if (loading) return
+	const registerUserCallback = () => {
+		if (loading) return;
 
-    setErrors({})
+		setErrors({});
 
-    if (!values.username.trim()) {
-      return setErrors({ username: Strings.enterYourName[lang] })
-    }
-    if (!values.email.trim()) {
-      return setErrors({ email: Strings.enterEmail[lang] })
-    }
-    if (!values.password.trim()) {
-      return setErrors({ password: Strings.enterPassword[lang] })
-    }
-    if (values.password.trim() !== values.confirmPassword) {
-      return setErrors({ confirmPassword: Strings.passwordsNotMatch[lang] })
-    }
+		if (!values.username.trim()) {
+			return setErrors({ username: Strings.enterYourName[lang] });
+		}
+		if (!values.email.trim()) {
+			return setErrors({ email: Strings.enterEmail[lang] })
+		}
+		if (!values.password.trim()) {
+			return setErrors({ password: Strings.enterPassword[lang] });
+		}
+		if (values.password.trim() !== values.confirmPassword) {
+			return setErrors({ confirmPassword: Strings.passwordsNotMatch[lang] });
+		}
 
-    setLoading(true)
+		setLoading(true);
 
-    registerUser()
-  }
+		registerUser();
+	}
 
-  const { onChange, onSubmit, values } = useForm(registerUserCallback, {
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  })
+	const { onChange, onSubmit, values } = useForm(registerUserCallback, {
+		username: '',
+		email: '',
+		password: '',
+		confirmPassword: ''
+	})
 
-  const registerUser = () => {
-    const { confirmPassword, ...body } = values
+	const registerUser = () => {
+		const { confirmPassword, ...body } = values;
 
-    fetch(BACKEND + '/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    })
-      .then(response => {
-        setLoading(false)
-        return response.json()
-      })
-      .then(data => {
-        if (data.accessToken) {
-          login(data)
-          history.push('/user/' + data.user.name)
-        } else throw Error(data.error?.message || 'Error')
-      })
-      .catch(err => {
-        setErrors({ general: err.message === '[object Object]' ? 'Error' : err.message })
-      })
-  }
+		fetch(BACKEND + '/auth/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		})
+			.then(response => {
+				setLoading(false);
+				return response.json();
+			})
+			.then(data => {
+				if (data.accessToken) {
+					login(data)
+					history.push('/user/' + data.user.name);
+				} else throw Error(data.error?.message || 'Error');
+			})
+			.catch(err => {
+				setErrors({ general: err.message === '[object Object]' ? 'Error' : err.message })
+			});
+	};
 
-  return (
-    <Section>
-      <Breadcrumbs current={Strings.signUp[lang]} links={[
-        { title: Strings.home[lang], link: '/' }
-      ]} />
+	return (
+		<Section>
+			<Breadcrumbs current={Strings.signUp[lang]} links={[
+				{ title: Strings.home[lang], link: '/' }
+			]} />
 
-      <SectionHeader title={Strings.createYourAccount[lang]} />
+			<SectionHeader title={Strings.createYourAccount[lang]} />
 
-      <form className="sign_form form_inner" onSubmit={onSubmit}>
-        <FormCardItem title={Strings.username[lang]} error={errors.username}>
-          <div className={errors.username ? 'form_block error' : 'form_block' }>
-            <Input
-              name="username"
-              value={values.username}
-              maxLength="21"
-              onChange={onChange}
-            />
-          </div>
-        </FormCardItem>
+			<form className="sign_form form_inner" onSubmit={onSubmit}>
+				<FormCardItem title={Strings.username[lang]} error={errors.username}>
+					<div className={errors.username ? 'form_block error' : 'form_block'}>
+						<Input
+							name="username"
+							value={values.username}
+							maxLength="21"
+							onChange={onChange}
+						/>
+					</div>
+				</FormCardItem>
 
-        <FormCardItem title={Strings.emailAddress[lang]} error={errors.email}>
-          <div className={errors.email ? 'form_block error' : 'form_block' }>
-            <Input
-              type="email"
-              name="email"
-              value={values.email}
-              maxLength="50"
-              onChange={onChange}
-            />
-          </div>
-        </FormCardItem>
+				<FormCardItem title={Strings.emailAddress[lang]} error={errors.email}>
+					<div className={errors.email ? 'form_block error' : 'form_block'}>
+						<Input
+							type="email"
+							name="email"
+							value={values.email}
+							maxLength="50"
+							onChange={onChange}
+						/>
+					</div>
+				</FormCardItem>
 
-        <FormCardItem title={Strings.password[lang]} error={errors.password}>
-          <div className={errors.password ? 'form_block error' : 'form_block' }>
-            <Input
-              type="password"
-              name="password"
-              value={values.password}
-              maxLength="50"
-              onChange={onChange}
-            />
-          </div>
-        </FormCardItem>
+				<FormCardItem title={Strings.registrationCategory[lang]} error={errors.email}>
+					<div className={errors.email ? 'form_block error' : 'form_block'}>
+						<select className="input_area" aria-label="Default select example">
+							<option>Select your category</option>
+							<option value="researcher">Researcher</option>
+							<option value="talent">Talent</option>
+							<option value="founder">Founder</option>
+							<option value="mentor">Mentor</option>
+							<option value="facility lead">Facility lead</option>
+							<option value="corp member">Corp member</option>
+							<option value="organization">Organization</option>
+						</select>
+					</div>
+				</FormCardItem>
 
-        <FormCardItem title={Strings.confirmPassword[lang]} error={errors.confirmPassword}>
-          <div className={errors.confirmPassword ? 'form_block error' : 'form_block' }>
-            <Input
-              type="password"
-              name="confirmPassword"
-              value={values.confirmPassword}
-              maxLength="50"
-              onChange={onChange}
-            />
-          </div>
-        </FormCardItem>
+				<FormCardItem title={Strings.password[lang]} error={errors.password}>
+					<div className={errors.password ? 'form_block error' : 'form_block'}>
+						<Input
+							type="password"
+							name="password"
+							value={values.password}
+							maxLength="50"
+							onChange={onChange}
+						/>
+					</div>
+				</FormCardItem>
 
-        {errors.general && (
-          <div className="card_item">
-            <span className="form_error">{errors.general}</span>
-          </div>
-        )}
+				<FormCardItem title={Strings.confirmPassword[lang]} error={errors.confirmPassword}>
+					<div className={errors.confirmPassword ? 'form_block error' : 'form_block'}>
+						<Input
+							type="password"
+							name="confirmPassword"
+							value={values.confirmPassword}
+							maxLength="50"
+							onChange={onChange}
+						/>
+					</div>
+				</FormCardItem>
 
-        <div className="card_item center">
-          {loading
-            ? <Loader className="btn" />
-            : <InputButton text={Strings.createAccount[lang]} />
-          }
-        </div>
+				{errors.general && (
+					<div className="card_item">
+						<span className="form_error">{errors.general}</span>
+					</div>
+				)}
 
-        <div className="card_item center text_reference">
-          {Strings.or[lang]} <Link className="flex_margin" to="/signin">{Strings.signIn[lang]}</Link> {Strings.ifYouAlreadyHaveAnAccount[lang]}.
-        </div>
-      </form>
-    </Section>
-  )
+				<div className="card_item center">
+					{loading
+						? <Loader className="btn" />
+						: <InputButton text={Strings.createAccount[lang]} />
+					}
+				</div>
+
+				<div className="card_item center text_reference">
+					{Strings.or[lang]} <Link className="flex_margin" to="/signin">{Strings.signIn[lang]}</Link> {Strings.ifYouAlreadyHaveAnAccount[lang]}.
+				</div>
+			</form>
+		</Section>
+	)
 }
 
 export default SignUp;
