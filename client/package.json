@@ -11,6 +11,7 @@
         "eject": "react-scripts eject"
     },
     "dependencies": {
+        "@babel/core": "^7.17.8",
         "jwt-decode": "^3.1.2",
         "moment": "^2.29.1",
         "react": "^17.0.2",
