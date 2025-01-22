@@ -4,6 +4,9 @@ Fully responsive, multilingual, NodeJs forum app built using Mongoose, ExpressJs
 
 ![Forum screenshot](/screenshot.png)
 
+## Warning
+Libraries are out of date. Runs on Nodejs 16
+
 ## Installation
 - Clone and install dependencies
   - `git clone https://github.com/xrystalll/MERN-Forum.git`
