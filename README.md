@@ -33,3 +33,7 @@ Libraries are out of date. Runs on Nodejs 16
   - Run backend with the command `npm start` or in development mode `npm run dev`
 
   - Enjoy 🙌
+
+## Use
+Make the user an admin manually through the database by setting the role value to 3. Then the admin can assign moderators through the frontend.
+
